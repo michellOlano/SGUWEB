@@ -1,0 +1,65 @@
+
+<ui:composition   			
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+                          
+                            template="/Administrativo/plantilla.xhtml">
+              
+            <ui:define name="titulo">
+            REPORTE
+            
+            </ui:define>
+               <ui:define name="contenido">
+<h:form  prependId="false">
+<div class="paneles">
+<h:outputLabel value="Sede" />
+<h:selectOneMenu id="cbSede" value="#{reporteMarcacionPersonalB.codSede}" >
+<f:selectItem itemLabel="Todos" itemValue="%" />
+<f:selectItems value="#{reporteMarcacionPersonalB.sedeL}" var="itemSede" itemValue="#{itemSede.local}" itemLabel="#{itemSede.descripcion}" />
+<f:ajax execute="@this" render="cbPersona" listener="#{reporteMarcacionPersonalB.selectSede}" />
+</h:selectOneMenu>
+<br />
+<h:outputLabel  value="Personal"  />
+<h:selectOneMenu id="cbPersona" value="#{reporteMarcacionPersonalB.codPersona}" >
+<f:selectItem itemLabel="Todos"  itemValue="%" />
+<f:selectItems  value="#{reporteMarcacionPersonalB.personalL}" var="itemPersonal" itemValue="#{itemPersonal.persona}" itemLabel="#{itemPersonal.itemPersona.paterno} #{itemPersonal.itemPersona.materno} #{itemPersonal.itemPersona.nombres}"  />
+<f:ajax execute="@this"  />
+</h:selectOneMenu>
+<br />
+<h:outputLabel  for="txtFechaInicio" value="Fecha Inicio"  />
+<p:calendar id="txtFechaInicio" value="#{reporteMarcacionPersonalB.fechaInicio}" pattern="dd-MM-yyyy" required="true" mask="true" >
+<p:ajax event="dateSelect" process="@this" update="txtFechaFinal" />
+</p:calendar>
+<br />
+<h:outputLabel  for="txtFechaFinal" value="Fecha Final" />
+<p:calendar id="txtFechaFinal" value="#{reporteMarcacionPersonalB.fechaFinal}" mindate="#{reporteMarcacionPersonalB.fechaInicio}"  pattern="dd-MM-yyyy" required="true" mask="true" >
+<p:ajax event="dateSelect" process="@this" />
+</p:calendar>
+</div>
+<div class="paneles">
+
+<h:commandLink styleClass="boton-normal"   >
+<i class="fa fa-print" />
+Vista Impresion
+<f:ajax render="pnReporte txtFechaInicio txtFechaFinal" execute="@this cbPersona txtFechaInicio txtFechaFinal" listener="#{reporteMarcacionPersonalB.mostrarReporte}" />
+</h:commandLink>
+</div>
+<div class="paneles" style="height: 700px;"  >
+<h:panelGroup layout="block" id="pnReporte" style="height: 100%;" >
+<h:panelGroup layout="block" rendered="#{reporteMarcacionPersonalB.bandera}" >
+<iframe src="../../SReporte?reporte=administrativo\marcacionPersonal\marcacionPersonal&amp;param=FECHAINICIO,#{utilB.convertDate(reporteMarcacionPersonalB.fechaInicio)},FECHAFIN,#{utilB.convertDate(reporteMarcacionPersonalB.fechaFinal)},PERSONAL,#{reporteMarcacionPersonalB.codPersonal},SEDE,#{reporteMarcacionPersonalB.codSede eq '%'?'%25':reporteMarcacionPersonalB.codSede}" style="display: block;width: 100%;height: 100%;border: none;"  />
+</h:panelGroup>
+
+</h:panelGroup>
+
+
+
+</div>
+
+</h:form>
+</ui:define>
+</ui:composition>

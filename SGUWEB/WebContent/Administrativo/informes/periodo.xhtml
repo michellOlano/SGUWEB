@@ -1,0 +1,391 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<h:head>
+
+<link   type="text/css" rel="stylesheet" href="/SGAWEB/resources/css/administrativo/style.css" />
+        <link   type="text/css" rel="stylesheet" href="/SGAWEB/resources/css/font-awesome.css" />
+<title>
+PERIODO
+
+</title>
+<style>
+.bloquear{position: relative;}
+.bloquear:before{content: "";width: 100%;height: 100%;background: rgba(0,0,0,0.7);position: absolute;cursor: no-drop}
+</style>
+<h:body>
+<h:form  id="frmPeriodo" prependId="false">
+
+<h:panelGroup layout="block" id="pnPeriodo" rendered="#{periodoB.index eq 1}" >
+	<div class="paneles">
+	<h:outputLabel for="cbInstitucion" value="Institucion" />
+	<h:selectOneMenu id="cbInstitucion" value="#{periodoB.codInstitucion}">
+	<f:selectItems value="#{periodoB.institucionL}" var="itemInstitucion" itemLabel="#{itemInstitucion.descripcion}" itemValue="#{itemInstitucion.institucion}" />
+	<f:ajax execute="@this" render="tbPeriodo" listener="#{periodoB.listaPeriodoInstitucion}" />
+	</h:selectOneMenu>
+	
+	
+	</div>
+	<div class="paneles">
+		<h:commandLink styleClass="boton-normal"  >
+		<i class="fa fa-file-o" />
+		Nuevo
+		<f:ajax execute="@this" render="txtPeriodo txtDescripcion cbPeriodoAnt cbPeriodoSig chkOrdinario cbEstado" listener="#{periodoB.nuevo}" />
+		</h:commandLink>
+		
+		<h:commandLink styleClass="boton-normal"  >
+		<i class="fa fa-pencil" />
+		Editar
+		<f:ajax execute="@this" render="txtPeriodo txtDescripcion cbPeriodoAnt cbPeriodoSig chkOrdinario cbEstado" listener="#{periodoB.editar}" />		
+		</h:commandLink>
+		
+		<h:commandLink styleClass="boton-normal"  >
+		<i class="fa fa-print" />
+		Imprimir
+		<f:ajax execute="@this"   />
+		</h:commandLink>
+		
+		
+	</div>
+	
+	<div>
+	<p:dataTable id="tbPeriodo" value="#{periodoB.periodoL}" var="itemPeriodo" selectionMode="single" selection="#{periodoB.periodo}" rowKey="#{itemPeriodo}" >
+	<p:ajax event="rowSelect"   />
+	<p:ajax event="rowDblselect" update="@form" listener="#{periodoB.mostrarPeriodoGrupoInicio}"  />
+	<p:column  headerText="Periodo" >
+	#{itemPeriodo.desPeriodo}
+	
+	</p:column>
+	
+	<p:column  headerText="Ordinario" width="50">
+	#{itemPeriodo.ordinario?'SI':'NO' }
+	
+	</p:column>
+	<p:column  headerText="Periodo Ant.">
+	#{itemPeriodo.periodoAnt}
+	
+	</p:column>
+	<p:column  headerText="Periodo Sig.">
+	#{itemPeriodo.periodoSig}
+	
+	</p:column>
+	<p:column  headerText="Estado" width="100">
+	#{itemPeriodo.estadoRegistro eq 1?'Habilitado':'Deshabilitado'}
+	
+	</p:column>
+	
+	<p:column   width="20">
+	<h:commandLink title="Eliminar">
+	<i class="fa fa-times" style="color: red" />
+	<f:ajax  execute="@this" />
+	</h:commandLink>
+	</p:column>
+	
+	</p:dataTable>
+	</div>
+</h:panelGroup>
+
+
+<h:panelGroup layout="block" id="pnGrupoInicio" rendered="#{periodoB.index eq 2}" >
+	<div class="paneles">
+	<h:outputLabel id="lblInstitucion" value="#{periodoB.institucion.descripcion}" /> -
+	<h:outputLabel id="lblPeriodo" value="#{periodoB.periodo.desPeriodo}" />
+	<hr />
+	
+	<h:outputLabel for="cbSedePGI" value="Sede"  />
+	
+	<h:selectOneMenu id="cbSedePGI" value="#{periodoB.periodoGrupoInicio.sede}" disabled="#{not periodoB.banderaPGI}" required="true" style="#{ component.valid ? '' : 'border-color:red;'}" >
+	<f:selectItem itemLabel="-- Seleccionar --" />
+	<f:selectItems  value="#{periodoB.localL}" var="itemLocal" itemLabel="#{itemLocal.descripcion}" itemValue="#{itemLocal.local}" />
+	</h:selectOneMenu>
+	
+	
+	<h:commandLink id="btAgregarSede" title="Agregar Sede" onclick="dlSede.show()" disabled="#{not periodoB.banderaPGI}" >
+	
+	<i class="fa fa-plus" />
+	<f:ajax execute="@this" render="pnSedeInstitucion" listener="#{periodoB.nuevoSede}" />
+	</h:commandLink>
+	
+	
+	<br/>
+	
+	<h:outputLabel for="txtDecripcionPGI" value="Grupo Inicio" />
+	<h:inputText id="txtDecripcionPGI" value="#{periodoB.periodoGrupoInicio.descripcion}" disabled="#{not periodoB.banderaPGI}" required="true" style="#{ component.valid ? '' : 'border-color:red;'}" />
+	
+	
+	
+	<br />
+	<h:outputLabel value="Fecha" />
+	<p:calendar id="txtFechaDesdePGI" value="#{periodoB.periodoGrupoInicio.fechaDesde}" pattern="dd-MM-yyyy" disabled="#{not periodoB.banderaPGI}" >
+	<p:ajax event="dateSelect" process="txtFechaDesdePGI" update="txtFechaHastaPGI " />
+	</p:calendar>
+	<p:calendar id="txtFechaHastaPGI" value="#{periodoB.periodoGrupoInicio.fechaHasta}" pattern="dd-MM-yyyy" mindate="#{periodoB.periodoGrupoInicio.fechaDesde}" disabled="#{not periodoB.banderaPGI}" />
+	<br />
+	
+	<h:outputLabel value="Fecha Matricula" />
+	<p:calendar id="txtFechaMatDesdePGI" value="#{periodoB.periodoGrupoInicio.fechaMatDesde}" pattern="dd-MM-yyyy" disabled="#{not periodoB.banderaPGI}" >
+	<p:ajax event="dateSelect" process="txtFechaMatDesdePGI" update="txtFechaMatHastaPGI" />
+	</p:calendar>
+	<p:calendar id="txtFechaMatHastaPGI" value="#{periodoB.periodoGrupoInicio.fechaMatHasta}" pattern="dd-MM-yyyy" mindate="#{periodoB.periodoGrupoInicio.fechaMatDesde}" disabled="#{not periodoB.banderaPGI}" />
+	<br />
+	<h:outputLabel for="cbVencimientoPGI" value="Vencimiento" />
+	
+	<h:selectOneMenu id="cbVencimientoPGI" value="#{periodoB.periodoGrupoInicio.vencimiento}" disabled="#{not periodoB.banderaPGI}" >
+	<f:selectItems value="#{periodoB.vencimientoL}" var="itemVencimiento" itemLabel="#{itemVencimiento.descripcion}" itemValue="#{itemVencimiento.vencimiento}" />
+	</h:selectOneMenu>
+	
+	<h:commandLink id="btAgregarV" title="Agregar Vencimiento" onclick="dlgVencimiento.show()" disabled="#{not periodoB.banderaPGI}"  >
+	
+	<i class="fa fa-plus" />
+	<f:ajax execute="@this" />
+	</h:commandLink>
+	
+	<br />
+	<h:outputLabel for="cbEstadoPGI" value="Estado" />
+	<h:selectOneMenu id="cbEstadoPGI" value="#{periodoB.periodoGrupoInicio.estadoRegistro}" disabled="#{not periodoB.banderaPGI}" >
+	<f:selectItem itemLabel="Habilitado" itemValue="1" />
+	<f:selectItem itemLabel="Deshabilitado" itemValue="0" />
+	</h:selectOneMenu>
+	
+	</div>
+	<div class="paneles">
+	<h:commandLink id="btNuevoPGI" styleClass="boton-normal" disabled="#{periodoB.banderaPGI}" >
+		<i class="fa fa-file-o" />
+	Nuevo
+	<f:ajax execute="@this" render="btAgregarSede cbSedePGI   txtDecripcionPGI txtFechaDesdePGI  txtFechaHastaPGI txtFechaMatDesdePGI txtFechaMatHastaPGI cbVencimientoPGI cbEstadoPGI btNuevoPGI btGuardarPGI btEditarPGI btCancelarPGI btregresarPGI btAgregarV" listener="#{periodoB.nuevoPeriodoGrupoInicio}" />
+	</h:commandLink>
+	
+	<h:commandLink id="btGuardarPGI" styleClass="boton-normal" disabled="#{not periodoB.banderaPGI}" >
+		<i class="fa fa-floppy-o" />
+	Guardar
+	<f:ajax execute="cbSedePGI txtDecripcionPGI txtFechaDesdePGI  txtFechaHastaPGI txtFechaMatDesdePGI txtFechaMatHastaPGI cbVencimientoPGI cbEstadoPGI" render="cbSedePGI  txtDecripcionPGI txtFechaDesdePGI  txtFechaHastaPGI txtFechaMatDesdePGI txtFechaMatHastaPGI cbVencimientoPGI cbEstadoPGI tbGrupoInicioPGI btNuevoPGI btGuardarPGI btEditarPGI btCancelarPGI btregresarPGI btAgregarV btAgregarSede" listener="#{periodoB.insertarPeriodoGrupoInicio}" />
+	</h:commandLink>
+	
+	
+	<h:commandLink id="btCancelarPGI" styleClass="boton-normal" disabled="#{not periodoB.banderaPGI}" >
+	<i class="fa fa-undo"/>
+	Cancelar
+	<f:ajax execute="@this"  render="btAgregarSede cbSedePGI   txtDecripcionPGI txtFechaDesdePGI  txtFechaHastaPGI txtFechaMatDesdePGI txtFechaMatHastaPGI cbVencimientoPGI cbEstadoPGI btNuevoPGI btGuardarPGI btEditarPGI btCancelarPGI btregresarPGI btAgregarV" listener="#{periodoB.cancelarPeriodoGrupoInicio}" resetValues="true" />
+	</h:commandLink>
+	
+	<h:commandLink id="btEditarPGI" styleClass="boton-normal" disabled="#{periodoB.banderaPGI}" >
+		<i class="fa fa-pencil" />
+	Editar
+	<f:ajax execute="@this"  render="cbSedePGI txtDecripcionPGI txtFechaDesdePGI  txtFechaHastaPGI txtFechaMatDesdePGI txtFechaMatHastaPGI cbVencimientoPGI cbEstadoPGI btNuevoPGI btGuardarPGI btEditarPGI btCancelarPGI btregresarPGI btAgregarV" listener="#{periodoB.editarPeriodoGrupoInicio}"  />
+	</h:commandLink>
+	
+	<h:commandLink id="btregresarPGI" styleClass="boton-normal" disabled="#{periodoB.banderaPGI}" >
+		<i class="fa fa-arrow-left" />
+	Regresar
+	<f:ajax execute="@this"  render="@form" listener="#{periodoB.regresar}"  />
+	</h:commandLink>
+		
+	
+	</div>
+	
+	<div id="tabla-grupo-inicio">
+	
+	
+	<p:dataTable id="tbGrupoInicioPGI" value="#{periodoB.periodoGrupoInicioL}" var="itemPeriodoGrupoInicio" selectionMode="single" selection="#{periodoB.grupoInicioL}" rowKey="#{itemPeriodoGrupoInicio}" >
+	<p:ajax event="rowSelect"  update="cbSedePGI txtDecripcionPGI txtFechaDesdePGI  txtFechaHastaPGI txtFechaMatDesdePGI txtFechaMatHastaPGI cbVencimientoPGI cbEstadoPGI" listener="#{periodoB.seleccionGrupoInicio}" />
+	
+	<p:column headerText="Grupo Inicio" >
+	#{itemPeriodoGrupoInicio.periodoGrupoInicio.descripcion}
+	</p:column>
+	
+	<p:column headerText="Fecha Grupo" width="140" >
+	#{itemPeriodoGrupoInicio.periodoGrupoInicio.fechaDesde} | #{itemPeriodoGrupoInicio.periodoGrupoInicio.fechaHasta}
+	</p:column>
+	
+	<p:column headerText="Fecha Matricula" width="140" >
+	#{itemPeriodoGrupoInicio.periodoGrupoInicio.fechaMatDesde} | #{itemPeriodoGrupoInicio.periodoGrupoInicio.fechaMatHasta}
+	</p:column>
+	
+	<p:column headerText="Vencimiento" width="200" >
+	#{itemPeriodoGrupoInicio.vencimiento.vencimiento} - #{itemPeriodoGrupoInicio.vencimiento.descripcion}
+	</p:column>
+	
+	<p:column headerText="Sede" width="100" >
+	#{itemPeriodoGrupoInicio.local.descripcion}
+	</p:column>
+	
+	<p:column width="20" >
+	<h:commandLink title="eliminar" >
+	<i class="fa fa-times" style="color: red" />
+	<f:ajax execute="@this" render=":frmPeriodo:tbGrupoInicioPGI" listener="#{periodoB.eliminarPeriodoGrupoInicio(itemPeriodoGrupoInicio.periodoGrupoInicio)}" />
+	</h:commandLink>
+	</p:column>
+	
+	</p:dataTable>
+	</div>
+</h:panelGroup>
+
+<p:dialog  header="Asignar Periodo" widgetVar="dlgPeriodo" modal="true" closeOnEscape="true" resizable="false">
+
+
+
+<h:outputLabel for="chkOrdinario" value="Ordinario" />
+<h:selectBooleanCheckbox id="chkOrdinario" value="#{periodoB.periodo.ordinario}" />
+<br />
+<h:outputLabel value="Periodo" />
+<h:inputText id="txtPeriodo" value="#{periodoB.periodo.periodo}" required="true" style="#{ component.valid ? '' : 'border-color:red;'}" />
+<br />
+
+<h:outputLabel value="Descripcion" />
+<h:inputText id="txtDescripcion" value="#{periodoB.periodo.desPeriodo}" required="true" style="#{ component.valid ? '' : 'border-color:red;'}" />
+
+<br />
+<h:outputLabel  value="Periodo Ant." />
+<h:selectOneMenu id="cbPeriodoAnt" value="#{periodoB.periodo.periodoAnt}" >
+<f:selectItems value="#{periodoB.periodoL}" var="itemPeriodoAnt" itemLabel="#{itemPeriodoAnt.desPeriodo}" itemValue="#{itemPeriodoAnt.periodo}" />
+</h:selectOneMenu>
+<br />
+<h:outputLabel  value="Periodo Sig." />
+<h:selectOneMenu id="cbPeriodoSig" value="#{periodoB.periodo.periodoSig}" >
+<f:selectItems value="#{periodoB.periodoL}" var="itemPeriodoSig" itemLabel="#{itemPeriodoSig.desPeriodo}" itemValue="#{itemPeriodoSig.periodo}" />
+</h:selectOneMenu>
+<br />
+<h:outputLabel for="cbEstado" value="Estado" />
+	<h:selectOneMenu id="cbEstado" value="#{periodoB.periodo.estadoRegistro}"  >
+	<f:selectItem itemLabel="Habilitado" itemValue="1" />
+	<f:selectItem itemLabel="Deshabilitado" itemValue="0" />
+	</h:selectOneMenu>
+
+<f:facet name="footer" >
+<div style="display: block;text-align: right;">
+<h:commandLink styleClass="boton-normal">
+Guardar
+<f:ajax execute="@this txtDescripcion txtPeriodo chkOrdinario cbPeriodoAnt cbPeriodoSig cbEstado" render="txtDescripcion txtPeriodo chkOrdinario tbPeriodo cbEstado" listener="#{periodoB.guardar}" />
+</h:commandLink>
+<h:commandLink styleClass="boton-normal"  onclick="dlgPeriodo.hide()" >
+Cancelar
+<f:ajax execute="@this" />
+</h:commandLink>
+
+
+</div>
+</f:facet>
+
+</p:dialog>
+
+
+<p:dialog header="Vencimiento" widgetVar="dlgVencimiento" width="600" modal="true" resizable="false" closeOnEscape="true" >
+<div class="paneles">
+<h:outputLabel for="txtDescripcionV" value="Descripcion" />
+<h:inputText id="txtDescripcionV" value="#{periodoB.vencimiento.descripcion}" required="true" disabled="#{not periodoB.banderaV}" style="#{ component.valid ? '' : 'border-color:red;'}" />
+<br />
+
+<h:outputLabel for="txtAbreviaturaV" value="Abreviatura" />
+<h:inputText id="txtAbreviaturaV" value="#{periodoB.vencimiento.abreviatura}" disabled="#{not periodoB.banderaV}" />
+<br />
+
+<h:outputLabel for="txtFechaIniV" value="Fecha Ini." />
+<p:calendar id="txtFechaIniV" value="#{periodoB.vencimiento.fechaInicio}" pattern="dd-MM-yyyy" disabled="#{not periodoB.banderaV}" >
+<p:ajax event="dateSelect" process="txtFechaIniV" update="txtFechaFinV" />
+</p:calendar>
+<br />
+<h:outputLabel for="txtFechaFinV" value="Fecha Fin" />
+<p:calendar  id="txtFechaFinV" value="#{periodoB.vencimiento.fechaFin}" mindate=""  pattern="dd-MM-yyyy" disabled="#{not periodoB.banderaV}" />
+<br />
+<h:outputLabel for="cbEstadoV" value="Estado" />
+	<h:selectOneMenu id="cbEstadoV" value="#{periodoB.vencimiento.estadoRegistro}" disabled="#{not periodoB.banderaV}" >
+	<f:selectItem itemLabel="Habilitado" itemValue="1" />
+	<f:selectItem itemLabel="Deshabilitado" itemValue="0" />
+	</h:selectOneMenu>
+
+</div>
+
+
+
+
+
+<p:dataTable id="tbVencimiento" value="#{periodoB.vencimientoL}" var="itemVencimiento" scrollable="true" scrollHeight="200" selection="#{periodoB.vencimiento}" rowKey="#{itemVencimiento.vencimiento}" selectionMode="single"  >
+<p:ajax event="rowSelect"  update="txtDescripcionV txtAbreviaturaV txtFechaIniV txtFechaFinV cbEstadoV" />
+<p:column headerText="Vencimiento">
+#{itemVencimiento.descripcion}
+</p:column>
+<p:column headerText="Fecha Ini."  width="100" >
+#{itemVencimiento.fechaInicio}
+</p:column>
+<p:column headerText="Fecha Ini." width="100">
+#{itemVencimiento.fechaFin}
+</p:column>
+
+</p:dataTable>
+
+
+<f:facet name="footer">
+<div style="display: block;text-align: right;" >
+<h:commandLink  id="btNuevoV" styleClass="boton-normal" disabled="#{periodoB.banderaV}" >
+Nuevo
+<f:ajax execute="@this" render="txtDescripcionV txtAbreviaturaV txtFechaIniV txtFechaFinV cbEstadoV btNuevoV cbEstadoV btGuardarV btCancelarV btEditarV" listener="#{periodoB.nuevoVencimiento}" />
+</h:commandLink>
+
+<h:commandLink  id="btGuardarV" styleClass="boton-normal" disabled="#{not periodoB.banderaV}" >
+Guardar
+<f:ajax execute="@this  txtDescripcionV txtAbreviaturaV txtFechaIniV txtFechaFinV cbEstadoV" render=" txtDescripcionV txtAbreviaturaV txtFechaIniV txtFechaFinV cbEstadoV tbVencimiento btNuevoV btGuardarV btCancelarV btEditarV  cbVencimientoPGI" listener="#{periodoB.insertarVencimiento}" />
+</h:commandLink>
+
+
+<h:commandLink  id="btCancelarV" styleClass="boton-normal" disabled="#{not periodoB.banderaV}" >
+Cancelar
+<f:ajax execute="@this" render="txtDescripcionV txtAbreviaturaV txtFechaIniV txtFechaFinV btNuevoV btGuardarV btCancelarV btEditarV" listener="#{periodoB.cancelarVencimiento}" resetValues="true" />
+</h:commandLink>
+
+<h:commandLink  id="btEditarV" styleClass="boton-normal" disabled="#{periodoB.banderaV}" >
+Editar
+<f:ajax execute="@this" render="txtDescripcionV txtAbreviaturaV txtFechaIniV txtFechaFinV btNuevoV btGuardarV btCancelarV btEditarV" listener="#{periodoB.editarVencimiento}" />
+</h:commandLink>
+
+</div>
+
+
+</f:facet>
+
+</p:dialog>
+
+<p:dialog header="Sede Institucion" widgetVar="dlSede" modal="true" closeOnEscape="true" resizable="false" width="500" >
+
+<h:panelGroup layout="block" id="pnSedeInstitucion" >
+<ui:repeat var="itemSedeInstitucion" value="#{periodoB.localLT}">
+<div class="paneles  column" style="text-align: center">
+<h:commandLink  style=";color: #{itemSedeInstitucion.estadoRegistro eq 1?'red':'silver'}" >
+<i class="fa fa-building" style="font-size: 2.0em" />
+<br />
+#{itemSedeInstitucion.descripcion}
+<f:ajax execute="@this"    render=":frmPeriodo:pnSedeInstitucion :frmPeriodo:cbSedePGI"  listener="#{periodoB.seleccionSede(itemSedeInstitucion)}" />
+</h:commandLink>
+
+</div>
+</ui:repeat>
+</h:panelGroup>
+
+
+<f:facet name="footer">
+
+<div style="display: block;text-align: right;">
+<h:commandLink styleClass="boton-normal" onclick="dlSede.hide()"  >
+	Salir
+<f:ajax execute="@this" />
+
+</h:commandLink>
+</div>
+
+
+
+
+</f:facet>
+
+</p:dialog>
+
+</h:form>
+
+</h:body>
+</h:head>
+</html>

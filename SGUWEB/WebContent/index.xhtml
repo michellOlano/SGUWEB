@@ -1,0 +1,255 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:hp="http://xmlns.jcp.org/jsf/passthrough"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"      
+      xmlns:p="http://primefaces.org/ui">
+    
+    
+      <f:metadata>
+            <f:viewParam name="tipoU" value="#{usuarioB.codPerfil}" />
+            <f:event type="preRenderView" listener="#{usuarioB.inicioUsuario}" />
+     </f:metadata>
+    
+    <h:head>
+        <title>..::.. INTRANET  ..::..
+        
+        </title>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js" />
+        <link   type="text/css" rel="stylesheet" href="/SGUWEB/resources/css/font-awesome.css" />        
+        <link   type="text/css" media="(max-width: 800px)"  rel="stylesheet" href="/SGUWEB/resources/css/responsivo.css" />
+        <style>
+        
+        *{padding: 0px ;margin: 0px;list-style: none;font-family: arial;text-decoration: none;outline: none;}      
+        html,body,form{height: 100%;width: 100%}          
+        .column{display: inline-block;vertical-align: top;}
+        
+      
+        .index-cuerpo{display: block;height: 100%;background: url("/imagen/java/bienvenida-index.png")no-repeat center center;background-size: 100% 100%; ;}
+        
+        .index-cuerpo .index-cuerpo-columIzquierda{width: 99.5%;height: 99.5%;border: 1px solid transparent;display: block;}                
+        
+        .index-cuerpo .index-cuerpo-columIzquierda .index-login{background-color:white;border: 5px solid #0D47A1;border-radius: 5px;}
+        #index-login-cuerpo-input{margin: 10px 0px}
+        #index-login-cuerpo-input > div{border: 1px solid silver;border-radius:5px;padding: 5px 3px;margin: 2px 0px }
+        
+        .index-cuerpo .index-cuerpo-columIzquierda .index-login .index-login-cabecera {display: block;padding: 20px 5px;background-color: #0D47A1;color: white; font-weight: bold}
+        .index-cuerpo .index-cuerpo-columIzquierda .index-login .index-login-cabecera #index-login-cabecera-titulo{text-align: center;width: 70%;line-height: 50px}
+        .index-cuerpo .index-cuerpo-columIzquierda .index-login .index-login-cabecera div img{width: 60px;height: 70px;background-color: white}
+        .index-cuerpo .index-cuerpo-columIzquierda .index-login .index-login-cuerpo{padding: 10px  ;background-color: white;}
+        .index-cuerpo .index-cuerpo-columIzquierda .index-login #index-login-cuerpo-input input{border-radius: 2px ; border: none;padding: 5px;width: 80%}
+        .index-cuerpo .index-cuerpo-columIzquierda .index-login .index-login-cuerpo .index-login-cuerpo-botonera{margin: 5px 0px;padding: 5px}
+        .index-cuerpo .index-cuerpo-columIzquierda .index-login .index-login-cuerpo .index-login-cuerpo-botonera a{background-color: #0D47A1;padding: 5px;border-radius: 5px;color: white;font-weight: bold;margin: 5px 2px}
+        .index-cuerpo .index-cuerpo-columIzquierda .index-login .index-login-cuerpo label{text-transform: capitalize}
+        
+        .index-cuerpo .index-cuerpo-columIzquierda .index-login .index-login-cuerpo .index-login-cuerpo-perfil{display: block;margin: 10px 0px;}
+        .index-cuerpo .index-cuerpo-columIzquierda .index-login .index-login-cuerpo .index-login-cuerpo-perfil input{opacity: 0 }
+        .index-cuerpo .index-cuerpo-columIzquierda .index-login .index-login-cuerpo .index-login-cuerpo-perfil input:checked + label{background-color: #0D47A1;;color: white}
+        .index-cuerpo .index-cuerpo-columIzquierda .index-login .index-login-cuerpo .index-login-cuerpo-perfil label{cursor: pointer;display: block;border: 1px solid silver;margin: -12px -3px 0px 0px;padding: 8px 5px}
+        .index-cuerpo-columIzquierda-bloque{display: block;margin: 10% auto;width: 300px }
+        .index-cuerpo .index-cuerpo-columIzquierda .index-login{}
+        .index-cuerpo .index-cuerpo-columIzquierda .index-login-aviso{margin: 20px 0px }
+        .subBotonera a{display: inline-block;border: 1px solid;padding: 5px ;margin: 1px;border-radius: 4px;color: white }
+        
+        
+        
+        .notify{ width: 250px;padding: 10px 5px;border-radius: 5px;color: white}
+        .error{background-color: red}
+        .correcto{background-color: #008000}
+         
+         
+         
+          @keyframes bienvenida{
+                        0%{transform: translate3d(0px, -100px, 0px);opacity: 0;}
+                        5%{transform: translate3d(0px, 0px, 0px);opacity: 1;}
+                        50%{}
+                        75%{}
+                        95%{opacity: 1;}
+                        100%{opacity: 0; }
+                    }
+                    @-moz-keyframes bienvenida{
+                          0%{transform: translate3d(0px, -100px, 0px);opacity: 0;}
+                        5%{transform: translate3d(0px, 0px, 0px);opacity: 1;}
+                        50%{}
+                        75%{}
+                        100%{opacity: 0;}
+                    }
+            
+    </style>
+    <script>
+    
+    
+    Notification.requestPermission();
+    
+    
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+        	
+        	$("#txtLatitud").val(position.coords.latitude);
+        	$("#txtLongitud").val(position.coords.longitude);
+          
+      
+
+         
+          
+        }, function() {
+        	console.log("handleLocationError(true, infoWindow, map.getCenter())");
+          ;
+        });
+      } else {
+        // Browser doesn't support Geolocation
+        
+        
+      }
+    
+        $(document).ready(function(){
+            $("#txtUsuario").focus();
+           
+            $(".index-chat-cabecera a").click(function(event){
+                event.preventDefault();                
+                $(".index-chat").toggleClass("minimizar");
+                $(this).children("i").toggleClass("fa-times");
+                $(this).children("i").toggleClass("fa-comment");
+                
+            });
+            
+            
+        });
+        
+        
+        function notificacion(msg,speed,fadeSpeed,type){
+                            $('.notify').remove();
+
+                  if (typeof fade != "undefined"){
+                  clearTimeout(fade);
+                  }
+                  $('body').append('<div class="notify '+type+'" style="display:none;position:fixed;right:10px"><p>'+msg+'</p></div>');
+
+                  notifyHeight = $('.notify').outerHeight();
+
+                  $('.notify').css('top',-notifyHeight).animate({top:10,opacity:'toggle'},speed);
+
+                  fade = setTimeout(function(){
+
+                  $('.notify').animate({top:notifyHeight+10,opacity:'toggle'}, speed);
+
+                  }, fadeSpeed);
+        }
+        
+    
+        
+
+        
+    </script>      
+        
+        
+    </h:head>
+    
+    
+    <h:body>
+
+         <h:form prependId="false" style="display:block" hp:autocomplete="off"  >
+         <h:inputHidden id="txtLatitud"  value="#{usuarioB.latitud}" />
+		 <h:inputHidden id="txtLongitud" value="#{usuarioB.logitud}" />
+         
+         
+        <div class="index-cuerpo">
+            
+            <div class="index-cuerpo-columIzquierda colum">
+                <div class="index-cuerpo-columIzquierda-bloque">
+                    <div class="index-login">
+                    <div class="index-login-cabecera column">
+                    <div id="index-login-cabecera-logo" class="column" >
+                    <img src="/SGUWEB/faces/SimagenBD?opcion=4&amp;codigo=#{inicioWebB.empresaCliente.empresaCliente}"  title="#{inicioWebB.empresaCliente.descripcion}"  />
+                    </div>
+                    <div id="index-login-cabecera-titulo" class="column">
+                        ACCESO INTRANET
+                    </div>
+                    </div>
+                    
+                    <div class="index-login-cuerpo">
+                       
+                        
+                           <div  id="index-login-cuerpo-input" >
+	                            <div>
+	                            <label for="txtUsuario" > <i class="fa fa-user-circle-o"  /></label>
+	                            
+	                            <h:inputText id="txtUsuario" value="#{usuarioB.usu}" hp:placeholder="Usuario" required="true" />
+	                            </div>
+	                            
+	                            <div>
+	                            <label for="txtClave" ><i class="fa fa-key" /></label>
+	                            
+	                            <h:inputSecret id="txtClave" value="#{usuarioB.pass}" hp:placeholder="Contraseña"  required="true" />
+	                            </div>
+                           </div>
+                          
+	                           <h:selectBooleanCheckbox   id="ckRecuerdame" value="#{usuarioB.recuerdame}" rendered="false" />
+	                        
+                            
+                            <div class="index-login-cuerpo-perfil">
+                               
+                                <h:selectOneRadio  id="rbPerfil" value="#{usuarioB.codPerfil}" rendered="#{inicioWebB.webPerfilL.size() ne 1}"  required="true"  >     
+                                	<f:selectItems value="#{inicioWebB.webPerfilL}" var="itemPerfil" itemLabel="#{itemPerfil.descripcion}" itemValue="#{itemPerfil.perfil}" />                         
+                                </h:selectOneRadio>
+                            </div>
+                            
+                            <div class="index-login-cuerpo-botonera" style="display: block;text-align: right">
+                                <h:commandLink >
+                                   
+                                    Entrar 
+                                    <f:ajax execute=" txtUsuario txtClave rbPerfil txtLatitud txtLongitud" render=" txtUsuario txtClave "  listener="#{usuarioB.validarUsuarios}" />
+                                </h:commandLink>
+                                <h:commandButton style="display: none">
+                                    <f:ajax execute=" txtUsuario txtClave rbPerfil txtLatitud txtLongitud" render=" txtUsuario txtClave "  listener="#{usuarioB.validarUsuarios}"/>
+                                </h:commandButton>
+                            </div>
+                      
+                        
+                    </div>
+                </div>
+                
+                </div>
+            </div>
+            
+       
+         
+        </div>
+        
+        
+            <p:dialog widgetVar="dlgRecupera" header="..Autentificacion Web.." modal="true" closeOnEscape="true" resizable="false" width="350">
+            <div style="display: inline-block;vertical-align: top;">
+            <i class="fa fa-address-card-o" style="font-size: 2.5em" />
+            </div>
+            
+               <p style="display: inline-block;vertical-align: top;width: 250px;">Introduce el código que aparece actualmente en su correo.</p>
+                   
+                 
+                        <div style="border: 1px solid silver;display: block;padding: 5px ">
+                        <i class="fa fa-key" style="padding-right: 5px " />
+                        <h:inputText id="txtUsuarioR" hp:placeholder="Introduce el Codigo" value="#{usuarioB.usu}" required="true" style="border:none" />
+                        
+                        </div>
+                      
+                        
+              
+              <f:facet name="footer">
+                  <div class="subBotonera" style="display: block;text-align: right">
+                      <h:commandLink style="background-color: #0069B3">
+                          <i class="fa fa-paper-plane"  />
+                          Aceptar
+                          
+                          <f:ajax execute="@this txtUsuarioR" listener="#{usuarioB.recuperarContraseña}" />
+                      </h:commandLink>
+                
+                  </div>                  
+              </f:facet>
+          </p:dialog>
+        
+     
+        </h:form>
+    </h:body>
+</html>
+

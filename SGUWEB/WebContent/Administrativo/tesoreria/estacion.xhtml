@@ -1,0 +1,160 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<h:head>
+<title>..: Estacion Caja :..</title>
+<link   type="text/css" rel="stylesheet" href="../../resources/css/administrativo/style2.css" />
+<link   type="text/css" rel="stylesheet" href="../../resources/css/font-awesome.css" />
+ <script type="text/javascript" src="#{utilB.ruta}/IGAUPSB/resources/js/util.js"></script>
+</h:head>
+
+<h:body>
+<script>
+getIPs(function(ip){
+	
+	console.log(ip);
+	
+	});
+
+</script>
+<h:form id="frmEstacion" prependId="false" ><div class="paneles" >
+<h:commandLink styleClass="boton-normal" >
+Nuevo
+<f:ajax execute="@this" render="txtEstacionE txtDescripcionE" listener="#{estacionB.nuevaEstacion}" />
+</h:commandLink>
+</div>
+
+<p:dataTable id="tbEstacion" value="#{estacionB.estacionL}" var="itemEstacion" selectionMode="single" selection="#{estacionB.estacion}" rowKey="#{itemEstacion}" rowIndexVar="status" >
+<p:ajax event="rowDblselect"  update="tbEstacionSerie" listener="#{estacionB.mostrarEstacionSerie}" />
+<p:column headerText="Nr." width="10">
+#{status+1}
+</p:column>
+<p:column headerText="Estacion" width="80">
+#{itemEstacion.estacion}
+</p:column>
+<p:column headerText="Descripcion">
+#{itemEstacion.descripcion}
+</p:column>
+<p:column  width="20">
+<h:commandLink>
+<i class="fa fa-pencil" />
+<f:ajax execute="@this" render=":frmEstacion:txtEstacionE :frmEstacion:txtDescripcionE" listener="#{estacionB.editarEstacion(itemEstacion)}" />
+</h:commandLink>
+</p:column>
+
+<p:column  width="20">
+<h:commandLink>
+<i class="fa fa-times" style="color:red" />
+<f:ajax execute="@this" render="tbEstacion" listener="#{estacionB.eliminarEstacion(itemEstacion)}" />
+</h:commandLink>
+</p:column>
+<p:column>
+<h:commandLink>
++
+<f:ajax  execute="@this" listener="#{estacionB.agregarCookie(itemEstacion)}" />
+</h:commandLink>
+</p:column>
+</p:dataTable>
+
+
+
+<p:dataTable id="tbEstacionSerie" value="#{estacionB.estacionSerieL}" var="itemEstacionSerie" rowIndexVar="status" >
+
+<p:column headerText="Nr." width="10" >
+#{status+1}
+</p:column>
+<p:column headerText="Documento" >
+#{itemEstacionSerie.itemTipoDocumento.descripcion}
+</p:column>
+<p:column headerText="Serie" >
+#{itemEstacionSerie.serie}
+</p:column>
+<p:column headerText="Nr. Actual" width="40" >
+#{itemEstacionSerie.numeroActual}
+</p:column>
+<p:column headerText="Nr. Inicio" width="40" >
+#{itemEstacionSerie.numeroInicio}
+</p:column>
+<p:column headerText="Nr. Final" width="40" >
+#{itemEstacionSerie.numeroFinal}
+</p:column>
+
+<p:column  width="40" >
+<h:commandLink  >
+<i class="fa fa-times"  style="color:red" />
+<f:ajax  execute="@this" render="tbEstacionSerie" listener="#{estacionB.eliminarEstacionSerie(itemEstacionSerie)}" />
+</h:commandLink>
+</p:column>
+
+</p:dataTable>
+
+<div class="paneles" >
+<h:commandLink  styleClass="boton-normal" >
+Nuevo
+<f:ajax execute="@this" render="cbTipoDocumentoES" listener="#{estacionB.nuevoEstacionSerie}" />
+</h:commandLink>
+</div>
+
+
+<p:dialog header="Nueva Estacion" widgetVar="dlEstacion" modal="true" closeOnEscape="true" resizable="false" >
+<h:outputLabel value="Estacion" />
+<h:inputText  id="txtEstacionE" value="#{estacionB.estacion.estacion}" />
+<br />
+<h:outputLabel value="Descripcion" />
+<h:inputText  id="txtDescripcionE" value="#{estacionB.estacion.descripcion}" />
+<br />
+
+<h:outputLabel for="cbEstadoE" value="Estado" />
+<h:selectOneMenu id="cbEstadoE" value="#{estacionB.estacion.estadoRegistro}" >
+<f:selectItem itemLabel="Habilitado" itemValue="1" />
+<f:selectItem itemLabel="DesHabilitado" itemValue="0" />
+</h:selectOneMenu>
+
+
+<f:facet name="footer">
+<h:commandLink styleClass="boton-normal">
+Aceptar
+<f:ajax execute="@this txtEstacionE txtDescripcionE" render="tbEstacion"  listener="#{estacionB.insertarEstacion}" />
+</h:commandLink>
+</f:facet>
+</p:dialog>
+
+
+<p:dialog  widgetVar="dlEstacionSerie" header="Estacion Serie" modal="true" resizable="false" closeOnEscape="true" >
+<h:outputLabel  for="txtSerieES" value="Serie" />
+<h:inputText id="txtSerieES" value="#{estacionB.estacionSerie.serie}" />
+<br />
+<h:outputLabel for="cbTipoDocumentoES" value="Documento" />
+<h:selectOneMenu id="cbTipoDocumentoES"  value="#{estacionB.estacionSerie.tipoDocumento}" required="true" >
+<f:selectItem itemLabel="--Seleccionar --" />
+<f:selectItems  value="#{estacionB.tipoDocumentoL}" var="itemTipoDocumento" itemLabel="#{itemTipoDocumento.descripcion}" itemValue="#{itemTipoDocumento.tipoDocumento}" />
+</h:selectOneMenu>
+<br />
+<h:outputLabel  for="txtInicioES" value="Nr. Inicio" />
+<h:inputText id="txtInicioES" value="#{estacionB.estacionSerie.numeroInicio}" />
+<br />
+<h:outputLabel for="txtFinalES" value="Nr. Final" />
+<h:inputText id="txtFinalES" value="#{estacionB.estacionSerie.numeroFinal}" />
+<br />
+<h:outputLabel for="txtActualES" value="Nr. Actual" />
+<h:inputText id="txtActualES" value="#{estacionB.estacionSerie.numeroActual}" />
+<f:facet name="footer">
+<h:commandLink styleClass="boton-normal" >
+Aceptar
+<f:ajax  execute="@this txtSerieES cbTipoDocumentoES txtInicioES txtFinalES txtActualES" render="tbEstacionSerie" listener="#{estacionB.insertarEstacionSerie}" />
+</h:commandLink>
+
+</f:facet>
+</p:dialog>
+
+
+
+</h:form>
+</h:body>
+</html>

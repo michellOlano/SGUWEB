@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="calendario" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="560cde86-56df-4eb0-8230-09c8bdc039de">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<queryString>
+		<![CDATA[SELECT A.CALENDARIO,A.DESCRIPCION DESCALENDARIO,B.ITEM,B.FECHA_DESDE,B.FECHA_HASTA,ISNULL(D.APELLIDO_PATERNO,'') APELLIDO_PATERNO,ISNULL(D.APELLIDO_MATERNO,'') APELLIDO_MATERNO,ISNULL(D.NOMBRES,'') NOMBRES,D.NRO_DOCUMENTO
+FROM DI.MAR_CALENDARIO A
+LEFT JOIN DI.MAR_CALENDARIO_PERSONAL B ON B.CALENDARIO=A.CALENDARIO
+LEFT JOIN SIGU.PER_PERSONAL C ON C.PERSONAL=B.PERSONAL
+LEFT JOIN UPA.DAT_PERSONAS D ON D.PERSONA=C.PERSONA
+ORDER BY A.CALENDARIO,D.APELLIDO_PATERNO,D.APELLIDO_MATERNO,D.NOMBRES]]>
+	</queryString>
+	<field name="CALENDARIO" class="java.lang.Integer"/>
+	<field name="DESCALENDARIO" class="java.lang.String"/>
+	<field name="ITEM" class="java.lang.Integer"/>
+	<field name="FECHA_DESDE" class="java.sql.Date"/>
+	<field name="FECHA_HASTA" class="java.sql.Date"/>
+	<field name="APELLIDO_PATERNO" class="java.lang.String"/>
+	<field name="APELLIDO_MATERNO" class="java.lang.String"/>
+	<field name="NOMBRES" class="java.lang.String"/>
+	<field name="NRO_DOCUMENTO" class="java.lang.String"/>
+	<group name="CALENDARIO" keepTogether="true">
+		<groupExpression><![CDATA[$F{CALENDARIO}]]></groupExpression>
+		<groupHeader>
+			<band height="76">
+				<textField>
+					<reportElement uuid="17b6d74d-e3b7-4734-bf5c-97c638d46273" x="21" y="16" width="510" height="20"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{CALENDARIO}+" - "+$F{DESCALENDARIO}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="46c1cd8f-f570-4012-a8c3-34dd88fb368d" mode="Opaque" x="48" y="46" width="71" height="30" backcolor="#CCCCCC"/>
+					<box>
+						<pen lineWidth="0.75"/>
+						<topPen lineWidth="0.75"/>
+						<leftPen lineWidth="0.75"/>
+						<bottomPen lineWidth="0.75"/>
+						<rightPen lineWidth="0.75"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[D.N.I]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="4f8cb595-8e06-4a83-a573-b869fb5ce39e" mode="Opaque" x="119" y="46" width="296" height="30" backcolor="#CCCCCC"/>
+					<box>
+						<pen lineWidth="0.75"/>
+						<topPen lineWidth="0.75"/>
+						<leftPen lineWidth="0.75"/>
+						<bottomPen lineWidth="0.75"/>
+						<rightPen lineWidth="0.75"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[DATOS PERSONAL]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="b9362255-0a5e-40de-a9c9-d71f053155b1" mode="Opaque" x="415" y="46" width="58" height="30" backcolor="#CCCCCC"/>
+					<box>
+						<pen lineWidth="0.75"/>
+						<topPen lineWidth="0.75"/>
+						<leftPen lineWidth="0.75"/>
+						<bottomPen lineWidth="0.75"/>
+						<rightPen lineWidth="0.75"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[FECHA
+DESDE]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="370fd2c8-ad8c-4d58-a7b8-0341ff3fde51" mode="Opaque" x="473" y="46" width="58" height="30" backcolor="#CCCCCC"/>
+					<box>
+						<pen lineWidth="0.75"/>
+						<topPen lineWidth="0.75"/>
+						<leftPen lineWidth="0.75"/>
+						<bottomPen lineWidth="0.75"/>
+						<rightPen lineWidth="0.75"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[FECHA
+HASTA]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="92ce72cd-8abc-41ae-9b90-c99e550cdfba" mode="Opaque" x="21" y="46" width="27" height="30" backcolor="#CCCCCC"/>
+					<box>
+						<pen lineWidth="0.75"/>
+						<topPen lineWidth="0.75"/>
+						<leftPen lineWidth="0.75"/>
+						<bottomPen lineWidth="0.75"/>
+						<rightPen lineWidth="0.75"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[NR.]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+	</group>
+	<pageHeader>
+		<band height="70" splitType="Stretch">
+			<line>
+				<reportElement uuid="1ea78814-05c3-4235-87e9-70566d253573" x="21" y="49" width="507" height="1" forecolor="#CCCCCC"/>
+			</line>
+			<staticText>
+				<reportElement uuid="81910c67-a733-4a0c-bace-badca277eeb9" x="21" y="0" width="507" height="39"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="20" isBold="true"/>
+				</textElement>
+				<text><![CDATA[LISTADO DE CALENDARIO PERSONAL]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="a286605f-428a-48de-a66c-6b6cff2a5cbb" x="119" y="0" width="296" height="20"/>
+				<box leftPadding="4" rightPadding="4">
+					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{APELLIDO_PATERNO}+' '+$F{APELLIDO_MATERNO}+' '+$F{NOMBRES}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="3d4572a8-32ee-4b0a-b7bc-bbafa5c1e9a8" x="48" y="0" width="71" height="20"/>
+				<box>
+					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NRO_DOCUMENTO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement uuid="427a9f9e-a5ee-4237-9207-7b7d5036e109" x="415" y="0" width="58" height="20"/>
+				<box>
+					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FECHA_DESDE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement uuid="22e54571-ee1f-452f-b10c-19fde0e4b467" x="473" y="0" width="58" height="20"/>
+				<box>
+					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FECHA_HASTA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="53d52f89-77db-4a60-9751-a66de53a57c5" x="21" y="0" width="27" height="20"/>
+				<box>
+					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{CALENDARIO_COUNT}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

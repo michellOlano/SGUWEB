@@ -1,0 +1,169 @@
+.paneles{border: 1px solid silver;padding: 4px}
+.paneles >label{display: inline-block;min-width: 100px}
+.column{display: inline-block;vertical-align: top;}
+.notify{ width: 250px;padding: 10px 5px;border-radius: 5px;color: white}
+.error{background-color: red}
+.correcto{background-color: #008000}
+
+input[type="text"],input[type="password"]{padding: 2px;margin: 1px}
+select{padding: 2px;margin: 1px}
+textarea{display: block;width: 100%;resize:none;height: 50px}
+
+a{text-decoration: none;}
+*{padding: 0;margin: 0;list-style: none;}
+html,body{display: block;height: 100%;width: 100%;}
+body{font-family:"majalla";background-color: #eeeeee;}
+
+
+header{background-color: #0069b3;}
+header .header-hgroup{width: 70%}
+header .header-hgroup div{text-align: center;}
+header .header-hgroup img{width:65px ;height:65px }
+header .header-hgroup h1{color: white}
+header .header-hgroup h3{color: yellow}
+header .header-person{width: 29%;text-align: right;}
+header .header-person-det{padding: 5px;position: relative;}
+header .header-person-det span{display: block;}
+header .header-person-det #userPerson{font-weight: bolder;color:yellow}
+header .header-person-det #opciones-persona{border: 1px solid silver;padding: 5px 10px;display: none;text-align: left;;background-color: white;z-index: 10}
+header #opciones-persona{border: 1px solid;position: absolute;right: 0}
+header #opciones-persona a{display: block;}
+
+
+#wrapper-nav-section{margin: 2px 0px}
+#wrapper-nav-section nav{border: 1px solid;width: 20%;background-color: white;border: 1px solid silver}
+#wrapper-nav-section nav #opc-inst-period{border-bottom: 1px solid silver;padding: 5px 0px}
+#wrapper-nav-section nav #opc-inst-period label{display: block;}
+#wrapper-nav-section nav #opc-inst-period select{width: 95%}
+#wrapper-nav-section nav #main-lista{}
+#wrapper-nav-section nav #main-lista >li{border-bottom: 1px solid silver}
+#wrapper-nav-section nav #main-lista >li ul {padding: 0px 15px}
+#wrapper-nav-section nav #main-lista >li ul li a{display: block;padding: 2px} 
+#wrapper-nav-section section{width: 78%;padding: 5px 10px}
+
+
+/* BOTONES */
+span.boton-normal,span.boton-circulo,span.boton-verde,span.boton-icono{opacity:0.5}
+.boton-verde{display: inline-block;vertical-align: top;background-color: green;color: white!important;;padding: 5px 8px;margin: 1px;border-radius:2px;}
+.boton-rojo{display: inline-block;vertical-align: top;background-color: red;color: white!important;;padding: 5px 8px;margin: 1px;border-radius:2px;}
+.boton-normal{display: inline-block;vertical-align: top;padding: 5px 8px;color: white!important;background-color: #0088CE;border-radius:2px;margin: 2px;text-align: center;transition:all 0.1s}
+.boton-icono{display:inline-block;margin:1px;transition:all 0.1s}
+
+
+a.boton-normal:hover,a.boton-icono:hover { transform:scale(1.1)}
+
+
+
+
+ /*========= MODAL ============*/
+ .modal{width: 400px;min-height: 100px;background-color: white;margin: 0 auto;border-radius: 0px 0px 5px 5px ;position: fixed;top: 5%;left: 40%;display: block;z-index: 9999}
+ .modal-titulo{display: block;background-color:  #0069b3;color: white;padding: 3px 5px;font-size: 1.2em}
+ .modal-fondo{width: 100%;height: 100%;background-color: rgba(0,0,0,0.8);position: fixed;display: block; top:0;;left: 0;color:white;z-index: 9998}
+ .modal-cuerpo{padding: 5px 1px}            
+ .modal-icono{font-size:4.0em;text-align:center;color:red;width: 80px}
+ .modal-texto{ font-size: 1.2em;width: 315px;line-height: 20px; color:silver}
+ .modal-botonera{display: block;width: 100%;padding: 5px 0px;text-align: center}
+ .modal-botonera a{padding: 2px 4px;min-width: 40px;display: inline-block;border-radius: 3px;color: white;font-size: 1.2em;border: 1px solid}
+ .modal-botonera a.positivo{background-color: #337ab7;border-color: #2e6da4}
+ .modal-botonera a.positivo:HOVER{background-color: #286090}
+ .modal-botonera a.negativo{background-color: #d9534f;border-color: #d43f3a}
+ .modal-botonera a.negativo:HOVER{background-color: #c9302c}   
+ /*============================*/
+ 
+ 
+ /* EDITANDO PRIMEFACES*/
+.ui-widget{}
+.ui-widget-content{color: black!important}
+.ui-inputfield{box-shadow:none!important;border-radius:0px}
+div.ui-shadow{box-shadow:none!important}
+div.ui-widget-overlay{background: black;opacity:0.50}
+div.ui-dialog div.ui-widget-header{background:  #0088CE;    color: white;    text-shadow: none;}
+.ui-datatable .ui-widget-header{background: #f6f7f9 0 0 repeat-x!important}
+.ui-shadow{box-shadow:none!important}
+
+.ui-datatable table thead tr th,.ui-datatable table tfoot  tr td{background: #f6f7f9 0 0 repeat-x!important;text-shadow: none!important;color:black!important;}
+.ui-datatable table thead tr th span.ui-column-title{font-size: 0.6em}
+.ui-datatable table .ui-datatable-odd, table .ui-datatable-even{background-color: white;background: white}   
+.ui-datatable table thead tr{}
+.ui-datatable table tbody tr.ui-state-hover{background-color: #eee!important;box-shadow:none!important}
+.ui-datatable table tbody tr:HOVER{background-color: #eee}
+.ui-datatable table tbody tr td{border: 1px solid silver!important;font-size: 0.75em}
+.ui-datatable table tbody tr.ui-state-highlight{border: 1px solid #156090!important;    background: #186ba0!important;    color:white!important;}
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+/* ==========================================================================
+   Author's custom styles
+   ========================================================================== */
+
+#loader-wrapper {    position: fixed;    top: 0;    left: 0;    width: 100%;    height: 100%;    z-index: 1000;}
+#logo{position:absolute;color: red;z-index: 9999999;top: 0;left: 0;width: 150px;height: 150px;background:url('/imagen/java/SGUWEB.png') no-repeat center center;background-size:60% }
+#loader {display: block;position: relative;;width: 150px;height: 150px;margin: 0;border: 4px solid transparent;border-top-color: #3498db;border-radius: 50%;-webkit-animation: spin 2s linear infinite; /* Chrome, Opera 15+, Safari 5+ */    animation: spin 2s linear infinite; /* Chrome, Firefox 16+, IE 10+, Opera */    z-index: 1001;}
+#loader:before {content: "";position: absolute;top: 5px;left: 5px;right: 5px;bottom: 5px;border-radius: 50%;border: 4px solid transparent;border-top-color: #e74c3c;-webkit-animation: spin 3s linear infinite; /* Chrome, Opera 15+, Safari 5+ */        animation: spin 3s linear infinite; /* Chrome, Firefox 16+, IE 10+, Opera */    }
+#loader:after {content: "";position: absolute;top: 15px;left: 15px;right: 15px;bottom: 15px;border-radius: 50%;border: 4px solid transparent;border-top-color: #f9c922;-webkit-animation: spin 1.5s linear infinite; /* Chrome, Opera 15+, Safari 5+ */          animation: spin 1.5s linear infinite; /* Chrome, Firefox 16+, IE 10+, Opera */    }
+
+    @-webkit-keyframes spin {
+        0%   { 
+            -webkit-transform: rotate(0deg);  
+            -ms-transform: rotate(0deg);  
+            transform: rotate(0deg);  
+        }
+        100% {
+            -webkit-transform: rotate(360deg);  
+            -ms-transform: rotate(360deg);  
+            transform: rotate(360deg);  
+        }
+    }
+    @keyframes spin {
+        0%   { 
+            -webkit-transform: rotate(0deg);  
+            -ms-transform: rotate(0deg);  
+            transform: rotate(0deg);  
+        }
+        100% {
+            -webkit-transform: rotate(360deg);  
+            -ms-transform: rotate(360deg);  
+            transform: rotate(360deg);  
+        }
+    }
+
+    #loader-wrapper .loader-section {position: fixed;top: 0;width: 50%;height: 100%;	background-color:rgba(0,0,0,0.8) ;z-index: 1000;-webkit-transform: translateX(0); -ms-transform: translateX(0);  transform: translateX(0);      }
+    #loader-wrapper .loader-section.section-left {left: 0;}
+    #loader-wrapper .loader-section.section-right {right: 0;}
+
+    /* Loaded */
+    .loaded #loader-wrapper .loader-section.section-left {-webkit-transform: translateX(-100%); -ms-transform: translateX(-100%);transform: translateX(-100%);-webkit-transition: all 0.7s 0.3s cubic-bezier(0.645, 0.045, 0.355, 1.000);transition: all 0.7s 0.3s cubic-bezier(0.645, 0.045, 0.355, 1.000);}
+    .loaded #loader-wrapper .loader-section.section-right {-webkit-transform: translateX(100%);-ms-transform: translateX(100%);transform: translateX(100%);-webkit-transition: all 0.7s 0.3s cubic-bezier(0.645, 0.045, 0.355, 1.000);transition: all 0.7s 0.3s cubic-bezier(0.645, 0.045, 0.355, 1.000);}
+    .loaded #loader {opacity: 0;-webkit-transition: all 0.3s ease-out;transition: all 0.3s ease-out;
+    }
+    .loaded #loader-wrapper {visibility: hidden;-webkit-transform: translateY(-100%);-ms-transform: translateY(-100%);transform: translateY(-100%);-webkit-transition: all 0.3s 1s ease-out;transition: all 0.3s 1s ease-out;}
+    
+    /* JavaScript Turned Off */
+    .no-js #loader-wrapper {display: none;}  
+    #content {margin: 0 auto;padding-bottom: 50px;width: 80%;max-width: 978px;    } 
+
+
+
+
+
+/*FONTFACE*/
+@font-face {
+    font-family: 'majalla';    
+    src: url('/SGAWEB/resources/fonts/majalla-webfont.eot');
+    src: url('/SGAWEB/resources/fonts/majalla-webfont.eot?#iefix') format('embedded-opentype'),
+         url('/SGAWEB/resources/fonts/majalla-webfont.woff') format('woff'),
+         url('/SGAWEB/resources/fonts/majalla-webfont.ttf') format('truetype'),
+         url('/SGAWEB/resources/fonts/majalla-webfont.svg#sakkal_majallaregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}

@@ -1,0 +1,194 @@
+*{padding: 0;margin: 0;text-decoration: none}
+*:FOCUS{outline: none;}
+ul{list-style: none;}
+html,body{display: block;height: 100%;width: 100%;background-color: #eeeeee;font-family: arial, "Roboto Regular";}
+
+form{display: block;width: 100%;height: 100%}
+
+
+#cabecera{display: block;width: 100%;}
+header{display: block;padding: 5px }
+header #header-hgroup{;width: 70%}
+header #header-hgroup #header-hgroup-img img{width: 80px}
+header #header-hgroup #header-hgroup-lema{text-align: center;}
+header #header-hgroup #header-hgroup-lema h1{color: white}
+header #header-hgroup #header-hgroup-lema h3{color: yellow;}
+header #header-person{width: 29%;text-align: right;}
+header #header-person #header-person-subMenu a{color: white}
+header #header-person #header-person-det{position: relative;text-align: right;}
+header #header-person #header-person-det span{display: block;}
+header #header-person #header-person-det #nomPerson{color: white}
+header #header-person #header-person-det #userPerson{color: yellow}
+header #header-person #header-person-det #conf-persona-ventana{background-color:white;position: absolute;right:0;padding:5px 10px;z-index:2;display: none;    border: 1px solid silver;border-radius: 5px;}
+header #header-person #header-person-det #conf-persona-ventana img{width: 60px}
+header #header-person #header-person-det #conf-persona-ventana #conf-persona-ventana-item{text-align: left;}
+header #header-person #header-person-det #conf-persona-ventana #conf-persona-ventana-item a{display: block;}
+header #header-person #header-person-img img{width: 80px; height: 80px}
+
+#wrapper-nav-section{}
+#wrapper-nav-section #column-nav{width: 20%}
+#wrapper-nav-section #column-nav #column-nav-cabecera {border: 1px solid green;position: relative;padding: 5px}
+#wrapper-nav-section #column-nav #column-nav-cabecera a{position: absolute;right: 5px;top: 2px}
+#wrapper-nav-section #column-nav #column-nav-cabecera label {display: block;color: white}
+#wrapper-nav-section #column-nav #column-nav-cabecera select{width: 100%}
+#wrapper-nav-section #column-nav #wrapper-nav-section-menu{padding: 5px}
+#wrapper-nav-section #column-nav #wrapper-nav-section-menu #main-lista{padding: 10px 0px}
+#wrapper-nav-section #column-nav #wrapper-nav-section-menu >ul >li {padding: 0px 0px 10px 0px}
+#wrapper-nav-section #column-nav #wrapper-nav-section-menu >ul >li >a{}
+#wrapper-nav-section #column-nav #wrapper-nav-section-menu ul li a{display: block;position: relative;text-transform: capitalize;opacity:0.8;transition:all 0.1s}
+#wrapper-nav-section #column-nav #wrapper-nav-section-menu ul li a:hover {font-weight:bold;opacity:1}
+#wrapper-nav-section #column-nav #wrapper-nav-section-menu ul li a .fa-sort-desc{position: absolute;right: 5px;top: 0}
+#wrapper-nav-section #column-nav #wrapper-nav-section-menu ul li ul{margin-left: 15px}
+#wrapper-section{width: 79%;}
+#wrapper-section #wrapper-section-area{display: block;position: relative;}
+
+
+
+#tope{position: fixed;background-color:rgba(0,0,0,0.5);left:0px;top:0px;width:100%;height:100%;z-index:1000;text-align:center;display: block;}
+#cargando{height: 70px;width: 70px;position: absolute;top:45%;left:45%;background:url("https://ssl.gstatic.com/android/market_images/web/loading_dark_large.gif") no-repeat center;}
+
+
+
+ /* CLASES REUTILIZABLES  */
+ div >label{display:inline-block;min-width: 100px;font-size: 0.8em}
+.paneles{border: 1px solid silver;background-color: white;margin: 0px 2px 2px 2px}
+.subTituloPanel{text-transform: capitalize;}
+.column{display: inline-block;vertical-align: top}
+.boton-verde{display: inline-block;vertical-align: top;background-color: green;color: white!important;;padding: 5px 8px;margin: 1px;border-radius:2px;}
+.boton-rojo{display: inline-block;vertical-align: top;background-color: red;color: white!important;;padding: 5px 8px;margin: 1px;border-radius:2px;}
+.boton-normal{display: inline-block;vertical-align: top;padding: 5px 8px;color: white!important;background-color: #0088CE;border-radius:2px;margin: 2px;text-align: center;text-transform:capitalize;transition:all 0.1s}
+.boton-icono{display:inline-block;margin:1px;transition:all 0.1s}
+.notify{ width: 250px;padding: 10px 5px;border-radius: 5px;color: white}
+.error{background-color: red}
+.correcto{background-color: #008000}
+a.boton-normal:hover,a.boton-icono:hover {  transform:scale(1.1)}
+span.boton-normal,span.boton-circulo,span.boton-verde,span.boton-icono{opacity:0.5}
+input,select,textarea{font-size: 0.85em!important;padding: 3px 2px!important;margin: 1px!important}
+textarea{width: 95%;display: block;resize:none;height: 80px}
+input:disabled,textarea:disabled{border: 1.9px  inset  ;background-color: white;color: #8e8e8e;    opacity: 1;}
+/* EDITANDO PRIMEFACES*/
+.ui-widget{font-size: 0.9em!important}
+.ui-widget-content{color: black!important}
+.ui-inputfield{box-shadow:none!important;border-radius:0px}
+div.ui-shadow{box-shadow:none!important}
+div.ui-widget-overlay{background: black;opacity:0.50}
+div.ui-dialog div.ui-widget-header{background:  #0088CE;    color: white;    text-shadow: none;}
+.ui-datatable .ui-widget-header{background: #f6f7f9 0 0 repeat-x!important}
+.ui-shadow{box-shadow:none!important}
+
+.ui-datatable table thead tr th,.ui-datatable table tfoot  tr td{background: #f6f7f9 0 0 repeat-x!important;text-shadow: none!important;color:black!important;}
+.ui-datatable table thead tr th span.ui-column-title{font-size: 0.6em}
+.ui-datatable table .ui-datatable-odd, table .ui-datatable-even{background-color: white;background: white}   
+.ui-datatable table thead tr{}
+.ui-datatable table tbody tr.ui-state-hover{background-color: #eee!important;box-shadow:none!important}
+.ui-datatable table tbody tr:HOVER{background-color: #eee}
+.ui-datatable table tbody tr i{transition:all 0.2s;transform: scale(1);}
+.ui-datatable table tbody tr:HOVER i.fa-times{color:red ;   transform: scale(1.5);}
+.ui-datatable table tbody tr:HOVER i.fa-pencil{color:green;    transform: scale(1.5);}
+.ui-datatable table tbody tr td{border: 1px solid silver!important;font-size: 0.75em}
+.ui-datatable table tbody tr.ui-state-highlight{border: 1px solid #156090!important;    background: #186ba0!important;    color:white!important;}
+.ui-datatable table tfoot tr td{font-size: 0.8em}
+.ui-datepicker-title select{width: 48%!important}
+.ui-tabs{}
+.ui-tabs .ui-tabs-navscroller{font-size: 0.8em!important}
+
+
+
+ /*========= MODAL ============*/
+ .modal{width: 400px;min-height: 100px;background-color: white;margin: 0 auto;border-radius: 0px 0px 5px 5px ;position: fixed;top: 5%;left: 40%;display: block;z-index: 9999}
+ .modal-titulo{display: block;background-color:  #0069b3;color: white;padding: 3px 5px;font-size: 1.2em}
+ .modal-fondo{width: 100%;height: 100%;background-color: rgba(0,0,0,0.8);position: fixed;display: block; top:0;;left: 0;color:white;z-index: 9998}
+ .modal-cuerpo{padding: 5px 1px}            
+ .modal-icono{font-size:4.0em;text-align:center;color:red;width: 80px}
+ .modal-texto{ font-size: 1.2em;width: 315px;line-height: 20px; color:silver}
+ .modal-botonera{display: block;width: 100%;padding: 5px 0px;text-align: center}
+ .modal-botonera a{padding: 2px 4px;min-width: 40px;display: inline-block;border-radius: 3px;color: white;font-size: 1.2em;border: 1px solid}
+ .modal-botonera a.positivo{background-color: #337ab7;border-color: #2e6da4}
+ .modal-botonera a.positivo:HOVER{background-color: #286090}
+ .modal-botonera a.negativo{background-color: #d9534f;border-color: #d43f3a}
+ .modal-botonera a.negativo:HOVER{background-color: #c9302c}    
+
+/* TIPO GRAFIAS */
+@font-face {
+	    font-family: 'Roboto Regular';	    
+	    src:url(../../fonts/Roboto-Regular.ttf) format('truetype');      
+	   
+		}
+		
+		
+		
+/* INDEX */
+			#pnNote{display: block;min-height: 500px; }
+			.ficha-note{border: 1px solid silver;box-shadow:2px 3px 4px silver;width: 150px;position: relative;}
+			.ficha-historial{width: 160px;height: 130px}
+			.ficha-historial img{display: block;width: 100%}
+			
+/*  INSCRIPCION */
+
+			
+            .error{background-color: #BC1010;padding: 6px 12px;border-radius: 4px;color: white;font-weight: bold;margin-left: 16px;margin-top: 6px;position: absolute;}
+            .error:before{   content: '';border-top: 8px solid transparent;border-bottom: 8px solid transparent;border-right: 8px solid #BC1010;border-left: 8px solid transparent;left: -16px;position: absolute;top: 5px;}
+            .ficha:hover{background-color: silver}
+            .circulo{border: 1px solid silver;display: inline-block;vertical-align: top;border-radius: 50%;width: 50px;height: 50px;color: white;text-align: center;font-size: 1.8em;line-height: 45px}
+          	 .tooltipCursos{position: absolute;top:20px;width: 200px;min-height: 0px;z-index: 10;background-color: white;border-radius: 5px;border: 1px solid silver;padding: 10px; display: none}
+             .flecha-derecha{content: " ";position: absolute;top:50%;left:  -24px;width: 0px ;height: 0px;  border-left: 12px solid transparent;border-right: 12px solid white;border-top: 12px solid transparent;border-bottom: 12px solid transparent;}
+             .flecha-izquierda{content: " ";position: absolute;top:50%;right:   -24px;width: 0px ;height: 0px;  border-left: 12px solid white;border-right: 12px solid transparent;border-top: 12px solid transparent;border-bottom: 12px solid transparent;}
+             .tituloProducto{display: block;padding: 5px 2px;height: 45px;color: white;text-align: center;border-bottom: 1px dashed silver;background-color: #0088CE;overflow: hidden;}
+             .grillaDetalleProducto{border: 1px solid silver;border-radius: 5px;display: inline-block;vertical-align: top;width: 34%;padding: 5px 5px 15px;}
+             .grillaDetalleProducto ul{border-bottom: 1px solid silver;font-size: 0.9em}
+             .grillaDetalleProducto ul li{display: inline-block;vertical-align: top;width: 55%;text-align: left;padding: 3px 1px}
+             .grillaDetalleProducto ul li:first-child{width: 40%;font-weight: bold}
+              .fichaSeccion:hover .tooltipCursos{display: block}
+             .fichaSeccion{background-color: white;width: 280px;display: inline-block;;vertical-align: top;height: 235px;margin: 5px;position: relative;;font-size: 0.9em;border-radius:5px;font-family: Arial,sans-serif}
+             .fichaSeccion-subMenu{text-align: center; }
+             .fichaSeccion-subMenu li {display: inline-block;vertical-align: top;}
+             .fichaSeccion-subMenu .num{font-size: 1.8em;font-weight: bold}
+             .remitente{border: none;max-height:150px;overflow: hidden;display: inline-block;vertical-align: top;width: 93% }
+             .remitente:hover{overflow: auto}
+             .remitente-persona{border: 1px solid silver;padding: 4px;margin: 2px 0px;display: inline-block;font-size: 0.7em}
+             .ficha-carrera{width: 252px;height: 200px;}
+             .ficha-carrera ul li{display:inline-block;width: 80px;text-align: center;color: #4f4f4f }
+ 		
+		
+/* CARHA HORARIO */
+			.cabecera-dia{display: block;outline: 1px solid silver;width: 100%;background-color:rgb(16,108,200);color: white;font-size: 0px}
+			.cabecera-dia div{display: inline-block;outline: 1px solid silver;width: 13.0%;height: 100%;text-align: center;font-size: 12px}
+			.cabecera-dia div:FIRST-CHILD{width:5%;}
+			.cuerpo{font-size:0px;width: 100%;height: 400px;overflow-x:auto}
+            .cuerpo-dia{display: inline-block;width: 13.2%;position: relative;outline:1px  solid silver;background: gainsboro;height: 900px;font-size: 12px}
+            .cuerpo-dia li{outline: 1px solid silver;}            
+            .cuerpo-hora{width: 5%;display: inline-block;background-color:rgb(16,108,200);font-size: 15px}
+            .cuerpo-hora li {height: 60px;outline: 1px solid silver}     
+            .hora-padre{display: table;height: 100%;width: 100%;text-align: center;color: white}
+            .hora-hijo{display: table-cell;vertical-align: middle}
+            .celda{position: absolute;width: 100%;background-color: white;text-align: center;display: block;z-index: 2;border: 1px solid silver;font-size: 0.8em;transition:all 0.8s}
+            .celda:hover{cursor: pointer}
+            .celda div span{display: block}
+            .ficha-aula{min-width: 80px;text-align: center;}
+            .aula-ocupada{background-color: red;color: white;}
+            .aula-select{background-color: orange;}
+            .aula-select a{color: white!important;}.row-recuperacion{background-color: green!important;color: white}
+
+/* MARCACION  */
+
+                    
+                    
+                    .leyenda{margin: 5px 20px}
+                    .leyenda li{display: inline-block}
+                    .leyenda li{border: 1px solid silver;padding: 4px;font-weight: bold;font-family: arial}
+                    .leyenda li b{margin: 0px 10px;vertical-align: top;display: inline-block;width: 60px;height: 20px;}
+                    
+                    .panel-detalle{outline: 1px solid silver;padding: 5px;font-size:0.8em;background-color: white}
+                    .panel-detalle li{outline: 1px solid silver;vertical-align: top;text-align: center;height: 20px;width: 80px}
+                    .panel-cabecera ul{}
+                    .panel-cabecera ul li{height: 35px;background-color: #0069B3;color: white;text-align: center;}
+                    .columIzquierda{outline: 1px solid silver}
+                    .columIzquierda li{display: inline-block}
+                    .columIzquierda li:nth-child(1){width: 8%;}
+                    .columIzquierda li:nth-child(2){width: 22%;}
+                    .columIzquierda li:nth-child(3){width: 66%;text-align: left;}                    
+                    
+                    .columDerecha li{display: table-cell;}                                        
+                    .columDerecha .columDerecha-cuerpo li:nth-last-child(1) {font-weight: bold;color: #008000!important}
+                    .columDerecha-cuerpo ul:hover li{background-color: #DDDDDD} 
+           

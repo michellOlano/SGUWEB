@@ -1,0 +1,842 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+    xmlns:hp="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<h:head>
+<title>..: Caja :..</title>
+<link   type="text/css" rel="stylesheet" href="../../resources/css/administrativo/style2.css" />
+<link   type="text/css" rel="stylesheet" href="../../resources/css/font-awesome.css" />
+<script type="text/javascript" src="#{utilB.ruta}/SGAWEB/resources/js/printArea.js"></script>
+
+<style>
+#rbInstitucion tbody tr td input{opacity: 0 ;position: absolute;}
+#rbInstitucion tbody tr td input:checked + label{color: red}
+#rbInstitucion tbody tr td label img {display: block;width: 30px;height:30px;text-align: center;}
+#rbInstitucion tbody tr td label{cursor: pointer;display: block;border: 1px solid silver;min-width: 50px;height: 50px}
+#pnAreaImpresion{background-color: rgba(0,0,0,0.5);display: block;height: 100%;width: 100%;position: fixed;left: 0;top: 0;z-index: 1}
+#pnPapel{}
+#pnPapel span {position: absolute;}
+
+</style>
+<style>
+
+</style>
+<script>
+//<![CDATA[
+           
+
+
+
+$(document).ready(function(){
+	$("#txtBusqueda").focus();
+	$("body").on("click","#btImprimir",function(e){
+		e.preventDefault();
+		$("#pnPapel >div").printArea();
+		$("#pnAreaImpresion").remove();		
+	});
+	
+	
+	
+	$("body").on("click","#btCerrar",function(e){
+		e.preventDefault();
+		$("#pnAreaImpresion").remove();
+		
+	});
+	
+	$(document).keydown(function(e) {
+	    // ESCAPE key pressed
+	     console.log(e.keyCode);
+	    if (e.keyCode == 27) {
+	        console.log("tecla escape.....");
+	        $("#pnAreaImpresion").remove();
+	    }
+	});
+	
+		
+	
+});
+
+function poput(cadena){
+	
+	$("body").append(cadena);
+	$("#btImprimir").focus();
+}
+//]]>
+</script>
+
+</h:head>
+<h:body>
+
+<h:form id="frmCaja" prependId="false">
+
+
+
+
+
+<h:commandLink rendered="false">
+Conexion 
+<f:ajax execute="@this" listener="#{conexionB.conexionMysql}" />
+</h:commandLink>
+
+<h:outputLabel value="ESTACION NO AUTORIZADA" rendered="#{not cajaB.bandera}" />
+<h:panelGroup id="pnModulo" layout="block" rendered="#{cajaB.bandera}" >
+<p:hotkey bind="shift+t" rendered="false" process="@this" update="tbConceptoInstitucionPeriodo txtConceptoFT" actionListener="#{cajaB.nuevoTramitePersona}" />
+<p:hotkey bind="shift+c" rendered="false" process="@this" update="tbCuentaPersona txtConceptoFT" actionListener="#{cajaB.nuevoTramitePersona}" />
+
+<div class="column"  style="border: 1px solid ;background-color: white;width: 50%" >
+
+<h:inputText id="txtBusqueda" value="#{cajaB.numero}" hp:placeholder="Escribir busqueda..." style="    width: 95%;    border: none;" >
+<f:ajax  execute="@this" render="@this txtDNI txtCorreo txtNombres txtTelefono txtCelular  btTramite btCuenta btFut btReprogramacion  btPagoBanco imgFoto rbInstitucion cbAlumno txtCarrera txtMalla txtCategoria txtPeriodoIngreso txtCreditos cbPeriodo txtNivel txtCreditoMatri txtPromedio  txtEmpresaE txtRucE txtTelefonoE cbEmpresaPersona lbContacto tbDetallePagoPersona btCobrar" listener="#{cajaB.busquedaPersona}" />
+</h:inputText>
+<h:panelGroup layout="block" id="pnBusqueda" styleClass="column" >
+<h:commandLink id="btBusquedaPersona" title="BUSQUEDA PERSONA" rendered="#{cajaB.codTipoDocumento ne 6}"  >
+<i class="fa fa-search" />
+<f:ajax  execute="@this" render="txtPaternoB  txtMaternoB txtNombresB tbPersona" listener="#{cajaB.nuevaBusquedaPersona}" />
+</h:commandLink>
+
+<h:commandLink id="btBusquedaEmpresa" title="BUSQUEDA EMPRESA" rendered="#{cajaB.codTipoDocumento eq 6}" >
+<i class="fa fa-search" />
+<f:ajax  execute="@this" render="txtBusquedaEmpresa" listener="#{cajaB.nuevaBusquedaEmpresa}" />
+</h:commandLink>
+</h:panelGroup>
+
+</div>
+
+<h:selectOneMenu id="cbTipoDocumento" value="#{cajaB.codTipoDocumento}" >
+<f:selectItems value="#{cajaB.tipoDocumentoL}" var="itemTipoDocumento" itemLabel="#{itemTipoDocumento.descripcion}" itemValue="#{itemTipoDocumento.tipoDocumento}" />
+<f:ajax execute="@this" render="txtSerie txtNumeroSerie pnBusqueda pnPersonaEmpresa btTramite"  listener="#{cajaB.mostrarSerie}"   />
+</h:selectOneMenu>
+<h:inputText id="txtSerie" value="#{cajaB.estacionSerie.serie}" size="4" readonly="true" /> <h:inputText id="txtNumeroSerie" value="#{cajaB.estacionSerie.numeroActual}"   size="5" />
+<h:commandLink title="Estacion Serie" onclick="dlSerie.show()" >
+<i class="fa fa-calendar-plus-o" />
+<f:ajax execute="@this" />
+</h:commandLink>
+<h:commandLink title="Imprimir" >
+<i class="fa fa-print" />
+<f:ajax execute="@this txtNumeroSerie" listener="#{cajaB.poput}" />
+</h:commandLink>
+
+
+<h:panelGroup layout="block" id="pnPersonaEmpresa" >
+
+
+<h:panelGroup id="pnPersona" layout="block" styleClass="paneles" rendered="#{cajaB.codTipoDocumento ne 6}" >
+	<div>
+		<div class="column">
+			<h:graphicImage id="imgFoto" value="SVerImagenAlumno?alumno=#{cajaB.persona.persona}" width="100" height="100" />
+		</div>
+		<div class="column" >
+			<h:outputLabel value="D.N.I" />
+			<h:inputText id="txtDNI" value="#{cajaB.persona.numero_documento}" disabled="true" size="50" />
+			<br />		
+			<h:outputLabel value="Datos" />
+			<h:inputText id="txtNombres" value="#{cajaB.persona.paterno} #{cajaB.persona.materno} #{cajaB.persona.nombres}" disabled="true" size="50" />
+			<br />
+			<h:outputLabel for="txtCorreo" value="Correo" />
+			<h:inputText id="txtCorreo" value="#{cajaB.persona.emailP}" disabled="#{not cajaB.banderaPersona}" size="50" style="#{ component.valid ? '' : 'border-color:red;'}" >
+			<f:validator validatorId="validarCorreo"  />  
+			</h:inputText>
+			<br />
+			<h:outputLabel for="txtTelefono" value="Telefono" />
+			<h:inputText id="txtTelefono" value="#{cajaB.persona.telefono}" disabled="#{not cajaB.banderaPersona}" maxlength="7" size="15" />
+					
+			<h:outputLabel for="txtCelular" value="Celular" />
+			<h:inputText id="txtCelular" value="#{cajaB.persona.celular}" disabled="#{not cajaB.banderaPersona}" maxlength="9" size="15" />
+		</div>
+	<h:commandLink id="btEditarP" disabled="#{cajaB.banderaPersona}" >
+	<i class="fa fa-pencil" />
+	<f:ajax execute="@this" render="@this txtCorreo txtTelefono txtCelular btGuardarP"  listener="#{cajaB.editarPersona}" />
+	
+	</h:commandLink>
+	<h:commandLink id="btGuardarP" disabled="#{not cajaB.banderaPersona}" >
+		<i class="fa fa-floppy-o" />
+	<f:ajax  execute="@this txtCorreo txtTelefono txtCelular btEditarP" render="@this txtCorreo txtTelefono txtCelular btEditarP" listener="#{cajaB.insertarPersona}" />
+	</h:commandLink>
+	</div>	
+</h:panelGroup>
+
+<h:panelGroup layout="block" styleClass="paneles" rendered="#{cajaB.codTipoDocumento eq 6}" >
+<div>
+<div class="column">
+			<h:graphicImage id="imgLogo" value="SVerImagenAlumno?alumno=#{cajaB.empresa.empresa}" width="100" height="100"  />
+</div>
+<div class="column">
+	<h:outputLabel for="txtEmpresaE" value="Rason Social"  />
+	<h:inputText id="txtEmpresaE" value="#{cajaB.empresa.razonSocial}" disabled="true" size="50" />
+	<br />
+	<h:outputLabel for="txtRucE" value="R.U.C" />
+	<h:inputText id="txtRucE" value="#{cajaB.empresa.ruc}" disabled="true" size="15" />
+	<br />
+	<h:outputLabel for="txtTelefonoE" value="Telefono" />
+	<h:inputText id="txtTelefonoE" value="#{cajaB.empresa.telefono}" disabled="true" size="15" />
+	<br /> 
+	<h:outputLabel value="Contacto" />	
+	<h:selectOneMenu id="cbEmpresaPersona" value="#{cajaB.codEmpresaPersona}"  >	
+	<f:selectItems value="#{cajaB.personaEL}" var="itemPersona" itemValue="#{itemPersona.persona}" itemLabel="#{itemPersona.paterno} #{itemPersona.materno} #{itemPersona.nombres}" />
+	<f:ajax execute="@this" render="rbInstitucion cbAlumno txtCarrera txtMalla txtCategoria txtPeriodoIngreso txtCreditos btTramite btCuenta tbDetallePagoPersona" listener="#{cajaB.selectContacto}" />
+	</h:selectOneMenu>
+	<h:commandLink id="lbContacto"  disabled="#{cajaB.empresa eq null}" >
+	<i class="fa fa-plus" />
+	<f:ajax execute="@this" render="txtPaternoPE txtMaternoPE txtNombresPE tbPersonaEmpresa " listener="#{cajaB.nuevaPersonaEmpresa}" />
+	</h:commandLink>
+	
+</div>
+
+</div>
+	
+</h:panelGroup>
+
+<div class="paneles" >
+			<h:selectOneRadio id="rbInstitucion" value="#{cajaB.codInstitucion}"  >
+			<f:selectItems  value="#{cajaB.institucionL}" var="itemInstitucion" itemValue="#{itemInstitucion.institucion}" itemLabel="&lt;img src='SimagenBD?opcion=6&amp;codigo=#{itemInstitucion.institucion}'  /> &lt;span> #{itemInstitucion.abreviatura} &lt;/span> " itemLabelEscaped="false"   />
+			<f:ajax execute="@this" render="cbAlumno txtCarrera txtMalla txtCategoria txtPeriodoIngreso txtCreditos cbPeriodo txtNivel txtCreditoMatri txtPromedio" listener="#{cajaB.mostrarAlumnoInstitucion}" />
+			</h:selectOneRadio>
+</div>
+<div >
+		
+		
+		<div class="column paneles">
+		<h:outputLabel for="cbAlumno" value="Alumno" />
+			<h:selectOneMenu id="cbAlumno" value="#{cajaB.codAlumno}" >		
+				<f:selectItems  value="#{cajaB.alumnoL}" var="itemAlumno" itemLabel="#{itemAlumno.alumno}" itemValue="#{itemAlumno.alumno}" />
+				<f:ajax  execute="@this rbInstitucion" render="txtCarrera txtMalla txtCategoria txtPeriodoIngreso txtCreditos cbPeriodo" listener="#{cajaB.mostrarAlumnoCarrera}" />
+			</h:selectOneMenu>		
+			<br />
+			<h:outputLabel for="txtCarrera" value="Carrera" />
+			<h:inputText id="txtCarrera" value="#{cajaB.alumnoCarrera.itemCarrera.descripcion}" size="60" disabled="true" />
+			<br />
+			<h:outputLabel for="txtMalla" value="Malla" />
+			<h:inputText id="txtMalla" value="#{cajaB.alumnoCarrera.malla}"  disabled="true" />
+			
+			<h:outputLabel for="txtCategoria" value="Categoria" />
+			<h:inputText id="txtCategoria" value="#{cajaB.alumnoCarrera.categoria}" disabled="true" />
+			<br />
+			<h:outputLabel for="txtPeriodoIngreso" value="Periodo Ingreso" />
+			<h:inputText id="txtPeriodoIngreso" value="#{cajaB.alumnoCarrera.periodoIngreso}" disabled="true" />
+		
+			<h:outputLabel for="txtCreditos" value="Creditos" />
+			<h:inputText id="txtCreditos" value="#{cajaB.alumnoCarrera.creditosAcumulados}" disabled="true" />
+			
+			<br />
+			<h:outputLabel for="txtPromedioPonderado" value="Promedio Global" />
+			<h:inputText id="txtPromedioPonderado" value="#{cajaB.alumnoCarrera.promedioPonderado}" disabled="true" />
+			
+			<h:commandLink id="btActualizaAC" title="#{cajaB.alumnoCarrera.fechaControl} " disabled="#{cajaB.alumnoCarrera eq null}"  >
+			<i class="fa fa-refresh"  />
+			
+
+			<f:ajax execute="@this" render="@this txtCreditos txtPromedioPonderado" listener="#{cajaB.actualizaAlumnoCarrera}" />
+		</h:commandLink>
+		</div>
+			
+		
+			<div class="column paneles">
+				<h:outputLabel  for="cbPeriodo" value="Periodo"  />
+				<h:selectOneMenu id="cbPeriodo" value="#{cajaB.codPeriodo}"   >
+				<f:selectItems value="#{cajaB.periodoL}" var="itemPeriodo" itemLabel="#{itemPeriodo.desPeriodo}" itemValue="#{itemPeriodo.periodo}" />
+				<f:ajax execute="@this" render="txtNivel txtCreditoMatri txtPromedio" listener="#{cajaB.selectAlumnoPeriodo}" />
+				</h:selectOneMenu>
+				<br />
+				<h:outputLabel  for="txtNivel"  value="Nivel" />
+				<h:inputText id="txtNivel" value="#{cajaB.alumnoPeriodo.nivel_referencial}" disabled="true" size="10" />
+				<br />
+				<h:outputLabel for="txtCreditoMatri"  value="Creditos" />
+				<h:inputText id="txtCreditoMatri" value="#{cajaB.alumnoPeriodo.creditos_matriculados}" disabled="true" size="10"  />
+				
+				<br />
+				<h:outputLabel  for="txtPromedio"  value="Promedio" />
+				<h:inputText id="txtPromedio" value="#{cajaB.alumnoPeriodo.promedio_semestral}" disabled="true" size="10"  />
+				
+				<h:commandLink id="btActualizarAP" title="Actualizar" disabled="#{cajaB.alumnoPeriodo eq null}">
+					<i class="fa fa-refresh" />
+					<f:ajax execute="@this" render="txtPromedio" listener="#{cajaB.actualizarAlumnoPeriodo}" />
+				</h:commandLink>
+			</div>
+		
+		</div>
+</h:panelGroup>
+
+<div class="paneles" >
+<h:commandLink  id="btTramite" title="(shift+t)" styleClass="boton-normal" disabled="#{cajaB.persona eq null}" >
+<i class="fa fa-suitcase" />
+
+Tramite
+<f:ajax  execute="@this" render="tbConceptoInstitucionPeriodo txtConceptoFT" listener="#{cajaB.nuevoTramitePersona}" />
+</h:commandLink>
+
+<h:commandLink id="btCuenta" title="(shift+c)" styleClass="boton-normal" disabled="#{cajaB.persona eq null}"  >
+<i class="fa fa-calendar-check-o" />
+Cuenta
+<f:ajax  execute="@this"  render="tbCuentaPersona txtConceptoFT" listener="#{cajaB.nuevoCuentaPersona}" />
+</h:commandLink>
+
+<h:commandLink id="btFut"  styleClass="boton-normal" disabled="#{cajaB.persona eq null}"   >
+F.U.T
+<f:ajax  execute="@this"  listener="#{cajaB.nuevoFUT}" />
+</h:commandLink>
+
+
+<h:commandLink id="btReprogramacion"  styleClass="boton-normal" disabled="#{cajaB.persona eq null}"     >
+Reprogramacion
+<f:ajax  execute="@this" render="tbAlumnoCursoNota"  listener="#{cajaB.nuevaReprogramacion}" />
+</h:commandLink>
+
+
+<h:commandLink id="btPagoBanco"  styleClass="boton-normal" disabled="#{cajaB.persona eq null}"   >
+Pago Banco
+<f:ajax  execute="@this"  render="cbBancoPB txtSeriePB txtMontoPB txtFechaPagoPB txtFechaRecepcionPB" listener="#{cajaB.nuevoPagoBanco}" />
+</h:commandLink>
+</div>
+
+
+<div  class="paneles" >
+<h:selectBooleanCheckbox  value="#{cajaB.aplicaIGV}"  >
+	Aplica I.G.V
+	<f:ajax execute="@this" render="tbDetallePagoPersona"  listener="#{cajaB.calcularTotal}" />
+</h:selectBooleanCheckbox>
+
+<h:selectBooleanCheckbox  value="#{cajaB.enviaCorreo}"  >
+	Factura Electronica
+	<f:ajax execute="@this"  />
+</h:selectBooleanCheckbox>
+<h:outputLabel value="#{cajaB.estacionSerie.maximoItem}" />
+</div>
+<div class="paneles" >
+
+
+<p:dataTable  id="tbDetallePagoPersona" value="#{cajaB.detallePagoPersonaL}" var="itemDetallePegoPersona" rowIndexVar="status" emptyMessage=""   >
+<p:column headerText="N" width="10" >
+#{status +1}
+</p:column>
+<p:column headerText="Concepto" >
+#{itemDetallePegoPersona.itemConcepto.descripcion}
+</p:column>
+
+<p:column headerText="Cant." width="50" >
+<h:inputText  value="#{itemDetallePegoPersona.cantidad}"  disabled="#{itemDetallePegoPersona.tipoConcepto ne 4 }" style="width: 80%;text-align:center"   >
+<f:ajax  execute="@this" render="tbDetallePagoPersona" listener="#{cajaB.agregarCantidad(itemDetallePegoPersona)}" />
+</h:inputText>
+</p:column>
+
+<p:column headerText="Monto" width="70" style="text-align:center"  >
+#{itemDetallePegoPersona.montoBase}
+</p:column>
+<p:column headerText="Mora" width="50"  style="text-align:center;color:red" >
+
+#{itemDetallePegoPersona.montoInteres.setScale(2, 3)}
+
+</p:column>
+<p:column headerText="Descuento" width="50" style="text-align:center;color:green"  >
+#{itemDetallePegoPersona.montoDescuento.setScale(2, 3)}
+</p:column>
+<p:column headerText="Monto Parte" width="70" style="text-align:center;"  >
+<h:inputText  value="#{itemDetallePegoPersona.montoParte.setScale(2, 3)}"   style="width: 80%;text-align:center"   >
+<f:ajax  execute="@this" render="tbDetallePagoPersona" />
+</h:inputText>
+</p:column>
+<p:column headerText="Total" width="100" style="text-align:center;color:#{itemDetallePegoPersona.montoParte eq itemDetallePegoPersona.montoTotal?'#0088CE':'red'}"  >
+<b>#{itemDetallePegoPersona.montoTotal.setScale(2, 3)}</b>
+</p:column>
+<p:column  width="20" style="style-align:center" >
+	<f:facet name="header">
+	<h:commandLink title="Limpiar" disabled="#{cajaB.detallePagoPersonaL.size() eq 0}" >
+	<i class="fa fa-archive" style="font-size: 1.5em" />
+	<f:ajax  execute="@this" render="tbDetallePagoPersona :frmCaja:btLimpiar :frmCaja:btCobrar"  listener="#{cajaB.limpiar}"  />
+	</h:commandLink>
+	</f:facet>
+	<h:commandLink>
+	<i class="fa fa-times" style="color:red" />
+	<f:ajax execute="@this" render="tbDetallePagoPersona :frmCaja:btLimpiar :frmCaja:btCobrar" listener="#{cajaB.quitarDetalle(status)}" />
+	</h:commandLink>
+</p:column>
+ <p:columnGroup type="footer">
+            <p:row>
+                <p:column colspan="7" style="text-align:right" footerText="Sub Total" />
+                
+                <p:column footerText="#{cajaB.subTotal.setScale(2, 3)}" style="color:#0088CE!important" />
+            </p:row>
+            <p:row>
+                <p:column colspan="7" style="text-align:right;" footerText="I.G.V" />
+                <p:column id="txtIGV" footerText="#{cajaB.totalIGV.setScale(2, 3)}"   style="color:red!important" />
+            </p:row>
+            <p:row>
+                <p:column colspan="7" style="text-align:right" footerText="Neto Pagar" />
+                <p:column  footerText="#{cajaB.totalPagar.setScale(2, 3)}" style="color:#0088CE!important;font-size:1.0em"  />
+               
+            </p:row>
+        </p:columnGroup>
+</p:dataTable>
+</div>
+<div  class="paneles">
+<h:commandLink id="btLimpiar" styleClass="boton-normal" disabled="#{cajaB.detallePagoPersonaL.size() eq 0}"  >
+<i class="fa fa-archive" />
+Limpiar
+<f:ajax execute="@this" render="txtBusqueda txtNumeroSerie imgFoto txtDNI txtNombres  txtCorreo txtTelefono txtCelular txtEmpresaE txtRucE txtTelefonoE cbEmpresaPersona  lbContacto rbInstitucion cbAlumno txtCarrera txtMalla txtCategoria txtPeriodoIngreso txtCreditos txtPromedioPonderado btActualizaAC cbPeriodo txtNivel txtCreditoMatri txtPromedio btActualizarAP btTramite btCuenta btFut btReprogramacion btPagoBanco btLimpiar btCobrar tbDetallePagoPersona"   listener="#{cajaB.limpiarTodo}" />
+</h:commandLink>
+
+
+<h:commandLink id="btCobrar" styleClass="boton-normal" disabled="#{cajaB.detallePagoPersonaL.size() eq 0}"  >
+<i class="fa fa-credit-card" />
+Cobrar
+<f:ajax execute="@this" render="cbFormaPago txtMontoTotalPP txtMontoVueltoPP txtMontoIngreso btPagar" resetValues="true"  listener="#{cajaB.nuevoPago}" />
+</h:commandLink>
+</div>
+
+<p:dialog  header="..: Busqueda Persona :.."  widgetVar="dlBusquedaPersona" modal="true" resizable="false" closeOnEscape="true" width="500" >
+<h:outputLabel for="txtPaternoB"  value="Paterno" />
+<h:inputText id="txtPaternoB" value="#{cajaB.paterno}" >
+<f:ajax execute="@this txtMaternoB txtNombresB" render="tbPersona" listener="#{cajaB.filtroPersona}" />
+</h:inputText>
+<br />
+<h:outputLabel  for="txtMaternoB" value="Materno" />
+<h:inputText id="txtMaternoB" value="#{cajaB.materno}" >
+<f:ajax execute="@this txtPaternoB txtNombresB" render="tbPersona" listener="#{cajaB.filtroPersona}" />
+</h:inputText>
+<br />
+<h:outputLabel  for="txtNombresB" value="Nombres" />
+<h:inputText id="txtNombresB" value="#{cajaB.nombres}" >
+<f:ajax execute="@this txtPaternoB txtMaternoB" render="tbPersona" listener="#{cajaB.filtroPersona}" />
+</h:inputText>
+
+
+<p:dataTable id="tbPersona" value="#{cajaB.personaL}" var="itemPersona"  rowIndexVar="status" scrollable="true" scrollHeight="300" selectionMode="single" selection="#{cajaB.persona}" rowKey="#{itemPersona.persona}" emptyMessage="Datos no encontrados " >
+<p:ajax event="rowSelect"  />
+<p:ajax event="rowDblselect"  update="txtBusqueda imgFoto txtDNI txtNombres txtCorreo txtTelefono txtCelular btTramite btCuenta btFut btPagoBanco btReprogramacion  rbInstitucion cbAlumno txtCarrera txtMalla txtCategoria txtPeriodoIngreso txtCreditos cbPeriodo  txtNivel txtCreditoMatri txtPromedio txtPromedioPonderado btActualizaAC btActualizarAP tbDetallePagoPersona"  listener="#{cajaB.selectPersona}"  />
+<p:column headerText="N." width="10">
+#{status +1}
+</p:column>
+<p:column  headerText="Datos" >
+#{itemPersona.paterno} #{itemPersona.materno} #{itemPersona.nombres}
+</p:column>
+</p:dataTable>
+<f:facet name="footer">
+<h:commandLink styleClass="boton-normal" >
+Aceptar
+<f:ajax execute="@this"  render="txtBusqueda txtNombres txtDNI txtCorreo txtTelefono txtCelular btTramite btCuenta btFut btPagoBanco btReprogramacion imgFoto rbInstitucion cbAlumno txtCarrera txtMalla txtCategoria txtPeriodoIngreso txtCreditos cbPeriodo  txtNivel txtCreditoMatri txtPromedio txtPromedioPonderado btActualizaAC btActualizarAP tbDetallePagoPersona"   listener="#{cajaB.selectPersona}" />
+</h:commandLink>
+<h:commandLink styleClass="boton-normal" >
+<i class="fa fa-file-text-o" />
+
+
+Nueva
+<f:ajax execute="@this" render="txtDNIP txtPaternoP txtMaternoP txtNombresP txtCorreoP txtTelefonoP txtCelularP"  resetValues="true"  listener="#{cajaB.nuevaPersona}"  />
+</h:commandLink>
+
+
+</f:facet>
+
+</p:dialog>
+
+<p:dialog  header="..: Cuenta persona :.." widgetVar="dlCuentaPersona"  modal="true" closeOnEscape="true" resizable="false" width="700" >
+
+<div>
+<i class="fa fa-search" />
+<h:inputText id="txtConceptoFCP" value="#{cajaB.conceptoF}" hp:placeholder="Escribir concepto" >
+<f:ajax  execute="@this" render="tbConceptoInstitucionPeriodo" listener="#{cajaB.filtroConcepto}" />
+</h:inputText>
+
+</div>
+<p:dataTable id="tbCuentaPersona"  value="#{cajaB.cuentaPersonaL}" var="itemCuentaPersona" rowIndexVar="status" scrollable="true" scrollHeight="300" selectionMode="multiple" selection="#{cajaB.cuentaPersonaLS}" rowKey="#{itemCuentaPersona}" emptyMessage="No tiene Deuda" >
+<p:ajax event="rowSelect"  />
+<p:ajax event="rowDblselect"  update="tbDetallePagoPersona :frmCaja:btLimpiar :frmCaja:btCobrar"  listener="#{cajaB.agregarDetalle}"  />
+<p:column headerText="N" width="10" >
+#{status+1}
+</p:column>
+<p:column headerText="Periodo" width="40" >
+#{itemCuentaPersona.periodo}
+</p:column>
+<p:column headerText="Concepto" >
+#{itemCuentaPersona.num_cuota} - #{itemCuentaPersona.itemConcepto.descripcion}
+</p:column>
+
+<p:column headerText="Monto Pago" width="50" style="text-align:center" >
+#{itemCuentaPersona.monto_pago}
+</p:column>
+<p:column headerText="Fecha Vencimiento" width="70" >
+#{itemCuentaPersona.fecha_vencimiento}
+</p:column>
+<p:column headerText="Dias" width="30" style="text-align:center;color:#{itemCuentaPersona.totalDia() ne 0?'red':'black'}" >
+#{itemCuentaPersona.totalDia()}
+</p:column>
+</p:dataTable>
+<f:facet name="footer">
+<h:commandLink styleClass="boton-normal" >
+Aceptar
+<f:ajax execute="@this" render="tbDetallePagoPersona :frmCaja:btLimpiar :frmCaja:btCobrar" listener="#{cajaB.agregarDetalle}" />
+</h:commandLink>
+
+</f:facet>
+</p:dialog>
+
+
+<p:dialog header="..: Tramite :.." widgetVar="dlTramite" modal="true" resizable="false"  closeOnEscape="true" width="700" >
+
+<div>
+<i class="fa fa-search" />
+<h:inputText id="txtConceptoFT" value="#{cajaB.conceptoF}" hp:placeholder="Escribir concepto" >
+<f:ajax  execute="@this" render="tbConceptoInstitucionPeriodo" listener="#{cajaB.filtroConcepto}" />
+</h:inputText>
+
+</div>
+<p:dataTable  id="tbConceptoInstitucionPeriodo" value="#{cajaB.conceptoInstitucionPeriodoL}" var="itemConceptoInstitucionPeriodo" scrollable="true" scrollHeight="300" selectionMode="single" selection="#{cajaB.conceptoInstitucionPeriodo}" rowKey="#{itemConceptoInstitucionPeriodo}" emptyMessage="" >
+<p:ajax event="rowSelect"  />
+<p:ajax event="rowDblselect"  update="tbDetallePagoPersona  :frmCaja:btCobrar :frmCaja:btLimpiar"  listener="#{cajaB.agregarDetalleTramite}"  />
+<p:column headerText="Institucion" width="100" >
+#{itemConceptoInstitucionPeriodo.itemInstitucion.abreviatura}
+</p:column>
+<p:column headerText="periodo" width="50" >
+#{itemConceptoInstitucionPeriodo.periodo}
+</p:column>
+<p:column headerText="Concepto" >
+ #{itemConceptoInstitucionPeriodo.itemConcepto.descripcion}
+</p:column>
+<p:column headerText="Precio" width="40" >
+#{itemConceptoInstitucionPeriodo.montoPago}
+</p:column>
+<p:column headerText="Descuento" width="50" style="text-align:center" >
+
+<h:commandLink>
+#{itemConceptoInstitucionPeriodo.conceptoInstitucionDescuentoFecha.monto}
+<f:ajax  execute="@this" render=":frmCaja:tbConceptoInstitucionDescuento" listener="#{cajaB.mostrarDescuento}" />
+</h:commandLink>
+
+</p:column>
+</p:dataTable>
+<f:facet name="footer">
+	<h:commandLink styleClass="boton-normal"  >
+	Aceptar
+	<f:ajax execute="@this" render="tbDetallePagoPersona  :frmCaja:btCobrar :frmCaja:btLimpiar" listener="#{cajaB.agregarDetalleTramite}" />
+	</h:commandLink>
+</f:facet>
+
+</p:dialog>
+
+<p:dialog header="Formato Unico Tramite" widgetVar="dlFUT" modal="true" resizable="false" closeOnEscape="true" >
+<h:outputLabel  value="Serie" />
+<h:inputText />
+<br />
+<h:outputLabel  value="Descripcion" /><br />
+<h:inputTextarea />
+
+<f:facet name="footer">
+<h:commandLink styleClass="boton-normal" >
+Aceptar
+<f:ajax execute="@this" />
+</h:commandLink>
+
+</f:facet>
+
+</p:dialog>
+
+
+<p:dialog  header="..: Descuentos :.." widgetVar="dlDescuento" modal="true" resizable="false" closeOnEscape="true" width="400" >
+<p:dataTable id="tbConceptoInstitucionDescuento" value="#{cajaB.conceptoInstitucionDescuentoFechaL}"  var="itemConceptoInstitucionDescuentoFecha"  rowIndexVar="status" scrollable="true" scrollHeight="200" >
+<p:column headerText="Nr." width="10" >
+#{status+1}
+</p:column>
+
+<p:column headerText="Fecha Inicio" >
+#{itemConceptoInstitucionDescuentoFecha.fechaInicio}
+</p:column>
+<p:column headerText="Fecha Final" >
+#{itemConceptoInstitucionDescuentoFecha.fechaFinal}
+</p:column>
+<p:column headerText="Monto" width="50" >
+#{itemConceptoInstitucionDescuentoFecha.monto}
+</p:column>
+</p:dataTable>
+<f:facet name="footer">
+<h:commandLink styleClass="boton-normal" onclick="dlDescuento.hide()" >
+Salir
+<f:ajax execute="@this" />
+</h:commandLink>
+
+</f:facet>
+</p:dialog>
+
+
+
+<p:dialog header="..: Cobrando Comprobante :.." widgetVar="dlCobrar" modal="true"  resizable="false" closeOnEscape="true" focus="cbFormaPago"  >
+
+<h:outputLabel value="Forma Pago" />
+<h:selectOneMenu id="cbFormaPago" value="#{cajaB.codFormaPago}" >
+<f:selectItems value="#{cajaB.formaPagoL}" var="itemFormaPago" itemLabel="#{itemFormaPago.descripcion}" itemValue="#{itemFormaPago.formaPago}" />
+</h:selectOneMenu>
+<br />
+<h:outputLabel for="txtMontoTotalPP" value="Monto Pagar" />
+<h:inputText id="txtMontoTotalPP" value="#{cajaB.pagoPersona.montoTotal.setScale(2, 3)}" disabled="true" />
+<br />
+<h:outputLabel for="txtMontoIngreso" value="Pago"  />
+<h:inputText id="txtMontoIngreso" value="#{cajaB.pagoPersona.montoIngreso}" required="true" style="#{ component.valid ? '' : 'border-color:red;'}" >
+<f:ajax execute="@this" render="txtMontoVueltoPP btPagar" listener="#{cajaB.calcularMontoVuelto}" />
+</h:inputText>
+<br />
+<h:outputLabel for="txtMontoVueltoPP" value="Vuelto" />
+<h:inputText id="txtMontoVueltoPP" value="#{cajaB.pagoPersona.montoVuelto.setScale(2, 3)}" disabled="true" />
+
+
+
+<f:facet name="footer">
+<h:commandLink id="btPagar" styleClass="boton-normal" disabled="#{cajaB.pagoPersona.montoVuelto le 0}"  >
+Insertar Pago
+<f:ajax execute="@this txtMontoIngreso" render="txtMontoIngreso txtNumeroSerie txtBusqueda imgFoto txtDNI txtNombres  txtCorreo txtTelefono txtCelular txtEmpresaE txtRucE txtTelefonoE cbEmpresaPersona  lbContacto rbInstitucion cbAlumno txtCarrera txtMalla txtCategoria txtPeriodoIngreso txtCreditos txtPromedioPonderado btActualizaAC cbPeriodo txtNivel txtCreditoMatri txtPromedio btActualizarAP btTramite btCuenta btFut btReprogramacion btPagoBanco btLimpiar btCobrar tbDetallePagoPersona " listener="#{cajaB.insertarPago}" />
+</h:commandLink>
+
+</f:facet>
+
+</p:dialog>
+
+
+<p:dialog header="..: Pago banco :.."  widgetVar="dlPagoBanco" modal="true" closeOnEscape="true" resizable="false" >
+
+	<h:outputLabel value="Banco" />
+	<h:selectOneMenu id="cbBancoPB" value="#{cajaB.pagoBanco.banco}" >
+	<f:selectItems value="#{cajaB.bancoL}" var="itemBanco" itemLabel="#{itemBanco.descripcion}" itemValue="#{itemBanco.banco}" />
+	
+	</h:selectOneMenu>
+	
+	
+	<br /> 
+
+	<h:outputLabel value="Serie" />
+	<h:inputText id="txtSeriePB" value="#{cajaB.pagoBanco.serie}" required="true" />
+	<br />
+	<h:outputLabel value="Monto" />
+	<h:inputText id="txtMontoPB" value="#{cajaB.pagoBanco.monto}" />
+	<br />
+	<h:outputLabel value="Fe. Pago" />
+	<p:calendar id="txtFechaPagoPB" value="#{cajaB.pagoBanco.fechaPago}"  pattern="dd-MM-yyyy" maxdate="#{utilB.fechaHoy()}" />
+	<br />
+	<h:outputLabel value="Fe. Recepcion" />
+	
+	<p:calendar id="txtFechaRecepcionPB" value="#{cajaB.pagoBanco.fechaRecepcion}"  pattern="dd-MM-yyyy" disabled="true" />
+	
+	<f:facet name="footer">
+	<h:commandLink styleClass="boton-normal" >
+		Aceptar
+		<f:ajax execute="@this cbBancoPB txtSeriePB txtMontoPB txtFechaPagoPB txtFechaRecepcionPB" render="txtSeriePB"  listener="#{cajaB.insertarPagoBanco}" />
+	</h:commandLink>
+	
+	</f:facet>
+</p:dialog>
+
+
+<p:dialog header="..: Reprogramacion de Examen :.." widgetVar="dlReporgramacion" modal="true" resizable="false" closeOnEscape="true" width="650" >
+
+<p:dataTable id="tbAlumnoCursoNota" value="#{cajaB.alumnoCursoNotaL}" var="itemAlumnoCursoNota" rowIndexVar="status"  selectionMode="multiple" selection="#{cajaB.alumnoCursoNotaLS}" rowKey="#{itemAlumnoCursoNota}" >
+<p:ajax event="rowSelect"  />
+<p:column headerText="Nr." width="10">
+#{status + 1}
+</p:column>
+<p:column headerText="Periodo" width="40" >
+#{itemAlumnoCursoNota.periodo}
+</p:column>
+
+<p:column headerText="Curso">
+#{itemAlumnoCursoNota.itemCurso.descripcion}
+</p:column>
+<p:column headerText="Tipo " width="30">
+#{itemAlumnoCursoNota.tipoExamen}
+</p:column>
+<p:column headerText="Nota" width="30" style="color:red" >
+#{itemAlumnoCursoNota.nota}
+</p:column>
+
+<p:column headerText="precio" width="50"  >
+
+</p:column>
+
+</p:dataTable>
+
+<f:facet name="footer">
+<h:commandLink styleClass="boton-normal">
+Aceptar
+<f:ajax execute="@this" render="tbDetallePagoPersona"  listener="#{cajaB.agregarReprogramacion}" />
+</h:commandLink>
+
+</f:facet>
+
+</p:dialog>
+
+
+
+
+<p:dialog  widgetVar="dlBusquedaEmpresa"  header="..: Busqueda Empresa :.." closeOnEscape="true" resizable="false" modal="true" width="600" >
+
+<h:inputText id="txtBusquedaEmpresa" value="#{cajaB.razonSocial}"  >
+<f:ajax  execute="@this" render="tbEmpresa" listener="#{cajaB.filtroEmpresa}" />
+</h:inputText>
+<p:dataTable id="tbEmpresa" value="#{cajaB.empresaL}" var="itemEmpresa"  rowIndexVar="status" scrollable="true" scrollHeight="300" selectionMode="single"  selection="#{cajaB.empresa}" rowKey="#{itemEmpresa.empresa}"  emptyMessage="" >
+<p:ajax event="rowSelect"  />
+<p:ajax event="rowDblselect"  update="lbContacto txtEmpresaE txtRucE txtTelefonoE  cbEmpresaPersona  rbInstitucion cbAlumno txtCarrera txtMalla txtCategoria txtPeriodoIngreso txtCreditos cbPeriodo  txtNivel txtCreditoMatri txtPromedio btTramite btCuenta" listener="#{cajaB.selectEmpresa}"  />
+<p:column headerText="Nr." width="10" >
+#{status+1}
+</p:column>
+<p:column headerText="Razon Social" >
+#{itemEmpresa.razonSocial}
+</p:column>
+
+</p:dataTable>
+<f:facet name="footer">
+<h:commandLink styleClass="boton-normal" >
+Aceptar
+
+<f:ajax execute="@this" render="lbContacto txtEmpresaE txtRucE txtTelefonoE  cbEmpresaPersona  rbInstitucion cbAlumno txtCarrera txtMalla txtCategoria txtPeriodoIngreso txtCreditos cbPeriodo  txtNivel txtCreditoMatri txtPromedio btTramite btCuenta"  listener="#{cajaB.selectEmpresa}" />
+</h:commandLink>
+
+<h:commandLink styleClass="boton-normal" >
+Nueva
+<f:ajax execute="@this"   listener="#{cajaB.nuevaEmpresa}" />
+</h:commandLink>
+
+</f:facet>
+</p:dialog>
+
+
+
+
+<p:dialog  widgetVar="dlEmpresaPersona" header="..: Empresa Persona :.." modal="true" resizable="false" closeOnEscape="true" width="500"  >
+<h:outputLabel for="txtPaternoPE" value="Paterno" />
+<h:inputText id="txtPaternoPE" value="#{cajaB.paterno}" >
+<f:ajax execute="@this" render="tbPersonaEmpresa" listener="#{cajaB.filtroPersonaEmpresa}" />
+</h:inputText>
+<br />
+<h:outputLabel for="txtMaternoPE" value="Materno" />
+<h:inputText id="txtMaternoPE" value="#{cajaB.materno}" >
+<f:ajax execute="@this" render="tbPersonaEmpresa" listener="#{cajaB.filtroPersonaEmpresa}" />
+</h:inputText>
+<br />
+<h:outputLabel for="txtNombresPE" value="Nombres" />
+<h:inputText id="txtNombresPE" value="#{cajaB.nombres}" >
+<f:ajax execute="@this" render="tbPersonaEmpresa" listener="#{cajaB.filtroPersonaEmpresa}" />
+</h:inputText>
+<p:dataTable  id="tbPersonaEmpresa" value="#{cajaB.personaL}" var="itemPersonaEmpresa" rowIndexVar="status" emptyMessage="" scrollable="true" scrollHeight="300" selectionMode="single" selection="#{cajaB.persona}" rowKey="#{itemPersonaEmpresa}" >
+<p:ajax event="rowSelect"  />
+<p:ajax event="rowDblselect"  update="cbEmpresaPersona rbInstitucion cbAlumno txtCarrera txtMalla txtCategoria txtPeriodoIngreso txtCreditos cbPeriodo  txtNivel txtCreditoMatri txtPromedio btTramite btCuenta"  listener="#{cajaB.insertarPersonaEmpresa}"  />
+<p:column headerText="Nr." width="10">
+#{status+1}
+</p:column>
+<p:column headerText="PERSONA" >
+#{itemPersonaEmpresa.paterno} #{itemPersonaEmpresa.materno} #{itemPersonaEmpresa.nombres}
+</p:column>
+</p:dataTable>
+
+<f:facet name="footer">
+<h:commandLink styleClass="boton-normal" >
+Aceptar
+<f:ajax execute="@this" render="cbEmpresaPersona rbInstitucion cbAlumno txtCarrera txtMalla txtCategoria txtPeriodoIngreso txtCreditos cbPeriodo  txtNivel txtCreditoMatri txtPromedio btTramite btCuenta" listener="#{cajaB.insertarPersonaEmpresa}" />
+</h:commandLink>
+
+</f:facet>
+
+
+
+
+</p:dialog>
+
+
+
+
+<p:dialog  header="..: Empresa :.." widgetVar="dlEmpresa" modal="true" resizable="false" closeOnEscape="true" >
+<h:outputLabel for="txtRazonSocialEMP" value="Rason Social" />
+<h:inputText  id="txtRazonSocialEMP" value="#{cajaB.empresa.razonSocial}" required="true" style="#{ component.valid ? '' : 'border-color:red;'}" />
+<br />
+<h:outputLabel for="txtRucEMP"  value="R.U.C" />
+<h:inputText id="txtRucEMP" value="#{cajaB.empresa.ruc}"  required="true"  maxlength="11" style="#{ component.valid ? '' : 'border-color:red;'}" />
+<br />
+<h:outputLabel for="txtTelefonoEMP" value="Telefono" />
+<h:inputText  id="txtTelefonoEMP" value="#{cajaB.empresa.telefono}" />
+
+
+<br />
+<h:outputLabel for="cbEstadoEMP"  value="Estado" />
+<h:selectOneMenu id="cbEstadoEMP" value="#{cajaB.empresa.estadoRegistro}" >
+<f:selectItem itemLabel="habilitado"  itemValue="1" />
+<f:selectItem itemLabel="Deshabilitado"  itemValue="0" />
+</h:selectOneMenu>
+
+<f:facet name="footer">
+<h:commandLink styleClass="boton-normal">
+Aceptar
+<f:ajax execute="@this txtRazonSocialEMP  txtRucEMP txtTelefonoEMP  cbEstadoEMP"  render="@this txtRazonSocialEMP  txtRucEMP lbContacto txtEmpresaE txtTelefonoE  cbEmpresaPersona btTramite" listener="#{cajaB.insertarEmpresa}" />
+</h:commandLink>
+
+</f:facet>
+
+</p:dialog>
+
+
+<p:dialog header="..: Estacion Serie :.." widgetVar="dlSerie" modal="true" resizable="false" closeOnEscape="true" >
+<h:outputLabel  value="Nr. Inicial" />
+<h:inputText value="#{cajaB.estacionSerie.numeroInicio}" />
+<br />
+<h:outputLabel  value="Nr. Final" />
+<h:inputText value="#{cajaB.estacionSerie.numeroFinal}" />
+<br />
+<h:outputLabel  value="Nr. Actual" />
+<h:inputText value="#{cajaB.estacionSerie.numeroActual}" />
+
+<f:facet name="footer">
+<h:commandLink styleClass="boton-normal" onclick="dlSerie.hide()" >
+Aceptar
+<f:ajax execute="@this" />
+</h:commandLink>
+
+</f:facet>
+
+</p:dialog>
+
+
+
+</h:panelGroup>
+
+<p:dialog header="..: Nueva Persona :.." widgetVar="dlPersona" modal="true" resizable="false"  closeOnEscape="true" >
+<h:outputLabel for="txtDNIP" value="D.N.I" />
+<h:inputText id="txtDNIP" value="#{cajaB.numeroDNI}" required="true"  maxlength="8" size="10" style="#{ component.valid ? '' : 'border-color:red;'}"   >
+<f:ajax  execute="@this" render="@this txtPaternoP txtMaternoP txtNombresP" listener="#{cajaB.busquedaReniec}" />
+</h:inputText>
+<br />
+
+<h:outputLabel value="paterno" />
+<h:inputText id="txtPaternoP" value="#{cajaB.persona.paterno}" required="true" style="#{ component.valid ? '' : 'border-color:red;'}"  />
+<br />
+<h:outputLabel value="Materno" />
+<h:inputText id="txtMaternoP" value="#{cajaB.persona.materno}" required="true"  style="#{ component.valid ? '' : 'border-color:red;'}" />
+<br />
+<h:outputLabel value="Nombres" />
+<h:inputText id="txtNombresP" value="#{cajaB.persona.nombres}" required="true" style="#{ component.valid ? '' : 'border-color:red;'}"  />
+<br />
+<h:outputLabel value="Email" />
+<h:inputText id="txtCorreoP" value="#{cajaB.persona.emailP}" style="#{ component.valid ? '' : 'border-color:red;'}"  >
+<f:validator  validatorId="validarCorreo"  />  
+</h:inputText>
+<br />
+<h:outputLabel value="Telefono" />
+<h:inputText id="txtTelefonoP" value="#{cajaB.persona.telefono}" size="10" />
+<br />
+<h:outputLabel value="Celular" />
+<h:inputText id="txtCelularP" value="#{cajaB.persona.celular}" size="10" />
+
+<f:facet name="footer">
+<h:commandLink styleClass="boton-normal" >
+Aceptar
+<f:ajax execute="@this txtDNIP txtPaternoP txtMaternoP txtNombresP txtCorreoP txtTelefonoP txtCelularP" render="txtDNIP txtPaternoP txtMaternoP txtNombresP txtCorreoP txtTelefonoP txtCelularP" listener="#{cajaB.insertarPersona}" />
+</h:commandLink>
+
+
+
+</f:facet>
+</p:dialog>
+
+</h:form>
+
+
+
+</h:body>
+</html>

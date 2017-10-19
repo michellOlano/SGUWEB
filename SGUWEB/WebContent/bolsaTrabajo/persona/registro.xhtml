@@ -1,0 +1,128 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:hp="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<h:head>
+<title>Registro Persona</title>
+ <link   type="text/css" rel="stylesheet" href="/SGAWEB/resources/css/bolsaTrabajo/style.css" />
+ <link   type="text/css" rel="stylesheet" href="/SGAWEB/resources/css/font-awesome.css" />
+ <script src="#{utilB.ruta}/SGAWEB/resources/js/util.js" />
+  <style>
+ section{ display: block;width: 800px; margin: 0 auto;}
+ section h2{border-bottom:1px solid silver; padding: 5px 10px }
+ section div{padding: 10px}
+ section textarea{width: 100%;    resize: none;height: 60px}
+ .valida-caja{border-color:red!important}
+ .error{background-color: red}
+ .correcto{background-color: #008000}
+table tbody tr td{border: none!important}
+ 
+ </style>  
+ 
+  
+</h:head>
+<h:body>
+	
+<h:form  id="frmRegistroPersona" prependId="False" hp:autocomplete="off"  >
+
+	<header >
+	<img src="/imagen/java/logoupsb.png" alt="" style="width: 60px; height: 60px"  />
+		<div class="column" >
+		<h1 >OPORTUNIDADES LABORALES UPSB</h1>
+		</div>
+	</header>
+<h:panelGroup id="pnRegistro" layout="block" rendered="#{not trabajoPersonaB.bandera}" >
+
+<section>
+
+
+
+	
+	<div class="paneles">
+	
+	<h2>
+		<i class="fa fa-address-card-o" />
+		Datos Personales
+	</h2>
+	<div>
+		<h:outputLabel for="txtNombre" value="Nombres *" /><br />
+		<h:inputText id="txtNombre" value="#{trabajoPersonaB.persona.nombres}" required="true" styleClass="#{not component.valid ?'valida-caja':''}" /><br />
+		<h:outputLabel for="txtPaterno" value="Paterno *" /><br />
+		<h:inputText id="txtPaterno" value="#{trabajoPersonaB.persona.paterno}" required="true" styleClass="#{not component.valid ?'valida-caja':''}" /><br />
+		<h:outputLabel for="txtMaterno" value="Materno" /><br />
+		<h:inputText id="txtMaterno" value="#{trabajoPersonaB.persona.materno}" /><br />
+		<h:outputLabel for="txtNacimiento" value="Fecha Nacimiento" /><br />
+		<p:calendar id="txtNacimiento" value="#{trabajoPersonaB.persona.fecha_nacimiento}" pattern="dd-MM-yyyy" mask="true" navigator="true" maxdate="#{utilB.fechaHoy()}" />
+		<br />
+		
+		<h:outputLabel for="cbEstadoCivil" value="Estado Civil" /><br />
+		<h:selectOneMenu id="cbEstadoCivil" value="#{trabajoPersonaB.persona.estado_civil}"  >
+		<f:selectItems value="#{trabajoPersonaB.estadoCivilL}" var="itemEstadoCivil" itemValue="#{itemEstadoCivil.estadoCivil}" itemLabel="#{itemEstadoCivil.descripcion}" />
+		</h:selectOneMenu><br />
+		
+		<h:outputLabel for="txtNumero" value="Numero Documento (D.N.I) *" /><br />
+		<h:inputText id="txtNumero" value="#{trabajoPersonaB.persona.numero_documento}" maxlength="8" onkeypress="return soloNumeros(event)"  required="true" styleClass="#{not component.valid ?'valida-caja':''}" /><br />
+		
+		<h:outputLabel for="rbSexo" value="Sexo" />
+		<h:selectOneRadio id="rbSexo" value="#{trabajoPersonaB.persona.sexo}" styleClass="column" >
+		<f:selectItem itemValue="1" itemLabel="Masculino"/>
+		<f:selectItem itemValue="2" itemLabel="Femenino"/>
+		</h:selectOneRadio><br />
+		
+		<h:outputLabel for="txtCelular" value="Telefono Celular" /><br />
+		<h:inputText id="txtCelular" value="#{trabajoPersonaB.persona.celular}" /><br />
+		<h:outputLabel for="txtTelefono" value="Telefono Fijo" /><br />
+		<h:inputText id="txtTelefono" value="#{trabajoPersonaB.persona.telefono}" /><br />
+		
+		
+		<h:outputLabel for="txtCorreo" value="E-mail *" /><br />
+		<h:inputText id="txtCorreo" value="#{trabajoPersonaB.persona.emailP}" required="true" styleClass="#{not component.valid ?'valida-caja':''}" hp:placeholder="correo@dominio.com"  >
+		 <f:validateRegex	pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+		</h:inputText>	<br />
+		
+		
+		
+		
+		
+		<h:outputLabel for="cbNacionalidad" value="Nacionalidad" /><br />
+		<h:selectOneMenu id="cbNacionalidad" value="#{trabajoPersonaB.persona.pais}"  >
+		<f:selectItem itemValue="1" itemLabel="Peru" />
+		</h:selectOneMenu>
+		
+		
+		<br />
+		<h:outputLabel for="txtDireccion" value="Direccion" /><br />
+		<h:inputTextarea id="txtDireccion" value="#{trabajoPersonaB.persona.direccion_recidencial}" />
+		
+		
+		</div>
+	
+	</div>
+	
+	
+	
+	
+	
+	<div class="paneles" style="display: block;text-align: right;" >
+	<h:commandLink   id="btIngresar" styleClass="boton-normal" >
+		<i class="fa fa-paper-plane-o" />
+			Registrar
+		<f:ajax execute="@this txtNombre txtPaterno txtMaterno txtCorreo txtCelular txtTelefono rbSexo cbNacionalidad cbEstadoCivil txtNumero txtNacimiento  txtDireccion" render="@form" listener="#{trabajoPersonaB.registrar}"  />
+	</h:commandLink>
+	</div>
+
+</section>
+
+</h:panelGroup>
+<h:outputLabel value="Se Registro Correctamente tu usuario y contraseña fueron enviados a tu correo" rendered="#{trabajoPersonaB.bandera}" />
+
+
+</h:form>
+</h:body>
+</html>

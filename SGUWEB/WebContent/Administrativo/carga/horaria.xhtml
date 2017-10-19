@@ -1,0 +1,1303 @@
+<ui:composition  template="/Administrativo/plantilla.xhtml" 
+				      xmlns="http://www.w3.org/1999/xhtml"
+				      xmlns:h="http://xmlns.jcp.org/jsf/html"
+				      xmlns:f="http://xmlns.jcp.org/jsf/core"
+				      xmlns:p="http://primefaces.org/ui"
+				      xmlns:hp="http://xmlns.jcp.org/jsf/passthrough"
+				      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+				      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">      
+      		<ui:define name="titulo">
+                CARGA HORARIO PERSONAL DOCENTE
+            </ui:define>
+            
+<ui:define name="contenido">
+          
+    
+       
+        <script>
+        
+        //<![CDATA[
+       
+        var bandera=false;
+        var idGeneral;
+        function loaded() {
+            document.getElementById('tope').style.display = 'none';
+        }
+        function confirmacion(obj,cadena){
+        	
+            idGeneral=obj;
+            if(bandera){
+                $(".modal-fondo").remove();
+                $(".modal").remove();
+                bandera=false;
+                return true;
+            }else{
+               if(! $('.modal-fondo').hasClass("modal-fondo")){
+                   $('body').append('<div class="modal-fondo"  /> ');
+                    $('body').append('<div class="modal" ><div class="modal-titulo" > INTRANET UPIG </div><div class="modal-cuerpo"> <div class="column modal-icono"><i class="fa fa-exclamation "  /></div><div class="column modal-texto"><span>' +cadena+'</span></div></div><hr/><div class="modal-botonera"><a  class="positivo"  onclick="valida(true)" >Si</a> <a class="negativo" onclick="valida(false)" > No</a></div>  </div>');
+                    }else{
+                    $(".modal-fondo").remove();
+                    $(".modal").remove();
+               }                    
+                
+                return false;
+            }
+            
+        }
+        
+        function valida(estado){
+            bandera=estado;           
+            $(idGeneral).click();            
+        }
+        function notificacion(msg,speed,fadeSpeed,type){
+            $('.notify').remove();
+
+			  if (typeof fade != "undefined"){
+			  clearTimeout(fade);
+			  }
+			  $('body').append('<div class="notify '+type+'" style="display:none;position:fixed;right:10px"><p>'+msg+'</p></div>');
+			
+			  notifyHeight = $('.notify').outerHeight();
+			
+			  $('.notify').css('top',-notifyHeight).animate({top:10,opacity:'toggle'},speed);
+			
+			  fade = setTimeout(function(){
+			
+			  $('.notify').animate({top:notifyHeight+10,opacity:'toggle'}, speed);
+			
+			  }, fadeSpeed);
+			}
+        
+        
+        
+        $( "body" ).on("mouseenter",".celda",function() {
+        	 
+        	 $("[data-curso="+$(this).attr("data-curso")+"]").css({"background-color":"rgb(196, 217, 232)"});
+            $(this).css({"z-index":"2"});
+           
+        });
+        
+        $( "body").on("mouseleave",".celda",function() {
+          
+          $("[data-curso="+$(this).attr("data-curso")+"]").css({"background-color":"white"});
+          $(this).css({"z-index":"1"});
+         
+          
+        });
+        
+     
+        function crearImagen(divId){
+        	
+            html2canvas(document.getElementById(divId), {
+                onrendered: function(canvas) {
+                    theCanvas = canvas;
+                 //   document.body.appendChild(canvas);
+                    
+                    $('<iframe>', {
+            		    name: 'myiframe',
+            		    class: 'printFrame'
+            		  })
+            		  .appendTo('body')
+            		  .contents().find('body')
+            		  .append(canvas);
+
+            		  window.frames['myiframe'].focus();
+            		  window.frames['myiframe'].print();
+
+            		  setTimeout(() => { $(".printFrame").remove(); }, 1000);
+                    
+                    
+                    
+                    
+                    
+                    
+
+                    /*
+                    canvas.toBlob(function(blob) {
+                      saveAs(blob, "Dashboard.png"); 
+                    });
+                    */
+                }
+            });	
+        }
+      
+       
+        
+        
+        
+        
+        function printDiv(divId) {
+        
+        	  //Get the HTML of div
+            var divElements = document.getElementById(divId).innerHTML;
+            //Get the HTML of whole page
+            var oldPage = document.body.innerHTML;
+
+            //Reset the page's HTML with div's HTML only
+            document.body.innerHTML = 
+              "<html><head><title></title></head><body>" + 
+              divElements + "</body>";
+
+            //Print Page
+            window.print();
+
+            //Restore orignal HTML
+            document.body.innerHTML = oldPage;
+        }
+        //]]>
+        
+        </script>
+     
+     
+       
+        <h:form id="frmDatos"  prependId="false" >
+        #{cargaElectivaB.load(usuarioB.institucionS,usuarioB.periodoS)}
+                <div>
+                
+                <div class="paneles  column"  >
+                   
+		                    
+		                <div class="column" style="width: 100px;height:100px;text-align: center;">
+		                    
+		                    <h:graphicImage id="imgFoto" value="SVerImagenAlumno?alumno=#{cargaElectivaB.persona.persona}" style="width: 100%;height:100%;"  />
+		                </div>
+		                  <div class="column">
+		             
+		                    <h:outputLabel value="Nombres"/>
+		                    <h:inputText id="txtNombres" value="#{cargaElectivaB.persona.nombres}" size="50"  disabled="true"  />
+		                    <br />
+		                    
+		                     <h:outputLabel value="A. Paterno"/>
+		                     <h:inputText id="txtPaterno" value="#{cargaElectivaB.persona.paterno}"  size="15" disabled="true"  />
+		                     <h:outputLabel value="A. Materno"/>
+		                     <h:inputText id="txtMaterno" value="#{cargaElectivaB.persona.materno}"  size="15"  disabled="true" />
+		                     
+		                    
+		                    <br />
+		                    <h:outputLabel value="E-mail" />
+		                    <h:inputText id="txtCorreo" value="#{cargaElectivaB.persona.emailP}" size="50" disabled="true" />
+		                    <br />
+		
+		                    <h:outputLabel value="Telefono" />
+		                    <h:inputText id="txtTelefono" value="#{cargaElectivaB.persona.telefono}" size="15" disabled="true" />
+		                    
+		                     <h:outputLabel value="Celular" />
+		                     <h:inputText id="txtCelular" value="#{cargaElectivaB.persona.celular}" size="15" disabled="true" />
+		                    </div>
+                    
+                    
+                  </div>  
+                    <div  class="paneles column" >
+  					 <h:outputLabel value="HORAS SEMANA"/>
+					                   	
+                   	<h:panelGroup layout="block" id="pnHoraA">
+                   	<div class="knob-container  ui-corner-all">
+					    <p:knob   max="34"   value="#{cargaElectivaB.totalHora}" width="60" height="60" disabled="true" backgroundColor="black" foregroundColor="red"/>   
+					</div>
+                   	</h:panelGroup>
+                   	
+  					</div>
+  					<div  class="paneles column" >
+  					 <h:outputLabel value="TOTAL HORAS"/>
+					                   	
+                   	<h:panelGroup layout="block" id="pnHoraB">
+                   	<div class="knob-container  ui-corner-all">
+                   	
+					    <p:knob   max="100"   value="#{cargaElectivaB.totalHoraTM}" width="60" height="60" disabled="true" backgroundColor="black" foregroundColor="red"/>   
+					</div>
+					</h:panelGroup>
+  					</div>
+             
+                    </div>
+                    
+                  <div  >        
+                   	<h:panelGroup layout="block" id="lblCantidad" >
+                   	
+                   	<ui:repeat var="itemCursoSeccionDocente" value="#{cargaElectivaB.cursoSeccionDocenteL}">
+                   	<div class="paneles column " style="min-width: 150px"  >
+                   	<h:commandLink style="display:block;">
+                   	#{itemCursoSeccionDocente.itemCarrera.abreviatura}
+                   	<br />
+                   	#{itemCursoSeccionDocente.itemCurso.descripcion}
+                   	<br />
+                   	#{itemCursoSeccionDocente.itemSeccion.descripcion}
+                   	<f:ajax execute="@this" render=":frmDatos:cbCarrera :frmDatos:cbMalla :frmDatos:cbCiclo :frmDatos:cbturno :frmDatos:cbSeccion  :frmDatos:tbCargaElectiva :frmDatos:btHorarioSeccion" onevent="onevent"  listener="#{cargaElectivaB.selectCursoSeccionDocente(itemCursoSeccionDocente)}" />
+                   	</h:commandLink>
+                   	<div>
+                   	<h:commandLink>
+                   	R
+                   	<f:ajax  execute="@this" render=":frmRecuperacion:tbReprogramacion " listener="#{cargaElectivaB.mostrarRecuperacion(itemCursoSeccionDocente)}" />
+                   	</h:commandLink>
+                   	</div>
+                   	</div>
+                   	</ui:repeat>
+                   	
+                   	</h:panelGroup>
+  					</div>
+  					
+  					
+  					
+  					<div class="paneles" >
+  					
+  					
+                   
+                       <h:commandLink styleClass="boton-normal"   >
+                            <i class="fa fa-search"  />
+                            busqueda
+                            <f:ajax execute="@this" render="txtPaternoB txtMaternoB txtNombresB" listener="#{cargaElectivaB.busquedaPersona}" />
+                        </h:commandLink>
+                        
+                        
+                        
+                        <h:commandLink id="btHorarioPersonal" styleClass="boton-normal" disabled="#{cargaElectivaB.personal.personal eq null}" >
+                        	<i class="fa fa-clock-o" />
+                        	horario docente
+                        <f:ajax execute="@this" render=":frmHorarioPersonalDocente:pnHorarioDocenteCabecera :frmHorarioPersonalDocente:pnHorarioDocenteCuerpo" listener="#{cargaElectivaB.mostrarHorarioPersonal}" />
+                        </h:commandLink>
+                        
+                        
+                     
+
+                        <h:commandLink id="btHorarioSeccion"  disabled="#{empty cargaElectivaB.codSeccion}" styleClass="boton-normal"     >                       
+                            <i class="fa fa-clock-o" />
+                            horario seccion
+                            <f:ajax execute="@this" render=":frmHorarioSeccion" listener="#{cargaElectivaB.nuevoHorarioSeccion}"   />
+                        </h:commandLink>
+                    </div>
+             
+            
+            <div class="paneles" >
+          
+         
+           
+
+            <h:outputLabel value="CARRERA" />
+            <h:selectOneMenu id="cbCarrera" value="#{cargaElectivaB.codCarrera}">
+            <f:selectItem itemLabel="selecciona"/>
+                <f:selectItems value="#{cargaElectivaB.carreraL}" var="carrera" itemValue="#{carrera.carrera}" itemLabel="#{carrera.descripcion}" />
+                <f:ajax execute="@this" render="cbCiclo cbMalla"  listener="#{cargaElectivaB.mostrarMallaCiclo}" />
+            </h:selectOneMenu>
+            <h:outputLabel value="MALLA" />
+            <h:selectOneMenu id="cbMalla" value="#{cargaElectivaB.codMalla}" >       
+                <f:selectItem itemLabel="selecciona"/>
+                <f:selectItems value="#{cargaElectivaB.horMallaCurricularL}" var="malla" itemValue="#{malla.malla}" itemLabel="#{malla.descripcion}"/>
+                <f:ajax execute="@this" render="cbSeccion" listener="#{cargaElectivaB.mostrarSeccion}"  />
+            </h:selectOneMenu>
+            <br />
+            <h:outputLabel value="CICLO" />
+            <h:selectOneMenu id="cbCiclo" value="#{cargaElectivaB.nivelModular}">
+                <f:selectItem itemLabel="selecciona"/>                
+                <f:selectItems value="#{cargaElectivaB.cicloL}" var="ciclo" itemValue="#{ciclo.ciclo}" itemLabel="#{ciclo.ciclo} - #{ciclo.descripcion}" />
+                <f:ajax execute="@this" render=" cbSeccion cbturno tbCargaElectiva" listener="#{cargaElectivaB.mostrarTurno}"  />
+            </h:selectOneMenu>
+            <h:outputLabel value="TURNO" />
+            <h:selectOneMenu id="cbturno" value="#{cargaElectivaB.codTurno}" >
+             	<f:selectItem itemLabel="selecciona"/>   
+                <f:selectItems value="#{cargaElectivaB.turnoL}" var="turno" itemValue="#{turno.turno}" itemLabel="#{turno.descripcion}" />
+                <f:ajax execute="@this" render="cbSeccion tbCargaElectiva" listener="#{cargaElectivaB.mostrarSeccion}" />
+            </h:selectOneMenu>         
+            <h:outputLabel value="SECCION" />
+            <h:selectOneMenu id="cbSeccion" value="#{cargaElectivaB.codSeccion}" >
+                <f:selectItem itemLabel="selecciona"/>
+                <f:selectItems value="#{cargaElectivaB.seccionL}" var="itemSeccion" itemValue="#{itemSeccion.seccion}" itemLabel="#{itemSeccion.descripcion}"/>
+                <f:ajax execute="@this" render=" btHorarioSeccion tbCargaElectiva"  listener="#{cargaElectivaB.mostrarDetalleCarga}" onevent="onevent"   />
+            </h:selectOneMenu>
+
+            <br/>
+        
+             </div>
+             <p:dataTable id="tbCargaElectiva" value="#{cargaElectivaB.cargaElectivaPersonalL}" var="itemCargaElectivaPersonal" rowIndexVar="status" >
+             	<f:facet name="header">
+             		Grupo:
+             		<h:outputLabel value="#{cargaElectivaB.vencimiento.descripcion}" />
+             		<br />
+             		Fechas :
+             		<h:outputLabel value="#{cargaElectivaB.seccionPeriodo.fechaInicio}  #{cargaElectivaB.seccionPeriodo.fechaFin}" />
+             		
+             	
+             	</f:facet>
+             
+             
+             	<p:column headerText="Nr." width="10">
+             		#{status +1 } 
+             	</p:column>
+             	
+             	<p:column headerText="CURSO" >
+             	<span class="column" style="width: 20px;height: 20px;background-color: #{itemCargaElectivaPersonal.cursoSeccion.estadoRegistro eq 1 ?'blue':'red'}" />
+             	<div class="column">
+             		#{itemCargaElectivaPersonal.horMallaCurricularCursoAct.itemCurso.curso}
+             		<br /> 
+             		#{itemCargaElectivaPersonal.horMallaCurricularCursoAct.itemCurso.descripcion}
+             		<br />
+             		SECUNDARIO #{itemCargaElectivaPersonal.cursoSeccionSecundario.estadoRegistro}
+             	</div>
+             		
+             	</p:column>
+             	
+             	<p:column headerText="CREDITO" width="50" style="text-align: center">
+             		<b style="font-size:  2.0em">#{itemCargaElectivaPersonal.horMallaCurricularCursoAct.creditos}    </b>      	
+             	</p:column>
+             	
+             	<p:column headerText="HORA TEORIA" width="50" style="text-align: center">
+             		<b style="font-size:  2.0em">#{itemCargaElectivaPersonal.horMallaCurricularCursoAct.horasTeoria} </b>
+             	</p:column>
+             	
+             	<p:column headerText="HORA PRACTICA" width="50" style="text-align: center">
+             		<b style="font-size:  2.0em">#{itemCargaElectivaPersonal.horMallaCurricularCursoAct.horasPracticas} </b>
+             	</p:column>
+             	
+             	
+             	<p:column headerText="PERSONA" width="400" >
+             		<h:panelGroup layout="block" rendered="#{itemCargaElectivaPersonal.cursoSeccionDocente.personal ne null}" >
+             		<h:commandLink>
+             		<h:graphicImage styleClass="column" value="SVerImagenAlumno?alumno=#{itemCargaElectivaPersonal.persona.persona}"  style="width:60px;height:60px;border: 1px solid silver" />
+             			<f:ajax execute="@this" render=":frmDatos" listener="#{cargaElectivaB.seleccionImagen(itemCargaElectivaPersonal)}" />
+             		</h:commandLink>
+             		
+             		<div class="column">
+	             		#{itemCargaElectivaPersonal.cursoSeccionDocente.personal} 
+	             		<br />
+	             		#{itemCargaElectivaPersonal.persona.paterno}  #{itemCargaElectivaPersonal.persona.materno}  #{itemCargaElectivaPersonal.persona.nombres} 
+	             		<br />
+	             		#{itemCargaElectivaPersonal.persona.emailP}   
+	             		<br />
+	             		CONTRATADO:  <b style="color:#{itemCargaElectivaPersonal.cursoSeccionDocente.estadoRegistro eq 59?'red':'green'}">  #{itemCargaElectivaPersonal.cursoSeccionDocente.estadoRegistro eq 59?'NO':'SI'}</b>
+             		</div>
+             		
+             		
+             		</h:panelGroup>
+             		
+             	
+             		 
+             	</p:column>
+             	<p:column   width="100" >
+             	<h:panelGroup layout="block" rendered="#{itemCargaElectivaPersonal.cursoSeccion.estadoRegistro eq 1 }" >
+             		<h:commandLink styleClass="boton-normal" title="INSERTAR DOCENTE" disabled="#{itemCargaElectivaPersonal.cursoSeccionDocente ne null}">
+	             	<i class="fa fa-plus" style=";color: green" />
+	             	<f:ajax  execute="@this" render="tbCargaElectiva" listener="#{cargaElectivaB.insertarCursoSeccionDocente(itemCargaElectivaPersonal.horMallaCurricularCursoAct)}" />
+	             	</h:commandLink>
+	             	
+	             	<h:commandLink  styleClass="boton-normal"  title="Horario"  disabled="#{itemCargaElectivaPersonal.cursoSeccionSecundario.estadoRegistro eq 1?true: itemCargaElectivaPersonal.cursoSeccionDocente eq null}"    >
+                            <i class="fa fa-clock-o" style="color: white" />
+                            <f:ajax execute="@this" render=":frmDatos:imgfotoTM    :frmDatos:lblDesPersonaTM :frmDatos:txtCarreraTM  :frmDatos:txtCursoTM :frmDatos:txtSeccionTM  :frmDatos:cbTipoHora  :frmDatos:txtFechaIni :frmDatos:txtFechaFin :frmDatos:txtAula :frmDatos:txtHoraInicio :frmDatos:txtHoraFin :frmDatos:tbCargaHorario :frmDatos:btNuevo :frmDatos:btEditar :frmDatos:btIngresar :frmDatos:btCancelar" resetValues="true"  listener="#{cargaElectivaB.mostrarRegistroPersonalHorario(itemCargaElectivaPersonal)}" />
+                    </h:commandLink>
+             	
+             		<h:commandLink styleClass="boton-normal"  title="Eliminar"  disabled="#{itemCargaElectivaPersonal.cursoSeccionDocente.estadoRegistro ne 59}" onclick="return confirmacion(this,'¿ Al eliminar el registro tambien se cambiaran los registro programados a la fecha de hoy esta seguro?');"  >             
+                            <i class="fa fa-times" style="color: red" />
+                            <f:ajax execute="@this" render="tbCargaElectiva" listener="#{cargaElectivaB.eliminarCursoDocente(itemCargaElectivaPersonal)}" />
+                    </h:commandLink>
+             	
+             	
+             	</h:panelGroup>
+	             	
+             	</p:column>
+             	
+             </p:dataTable>
+             
+             
+             
+             
+             
+              <p:dialog widgetVar="dlgModal" width="600"     header="..: BUSQUEDA DE PERSONAL :.."  closeOnEscape="true" modal="true" resizable="false">
+           <div class="paneles">
+         
+           <h:outputLabel for="txtPaternoB" value="PATERNO" />
+                <h:inputText id="txtPaternoB" value="#{cargaElectivaB.paterno}" >
+                    <f:ajax execute="@this txtMaternoB txtNombresB" render="tbBusqueda" listener="#{cargaElectivaB.filtroPersonaDocente}" />
+                </h:inputText><br/>
+                
+                <h:outputLabel for="txtMaternoB" value="MATERNO" />
+                <h:inputText id="txtMaternoB" value="#{cargaElectivaB.materno}" >
+                    <f:ajax execute="@this txtPaternoB txtNombresB" render="tbBusqueda" listener="#{cargaElectivaB.filtroPersonaDocente}" />
+                </h:inputText><br/>
+                <h:outputLabel for="txtNombresB" value="NOMBRES" />
+                
+                <h:inputText id="txtNombresB" value="#{cargaElectivaB.nombres}" >
+                    <f:ajax execute="@this txtPaternoB txtNombresB " render="tbBusqueda"  listener="#{cargaElectivaB.filtroPersonaDocente}" />
+                </h:inputText>
+           
+           </div>
+                <p:dataTable id="tbBusqueda"  value="#{cargaElectivaB.personaL}" var="detalle" selection="#{cargaElectivaB.persona}" selectionMode="single" scrollable="true" scrollHeight="300" rowKey="#{detalle.persona}" emptyMessage="No hay resultados"   rowIndexVar="status"  >
+                    <p:ajax event="rowSelect"     />
+                    <p:ajax event="rowDblselect"   update="imgFoto txtNombres txtPaterno txtMaterno txtCorreo txtTelefono txtCelular btHorarioPersonal  lblCantidad pnHoraA pnHoraB" listener="#{cargaElectivaB.selectPersona}"  /> 
+                    <p:column headerText="Nro"  width="10"  >
+                        #{status+1}
+                    </p:column>
+                    <p:column headerText="PERSONAL"  width="320"  >
+                        #{detalle.nombreCompletos()}
+                    </p:column>
+                </p:dataTable>
+              
+           
+              <f:facet name="footer">
+              
+                            <h:commandLink styleClass="boton-normal" >
+                            Aceptar
+                            <f:ajax execute="@this" render="imgFoto txtNombres txtPaterno txtMaterno txtCorreo txtTelefono txtCelular btHorarioPersonal  lblCantidad pnHoraA pnHoraB" listener="#{cargaElectivaB.selectPersona}" />
+                        </h:commandLink>
+              
+              
+                        
+                            <h:commandLink  styleClass="boton-rojo" onclick="dlgModal.hide()">
+                            Salir
+                            <f:ajax execute="@this" />
+                        </h:commandLink>
+                        
+                        
+              </f:facet>
+        </p:dialog>
+             
+             <p:dialog id="dlgHorario"  widgetVar="dlgHorario" header="..: MANTENIMIENTO HORARIO :.." width="750" modal="true"    resizable="false"  closeOnEscape="true"   > 
+            
+                <div class="paneles">
+                    <div class="column" style="width: 80px;height:80px;   ">                         
+                        <h:graphicImage id="imgfotoTM" value="SVerImagenAlumno?alumno=#{cargaElectivaB.cargaElectivaPersonal.persona.persona}"  style="width:100%; height:100%" />
+                         
+                    </div>
+
+                    <div class="column" >
+                        
+                       
+                        <h:outputLabel value="NOMBRES" />
+						<h:outputText id="lblDesPersonaTM" value="#{cargaElectivaB.cargaElectivaPersonal.persona.nombreCompletos()}" />
+                        <br />
+                        <h:outputLabel value="CARRERA" />
+                        <h:outputText id="txtCarreraTM" value="#{cargaElectivaB.cursoSeccionDocente.itemCarrera.descripcion}" />
+                        <br />
+                        <h:outputLabel value="CURSO" />                    
+                        <h:outputText id="txtCursoTM" value="#{cargaElectivaB.cursoSeccionDocente.itemCurso.descripcion}" />
+
+                        <br />
+
+                        <h:outputLabel value="SECCION" />   
+                        <h:outputText  id="txtSeccionTM"  value="#{cargaElectivaB.cursoSeccionDocente.itemSeccion.descripcion}" /> 
+                    </div>
+                </div>
+                
+                <div class="paneles" >
+                <div>
+                	<div class="column" style="width: 90%;">
+		                	 <h:outputLabel value="Fecha Inicio"  />
+		                    <p:calendar  id="txtFechaIni"  value="#{cargaElectivaB.registrotm.fecha_inicio}" pattern="dd-MM-yyyy" disabled="#{cargaElectivaB.bandera}" required="true" mindate="#{cargaElectivaB.seccionPeriodo.fechaInicio}" mask="true" navigator="true" maxdate="#{cargaElectivaB.seccionPeriodo.fechaFin}" size="10" >
+		                        <p:ajax event="dateSelect"  update="txtFechaFin " />
+		                    </p:calendar>
+		                    <br />
+		                    <h:outputLabel value="Fecha Fin" />
+		                    <p:calendar id="txtFechaFin" value="#{cargaElectivaB.registrotm.fecha_fin}" pattern="dd-MM-yyyy" mindate="#{cargaElectivaB.registrotm.fecha_inicio}" maxdate="#{cargaElectivaB.seccionPeriodo.fechaFin}" mask="true" navigator="true" disabled="#{cargaElectivaB.bandera}" required="true" size="10" >
+		                    	<p:ajax event="dateSelect" />
+		                    </p:calendar>
+		                    <br />
+		                       <h:outputLabel value="Tipo Hora" />      
+		                    <h:selectOneMenu id="cbTipoHora" value="#{cargaElectivaB.registrotm.tipoHora}" required="true" disabled="#{cargaElectivaB.bandera}">
+		                        <f:selectItem itemLabel="--Selecciona--" />
+		                        <f:selectItems value="#{cargaElectivaB.tipoHoraL}" var="tipoHora" itemLabel="#{tipoHora.descripcion} - #{tipoHora.duracion}" itemValue="#{tipoHora.tipoHora}" />
+		                        <f:ajax execute="@this" render="brTiempo " />
+		                    </h:selectOneMenu>
+                	</div>
+                	<div class="column" style="text-align: center;">
+                	 
+                    
+		                    <h:commandLink  id="txtAula" title="Mostrar aulas"  disabled="#{cargaElectivaB.bandera}"    >
+		                    	<i class="fa fa-building-o" style="font-size: 3.5em" />
+		                    	<br />
+		                    	<b>#{cargaElectivaB.registrotm.aula eq null ?'Vacio':cargaElectivaB.registrotm.aula}</b>
+		                        <f:ajax execute="@this  txtFechaIni txtFechaFin txtHoraInicio txtHoraFin" render=":frmAulas txtFechaIni txtFechaFin txtHoraInicio txtHoraFin" listener="#{cargaElectivaB.mostrarAula}" />
+		                    </h:commandLink>
+                	</div>
+                
+                </div>
+                   
+                   
+
+                    <div style="border: 1px solid silver;height: 60px;padding: 10px 0px  5px;margin: 10px 0px;">
+                        <div class="column" style="width: 14%;height: 100%;text-align: center;">
+                            <h:outputLabel value="INICIO" /><br/>
+
+                            <p:calendar id="txtHoraInicio" value="#{cargaElectivaB.registrotm.hora_inicio}" required="true" pattern="HH:mm" timeOnly="true" showButtonPanel="true" disabled="#{cargaElectivaB.bandera}" mask="true"  size="2" minHour="6"   stepMinute="5" >
+                                <p:ajax event="dateSelect"   update="txtHoraFin"   />
+                            </p:calendar>
+                        </div>
+                        <div class="column" style="width: 70%;height: 100%">
+                            <h:inputText id="txt1"  value="#{cargaElectivaB.minutos}" style="width: 100%;text-align: center;border: none" />                    
+                            <p:slider id="brTiempo" for="txt1"  step="#{tipoHoraB.mostrarTipoHora(cargaElectivaB.registrotm.tipoHora).duracion}" maxValue="1000"  disabled="#{cargaElectivaB.bandera}"  >
+                                <p:ajax event="slideEnd" listener="#{cargaElectivaB.onSlideEnd}" update="txtHoraFin" />
+                            </p:slider>
+                        </div>
+                        <div class="column" style="width: 14%;height: 100%;text-align: center;">
+
+                            <h:outputLabel value="FINAL" /><br/>
+                            <p:calendar id="txtHoraFin" value="#{cargaElectivaB.registrotm.hora_fin}"  required="true"  pattern="HH:mm" timeOnly="true" showButtonPanel="true" disabled="#{cargaElectivaB.bandera}" mask="true"  size="2" minHour="#{cargaElectivaB.registrotm.hora_inicio.hours}"   stepMinute="5" />                            
+                          
+                        </div>
+                    </div>
+                    
+                </div>
+               
+                <p:dataTable id="tbCargaHorario" value="#{cargaElectivaB.registrotmL}" var="detalleH" rowIndexVar="status" scrollable="true" scrollHeight="100" selection="#{cargaElectivaB.registrotm}" selectionMode="single" rowKey="#{detalleH.id}" disabledSelection="#{not cargaElectivaB.bandera}" emptyMessage="" >
+                    <p:ajax event="rowSelect"  update="cbTipoHora  txtFechaIni txtFechaFin txtHoraInicio txtHoraFin txtAula btEditar" />
+                    <p:column headerText="N" width="10" >
+                        #{status +1 }
+                    </p:column>
+ 					<p:column headerText="Dia" width="80"  >                        
+                        #{utilB.listaDiasSemanaNormal[detalleH.dia -1 ]}
+                    </p:column>
+                    <p:column headerText="Fecha"   >
+                   	 #{detalleH.fecha_inicio.toString().concat(' | ').concat(detalleH.fecha_fin.toString())}
+                    </p:column>
+                    <p:column headerText="Hora"  width="80" >                        
+                        #{utilB.convertTimes(detalleH.hora_inicio)} | #{utilB.convertTimes(detalleH.hora_fin)}
+                    </p:column>
+                              
+                    <p:column headerText="Horas" width="40" >                        
+                        
+                        #{detalleH.totalHora()}
+                    </p:column>
+                    <p:column headerText="Turno" width="50"   >
+                        #{detalleH.itemTurno.descripcion}
+                    </p:column>
+                   
+
+                    <p:column headerText="Aula" width="50"  >
+                        #{detalleH.aula}
+                    </p:column>
+                    
+
+                    <p:column width="10" >                       
+                        <h:commandLink title="eliminar"  onclick="return confirmacion(this,'¿ Esta seguro eliminar ?');"  >
+                        	<i class="fa fa-times" style="color:red" />
+                            <f:ajax execute="@this" render="tbCargaHorario" listener="#{cargaElectivaB.eliminarCargaHoraria(detalleH)}" />
+                        </h:commandLink>
+                    </p:column>
+                    <p:column width="10" >                       
+                        <h:commandLink title="Bajar"  onclick="dlgBaja.show()"  >
+                        	<i class="fa fa-hand-paper-o" />
+                            <f:ajax execute="@this"  />
+                        </h:commandLink>
+                    </p:column>
+                </p:dataTable>
+                 
+                <f:facet name="footer">
+            
+                
+                
+       
+                    <h:commandLink styleClass="boton-normal"  id="btNuevo" disabled="#{not cargaElectivaB.bandera}"  >
+                        <i class="fa fa-file-text-o" />
+                        nuevo
+                        <f:ajax execute="@this" render="cbTipoHora  txtFechaIni txtFechaFin txtHoraInicio txtHoraFin txtAula tbCargaHorario btNuevo btEditar  btIngresar btCancelar   " listener="#{cargaElectivaB.nuevo}"  />
+                    </h:commandLink>
+                    <h:commandLink styleClass="boton-normal"  id="btEditar"  disabled="#{cargaElectivaB.registrotm eq null ?true:not cargaElectivaB.bandera}" >
+                        <i class="fa fa-pencil" /> 
+                        editar
+                        <f:ajax render="cbTipoHora  txtFechaIni txtFechaFin txtHoraInicio txtHoraFin txtAula tbCargaHorario btNuevo btEditar  btIngresar btCancelar  " listener="#{cargaElectivaB.editar}" />
+                    </h:commandLink>
+                    <h:commandLink styleClass="boton-normal"  id="btIngresar" disabled="#{cargaElectivaB.bandera}" >
+                        <i class="fa fa-floppy-o"/>
+                        ingresar
+                        <f:ajax execute="cbTipoHora  txtFechaIni txtFechaFin txtHoraInicio txtHoraFin txtAula" render="cbTipoHora  txtFechaIni txtFechaFin txtHoraInicio txtHoraFin txtAula tbCargaHorario btNuevo btEditar  btIngresar btCancelar  " listener="#{cargaElectivaB.ingresarCargaHoraria}"  />
+                    </h:commandLink>
+                    <h:commandLink styleClass="boton-normal"  id="btCancelar" disabled="#{cargaElectivaB.bandera}" >
+                        <i class="fa fa-reply" />
+                        cancelar
+                        <f:ajax render="cbTipoHora  txtFechaIni txtFechaFin txtHoraInicio txtHoraFin txtAula tbCargaHorario btNuevo btEditar  btIngresar btCancelar  " listener="#{cargaElectivaB.cancelarTM}" resetValues="true" />
+                    </h:commandLink>
+                   
+              </f:facet>
+        </p:dialog>
+             
+             
+             
+             
+             
+        </h:form>      
+
+
+
+ 
+ <h:form id="frmBaja" prependId="false" >
+	  <p:dialog widgetVar="dlgBaja" header="Baja de Horario" modal="true" resizable="false" closeOnEscape="true" >
+		 <h:outputLabel value="fecha Baja" />
+		 <p:calendar  pattern="dd-MM-yyyy" />
+		 <br />
+		 <h:outputLabel value="Descripcion" />
+		  <br />
+		 <h:inputTextarea />
+		 <f:facet name="footer">
+			 <h:commandLink styleClass="boton-normal" >
+			 	Aceptar
+			 <f:ajax execute="@this" />
+			 </h:commandLink>
+		 
+		 </f:facet>  
+	 </p:dialog>
+ </h:form>
+
+ 
+ 
+ 
+ 
+ 
+ 
+       
+        
+        
+        
+        
+
+
+  <h:form id="frmAulas" prependId="false">
+        <p:dialog widgetVar="dlgAulas" header="..: REGISTRO DE AULA :.."  width="800" modal="true" closeOnEscape="true"  resizable="false" >
+          
+				<div class="paneles">
+					
+					<h:outputLabel  value="SECCION:" />
+					<b>#{cargaElectivaB.cursoSeccion.seccion} </b>
+
+					 
+					<h:outputLabel value="MATRICULADOS:" />
+					<b>#{cargaElectivaB.cursoSeccion.vacantesActuales}</b>
+					
+					
+					<div class="paneles" >
+						<h:outputLabel  >
+						AULA LIBRE
+						</h:outputLabel>
+						
+						<h:outputLabel  >
+						<i class="fa fa-ban" />
+						AULA OCUPADA
+						</h:outputLabel>
+						
+						<h:outputLabel  >
+						AULA RECOMENDADA
+						</h:outputLabel>
+					
+					
+					</div>
+				</div>
+				
+				<div class="paneles" style="height: 400px;overflow: auto;" >
+				<h:panelGroup  layout="block" id="pnAula" > 			
+						<ui:repeat  value="#{cargaElectivaB.aulaL}" var="itemAula">
+						<div class="ficha-aula paneles column #{itemAula.estadoRegistro eq 1?'aula-ocupada':'aula-libre'} #{cargaElectivaB.aula eq itemAula?'aula-select':''}" >
+							<h:commandLink disabled="#{itemAula.estadoRegistro eq 1}">
+									<span >#{itemAula.descripcion}</span>							 
+		                            <br/>
+		                            <b>#{itemAula.capacidad} </b>
+		                                 
+							<f:ajax execute="@this" render=":frmAulas:pnAula :frmAulas:btAceptarA :frmAulas:btHorarioA" listener="#{cargaElectivaB.seleccionAula(itemAula)}" />
+							</h:commandLink>
+						</div>
+						
+						</ui:repeat>
+					</h:panelGroup>
+				</div>
+             <f:facet name="footer">
+                        <div style="display: block;text-align: right">
+                        
+                        <h:commandLink id="btHorarioA" styleClass="boton-verde" disabled="#{cargaElectivaB.aula eq null}" >
+                            HORARIO
+                            <f:ajax execute="@this" render=":frmHorarioAula:pnHorarioAulaCabecera :frmHorarioAula:pnHorarioAulaCuerpo" listener="#{cargaElectivaB.mostrarHorarioAula}"   />
+                        </h:commandLink>
+                        
+                        <h:commandLink id="btAceptarA" styleClass="boton-verde" disabled="#{cargaElectivaB.aula eq null}" >
+                            ACEPTAR
+                            <f:ajax execute="@this" render="txtAula"  listener="#{cargaElectivaB.ingresarAula}"  />
+                        </h:commandLink>
+                        
+                        
+                            <h:commandLink styleClass="boton-rojo" onclick="dlgAulas.hide()">
+                            CANCELAR
+                            <f:ajax execute="@this" />
+                        </h:commandLink>
+                        </div>
+                            </f:facet>
+        </p:dialog>
+
+</h:form>
+
+
+
+
+
+        <p:dialog widgetVar="dlgCargaElectiva" width="900" height="650" header="CARGA PROYECTADA" modal="true">
+            <h:form id="frmDetalleCargaElectiva">
+                <p:dataTable id="tbCargaProyectada" value="#{cargaElectivaB.detalleCargaElectivaL}" var="detalleCE" rowIndexVar="status" emptyMessage="">
+                    <p:column headerText="" >                                       
+                        <span style="display: block;width: 20px;height: 20px;background-color: #{detalleCE.estadoRegistro eq 1?'blue':detalleCE.estadoRegistro eq 2?'red':'green'}" />
+                    </p:column>
+                    <p:column headerText="N">
+                        #{status + 1}
+                    </p:column>
+                    <p:column headerText="FECHA">
+                        #{detalleCE.fecha}
+                    </p:column>
+                    <p:column headerText="DIA">
+                        #{utilB.listaDiasSemanaNormal[detalleCE.dia-1]}
+                    </p:column>
+                    <p:column headerText="HORA INICIO">
+                        #{detalleCE.hora_inicio}
+                    </p:column>
+                    <p:column headerText="HORA FIN">
+                        #{detalleCE.hora_fin}
+                    </p:column>
+                    <p:column headerText="GRUPO">
+                        #{detalleCE.grupo}
+                    </p:column>
+                    <p:column headerText="SEMANA">
+                        #{detalleCE.semana}
+                    </p:column>
+                    <p:column headerText="DESCRIPCION">
+                        #{detalleCE.descripcion}
+                    </p:column>
+                </p:dataTable>
+            </h:form>
+        </p:dialog>
+
+      
+
+
+
+
+<h:form id="frmHorarioAula" prependId="false">
+
+
+
+
+
+        <p:dialog widgetVar="dlgHorarioAula" header="..: HORARIO DE AULA :.." width="1500"   modal="true" resizable="false" closeOnEscape="true">
+            <div  class="paneles" >
+     			<h:commandLink   class="boton-normal" title="ANTERIOR">
+                    <i class="fa fa-chevron-left"/>
+                    Anterior
+                    <f:ajax execute="@this" render="pnHorarioAulaCabecera pnHorarioAulaCuerpo"  listener="#{cargaElectivaB.anteriorA}" />
+                </h:commandLink>
+                
+                <h:commandLink   class="boton-normal" title="SIGUIENTE">
+                    <i class="fa fa-chevron-right"/>
+                    Siguiente
+                    <f:ajax execute="@this" render="pnHorarioAulaCabecera pnHorarioAulaCuerpo" listener="#{cargaElectivaB.siguienteA}" />
+                </h:commandLink>
+      </div>
+      <div class="paneles" >
+      
+      
+      <h:panelGroup layout="block" id="pnHorarioAulaCabecera"  >      
+				       <div class="cabecera-dia"   >
+				        <div  ><i class="fa fa-clock-o" style="font-size: 1.7em;"/></div>
+      				  		<ui:repeat value="#{cargaElectivaB.horarioCabeceraL}" var="dia"  varStatus="index">    
+	                   
+	                        <div   class="#{dia.feriadosL.size() eq 0?'':'FERIADO'}" >                          
+	                        <span style="display: block;">#{utilB.listaDiasSemana[dia.dia]}</span>
+	                        <span style="display: block;"><h:outputLabel value="#{dia.fecha}" >  <f:convertDateTime  pattern="dd/MM/yyyy" /> </h:outputLabel>  </span>                    
+	                       
+	                    	</div>
+	                  
+         			</ui:repeat>
+        			</div>
+        </h:panelGroup>
+        			
+       <div style="width: 100%;height: 520px;overflow-x:auto ">	
+        		
+        	<h:panelGroup layout="block" id="pnHorarioAulaCuerpo" style="display:block;"  >   
+        	
+        		
+      			<ul class="hora" >
+                   
+                        <li ><div class="hora-padre"><div class="hora-hijo">8:00</div></div></li>
+                        <li ><div class="hora-padre"><div class="hora-hijo">9:00</div></div></li>
+                        <li ><div class="hora-padre"><div class="hora-hijo">10:00</div></div></li>
+                        <li><div class="hora-padre"><div class="hora-hijo">11:00</div></div></li>
+                        <li ><div class="hora-padre"><div class="hora-hijo">12:00</div></div></li>
+                        <li ><div class="hora-padre"><div class="hora-hijo">13:00</div></div></li>
+                        <li ><div class="hora-padre"><div class="hora-hijo">14:00</div></div></li>
+                        <li ><div class="hora-padre"><div class="hora-hijo">15:00</div></div></li>
+                        <li ><div class="hora-padre"><div class="hora-hijo">16:00</div></div></li>
+                        <li ><div class="hora-padre"><div class="hora-hijo">17:00</div></div></li>
+                        <li ><div class="hora-padre"><div class="hora-hijo">18:00</div></div></li>
+                        <li ><div class="hora-padre"><div class="hora-hijo">19:00</div></div></li>
+                        <li ><div class="hora-padre"><div class="hora-hijo">20:00</div></div></li>
+                        <li ><div class="hora-padre"><div class="hora-hijo">21:00</div></div></li>
+                        <li ><div class="hora-padre"><div class="hora-hijo">22:00</div></div></li>
+      			</ul>
+                
+		                 <ui:repeat value="#{cargaElectivaB.horarioCabeceraL}" var="dia"  varStatus="index">    
+		                    <div class="dia" >
+		                        
+		                   
+		                  	<ui:repeat value="#{dia.horarioCuerpoL}" var="horario">
+		                      <div style="height: #{horario.alto}px;top: #{horario.top}px;" class="celda #{horario.desTipoClase}" data-curso="#{horario.curso}" title="#{horario.desTipoClase}"  >
+		                            <div  style="display: table;height: 100%;width: 100%;z-index: 1">
+		                                <div  style="display: table-cell;vertical-align: middle">
+		                                    <span style="color: #008000">#{horario.desCarrera}</span>
+		                                    <span ><b>#{horario.desCurso}</b> </span>
+		                                    <span>#{horario.desPersona}</span>
+		
+		                                    <span style="color: red">  #{utilB.convertTimes(horario.horaInicio)} - #{utilB.convertTimes(horario.horaFinal)}</span>
+		                                    <span>#{horario.seccion}</span>
+		                                </div>                                
+		                            </div>
+		                        </div>
+		                        
+		                    </ui:repeat> 
+		                   
+		                  </div>
+		                </ui:repeat>
+                </h:panelGroup>	
+                </div>
+               
+      
+    		
+			 </div>
+			 <f:facet name="footer">
+                        <div style="display: block;text-align: right">
+                            <h:commandLink onclick="dlgHorarioAula.hide()">
+                            SALIR
+                            <f:ajax execute="@this" />
+                        </h:commandLink>
+                        </div>
+                        
+              </f:facet>      
+
+        </p:dialog>
+
+</h:form>
+ 
+   <h:form id="frmHorarioSeccion" prependId="false" >
+        <p:dialog widgetVar="dlgHorarioSeccion" header="..: HORARIO DE SECCION :.." width="80%"   modal="true" resizable="true" closeOnEscape="true" >
+        
+        	<div  class="paneles" >
+        
+        	Semanas  
+        	<h:selectOneRadio id="rbSemana" value="#{cargaElectivaB.fechaInicio}" >
+        		<f:convertDateTime pattern="dd-MM-yyyy" />
+	        	<f:selectItems value="#{cargaElectivaB.semanaL}" var="itemSemana" itemValue="#{utilB.convertDate(itemSemana.fecha,'dd-MM-yyyy')}" itemLabel="&lt;b title='#{utilB.convertDate(itemSemana.fecha,'dd-MM-yyyy')}' >#{itemSemana.semana} &lt;/b>" itemLabelEscaped="false"/>
+	        	<f:ajax  execute="@this"  render="pnHorarioSeccionCabecera pnHorarioSeccionCuerpo lblCronogramaAcademico lblSemana"  listener="#{cargaElectivaB.mostrarHorarioSeccion}" />
+        	</h:selectOneRadio>        	
+        	
+        	
+        	
+        	
+   			</div>
+        
+   			<div  class="paneles" >
+   				
+   			<div class="column">
+   			<h:commandLink   class="boton-normal" title="ANTERIOR">
+                    <i class="fa fa-chevron-left"/>
+                   
+                    <f:ajax execute="@this" render="pnHorarioSeccionCabecera pnHorarioSeccionCuerpo lblCronogramaAcademico lblSemana rbSemana"  listener="#{cargaElectivaB.anteriorS}" />
+                </h:commandLink>
+                
+                <h:commandLink   class="boton-normal" title="SIGUIENTE">
+                    <i class="fa fa-chevron-right"/>
+                    
+                    <f:ajax execute="@this" render="pnHorarioSeccionCabecera pnHorarioSeccionCuerpo lblCronogramaAcademico lblSemana rbSemana" listener="#{cargaElectivaB.siguienteS}" />
+                </h:commandLink>
+   			</div>
+     			
+                <div class="column">
+                <h:outputLabel id="lblCronogramaAcademico" value="#{cargaElectivaB.cronogramaAcademico.descripcion}" /><br />
+                <h:outputLabel id="lblSemana" value="#{cargaElectivaB.cronogramaAcademico.semana}" />
+                </div>
+                
+      		</div>
+      <div class="paneles" id="horario-seccion" >
+      
+      
+      <h:panelGroup layout="block" id="pnHorarioSeccionCabecera"  >      
+				       <div class="cabecera-dia"  >
+				        <div  ><i class="fa fa-clock-o" style="font-size: 1.7em;"/></div>
+      				  		<ui:repeat value="#{cargaElectivaB.horarioCabeceraL}" var="dia"  varStatus="index">    
+	                   
+	                        <div   class="#{dia.feriadosL.size() eq 0?'':'FERIADO'}" >                          
+	                        <span style="display: block;">#{utilB.listaDiasSemana[dia.dia]}</span>
+	                        <span style="display: block;"><h:outputLabel value="#{dia.fecha}" >  <f:convertDateTime  pattern="dd/MM/yyyy" /> </h:outputLabel>  </span>                    
+	                       
+	                    	</div>
+	                  
+         			</ui:repeat>
+        			</div>
+        </h:panelGroup>
+        			
+       <div class="cuerpo" >	
+        		
+        	<h:panelGroup layout="block" id="pnHorarioSeccionCuerpo" style="display:block;"  >  
+      			<ul class="cuerpo-hora" >
+                        <li ><div class="hora-padre"><div class="hora-hijo">8:00</div></div></li>
+                        <li ><div class="hora-padre"><div class="hora-hijo">9:00</div></div></li>
+                        <li ><div class="hora-padre"><div class="hora-hijo">10:00</div></div></li>
+                        <li ><div class="hora-padre"><div class="hora-hijo">11:00</div></div></li>
+                        <li ><div class="hora-padre"><div class="hora-hijo">12:00</div></div></li>
+                        <li ><div class="hora-padre"><div class="hora-hijo">13:00</div></div></li>
+                        <li ><div class="hora-padre"><div class="hora-hijo">14:00</div></div></li>
+                        <li ><div class="hora-padre"><div class="hora-hijo">15:00</div></div></li>
+                        <li ><div class="hora-padre"><div class="hora-hijo">16:00</div></div></li>
+                        <li ><div class="hora-padre"><div class="hora-hijo">17:00</div></div></li>
+                        <li ><div class="hora-padre"><div class="hora-hijo">18:00</div></div></li>
+                        <li ><div class="hora-padre"><div class="hora-hijo">19:00</div></div></li>
+                        <li ><div class="hora-padre"><div class="hora-hijo">20:00</div></div></li>
+                        <li ><div class="hora-padre"><div class="hora-hijo">21:00</div></div></li>
+                        <li ><div class="hora-padre"><div class="hora-hijo">22:00</div></div></li>
+      			</ul>
+                
+		                 <ui:repeat value="#{cargaElectivaB.horarioCabeceraL}" var="dia"  varStatus="index">    
+		                    <div class="cuerpo-dia" >
+		                        
+		                   
+		                  	<ui:repeat value="#{dia.horarioCuerpoL}" var="horario">
+		                      <div style="height: #{horario.alto}px;top: #{horario.top}px;" class="celda #{horario.desTipoClase}" data-curso="#{horario.curso}" title="#{horario.desTipoClase}"  >
+		                            <div  style="display: table;height: 100%;width: 100%;z-index: 1">
+		                                <div  style="display: table-cell;vertical-align: middle">
+		                                    <span style="color: green">#{horario.desCarrera}</span>
+		                                    <span ><b>#{horario.desCurso}</b> </span>
+		                                    <span>#{horario.desPersona}</span>
+		
+		                                    <span style="color: red">  #{utilB.convertTimes(horario.horaInicio)} - #{utilB.convertTimes(horario.horaFinal)}</span>
+		                                    <span>#{horario.aula}</span>
+		                                </div>                                
+		                            </div>
+		                        </div>
+		                        
+		                    </ui:repeat> 
+		                   
+		                  </div>
+		                </ui:repeat>
+                </h:panelGroup>	
+                </div>
+               
+      
+    		
+			 </div>
+			 <f:facet name="footer">
+                        <div style="display: block;text-align: right">
+                           <h:commandLink styleClass="boton-normal" onclick="crearImagen('horario-seccion')" >
+                        <i class="fa fa-print" />
+                            imagen
+                            <f:ajax execute="@this" />
+                        </h:commandLink>
+                        
+                        <h:commandLink styleClass="boton-normal" onclick="printDiv('horario-seccion');" >
+                        <i class="fa fa-print" />
+                            Imprimir
+                            <f:ajax execute="@this" />
+                        </h:commandLink>
+                        
+                        
+                        
+                        <h:commandLink styleClass="boton-rojo" onclick="dlgHorarioSeccion.hide()">
+                            Salir
+                            <f:ajax execute="@this" />
+                        </h:commandLink>
+                        </div>
+                        
+              </f:facet>      
+               
+      
+        </p:dialog>
+   </h:form>
+              
+              
+              
+              
+              
+        <h:form  id="frmHorarioPersonalDocente" prependId="false" >
+        
+        
+      <p:dialog header="..: HORARIO PERSONAL DOCENTE :.." width="80%"   widgetVar="dlHorarioPersonal" modal="true" closeOnEscape="true" resizable="false" maximizable="true" >
+      <div  class="paneles" >
+     <h:commandLink   class="boton-normal" title="ANTERIOR">
+                    <i class="fa fa-chevron-left"/>
+                    Anterior
+                    <f:ajax execute="@this" render="pnHorarioDocenteCabecera pnHorarioDocenteCuerpo"  listener="#{cargaElectivaB.anteriorP}" />
+                </h:commandLink>
+                
+                <h:commandLink   class="boton-normal" title="SIGUIENTE">
+                    <i class="fa fa-chevron-right"/>
+                    Siguiente
+                    <f:ajax execute="@this" render="pnHorarioDocenteCabecera pnHorarioDocenteCuerpo" listener="#{cargaElectivaB.siguienteP}" />
+                </h:commandLink>
+      </div>
+      <div id="horario-personal-docente" class="paneles" >
+      
+      
+      
+      <h:panelGroup layout="block" id="pnHorarioDocenteCabecera"  >      
+				       <div class="cabecera-dia"   >
+				        <div  ><i class="fa fa-clock-o" style="font-size: 1.7em;"/></div>
+      				  		<ui:repeat value="#{cargaElectivaB.horarioCabeceraL}" var="dia"  varStatus="index">    
+	                   
+	                        <div   class="#{dia.feriadosL.size() eq 0?'':'FERIADO'}" >                          
+	                        <span style="display: block;">#{utilB.listaDiasSemana[dia.dia]}</span>
+	                        <span style="display: block;"><h:outputLabel value="#{dia.fecha}" >  <f:convertDateTime  pattern="dd/MM/yyyy" /> </h:outputLabel>  </span>                    
+	                       
+	                    	</div>
+	                  
+         			</ui:repeat>
+        			</div>
+        </h:panelGroup>
+        			
+       <div class="cuerpo" >	
+        		
+        	<h:panelGroup layout="block" id="pnHorarioDocenteCuerpo" style="display:block;"  >   
+        	
+        		
+      			<ul class="cuerpo-hora" >
+                   
+                        <li ><div class="hora-padre"><div class="hora-hijo">8:00</div></div></li>
+                        <li ><div class="hora-padre"><div class="hora-hijo">9:00</div></div></li>
+                        <li ><div class="hora-padre"><div class="hora-hijo">10:00</div></div></li>
+                        <li ><div class="hora-padre"><div class="hora-hijo">11:00</div></div></li>
+                        <li ><div class="hora-padre"><div class="hora-hijo">12:00</div></div></li>
+                        <li ><div class="hora-padre"><div class="hora-hijo">13:00</div></div></li>
+                        <li ><div class="hora-padre"><div class="hora-hijo">14:00</div></div></li>
+                        <li ><div class="hora-padre"><div class="hora-hijo">15:00</div></div></li>
+                        <li ><div class="hora-padre"><div class="hora-hijo">16:00</div></div></li>
+                        <li ><div class="hora-padre"><div class="hora-hijo">17:00</div></div></li>
+                        <li ><div class="hora-padre"><div class="hora-hijo">18:00</div></div></li>
+                        <li ><div class="hora-padre"><div class="hora-hijo">19:00</div></div></li>
+                        <li ><div class="hora-padre"><div class="hora-hijo">20:00</div></div></li>
+                        <li ><div class="hora-padre"><div class="hora-hijo">21:00</div></div></li>
+                        <li ><div class="hora-padre"><div class="hora-hijo">22:00</div></div></li>
+      			</ul>
+                
+		                 <ui:repeat value="#{cargaElectivaB.horarioCabeceraL}" var="dia"  varStatus="index">    
+		                    <div class="cuerpo-dia" >
+		                        
+		                   
+		                  	<ui:repeat value="#{dia.horarioCuerpoL}" var="horario">
+		                      <div style="height: #{horario.alto}px;top: #{horario.top}px;" class="celda #{horario.desTipoClase}" data-curso="#{horario.curso}" title="#{horario.desTipoClase}"  >
+		                            <div  style="display: table;height: 100%;width: 100%;z-index: 1">
+		                                <div  style="display: table-cell;vertical-align: middle">
+		                                    <span style="color: #008000">#{horario.desCarrera}</span>
+		                                    <span ><b>#{horario.desCurso}</b> </span>
+		                                    <span>#{horario.seccion} - #{horario.aula}</span>
+		
+		                                    <span style="color: red">  #{utilB.convertTimes(horario.horaInicio)} - #{utilB.convertTimes(horario.horaFinal)}</span>
+		                                </div>                                
+		                            </div>
+		                        </div>
+		                        
+		                    </ui:repeat> 
+		                   
+		                  </div>
+		                </ui:repeat>
+                </h:panelGroup>	
+                </div>
+               
+      
+    		
+			 </div>
+			 <f:facet name="footer">
+                        <div style="display: block;text-align: right">
+                           <h:commandLink styleClass="boton-normal" onclick="crearImagen('horario-personal-docente')" >
+                        <i class="fa fa-print" />
+                            imagen
+                            <f:ajax execute="@this" />
+                        </h:commandLink>
+                        
+                        <h:commandLink styleClass="boton-rojo" onclick="dlHorarioPersonal.hide()">
+                            SALIR
+                            <f:ajax execute="@this" />
+                        </h:commandLink>
+                        </div>
+                        
+              </f:facet>
+			</p:dialog>
+			</h:form>
+			
+			
+			
+			
+			<h:form id="frmRecuperacion" prependId="false">
+			
+			<p:dialog widgetVar="dlRecuperacion"  header="..: RECUPERACION Y REPROGRAMACION :.." width="750" modal="true" resizable="false" closeOnEscape="true"   >
+		
+			
+			
+			
+			<p:dataTable id="tbReprogramacion" value="#{cargaElectivaB.registrotdL}" var="itemRegistrotd" rowIndexVar="status" scrollable="true" scrollHeight="300" emptyMessage="" rowStyleClass="#{itemRegistrotd.tipoClase ne 1?'row-recuperacion':'row-normal'}" >
+			<f:facet name="header">
+				Fechas Programadas
+			</f:facet>
+				<p:column  headerText="N." width="10" >
+					#{status+1}
+				</p:column>				
+				<p:column  headerText="Fecha" width="70"  >
+					#{itemRegistrotd.fecha}
+					
+				</p:column>
+				<p:column  headerText="Dia" width="70"  >
+					#{utilB.listaDiasSemana[itemRegistrotd.dia]}					
+				</p:column>
+				
+				<p:column  headerText="Hora Inicio" width="40" >					
+					#{utilB.convertTimes(itemRegistrotd.hora_ing)}
+				</p:column>
+				<p:column  headerText="Hora Final" width="40" >
+				
+					#{utilB.convertTimes(itemRegistrotd.hora_sal)}
+				</p:column>
+				<p:column  headerText="Total Hora" width="40" >
+				
+					 #{(((utilB.dateIff(utilB.convertDateTime(itemRegistrotd.hora_ing),utilB.convertDateTime(itemRegistrotd.hora_sal))/60000)/tipoHoraB.mostrarTipoHora(itemRegistrotd.tipoHora).duracion))}
+				</p:column>
+				<p:column  headerText="Tema">				
+					#{itemRegistrotd.tema}
+				</p:column>
+				<p:column   width="40" style="text-align:center"  >
+				
+				<h:commandLink title="REPROGRAMACION" rendered="#{itemRegistrotd.estadoRegistro  eq 0?itemRegistrotd.tipoClase eq 1:false}" >
+					<i class="fa fa-plus-square-o" />					
+					<f:ajax execute="@this" resetValues="true" render=":frmRecuperacion:cbTipoClaseR :frmRecuperacion:lblFutR :frmRecuperacion:txtFutR     :frmRecuperacion:txtFechaInicioR  :frmRecuperacion:txtHoraInicioR :frmRecuperacion:txtHoraFinalR  :frmRecuperacion:tbListaRecuperacion :frmRecuperacion:txtFechaRecuperacion  :frmRecuperacion:txtTotalMinutos"  listener="#{cargaElectivaB.nuevoRecuperacion(itemRegistrotd)}" />
+				</h:commandLink>
+				
+				<h:commandLink title="Editar" rendered="false" >
+					<i class="fa fa-pencil" style="color:green" />
+					
+					<f:ajax  execute="@this" render=":frmRecuperacion:txtFutR  :frmRecuperacion:txtFechaInicioR  :frmRecuperacion:txtHoraInicioR :frmRecuperacion:txtHoraFinalR  "  listener="#{cargaElectivaB.editarRecuperacion(itemRegistrotd)}" />
+				</h:commandLink>				
+				<h:commandLink title="Eliminar" rendered="#{itemRegistrotd.tipoClase ne 1}" onclick="return confirmacion(this,'¿ Esta seguro eliminar la reprogramacion?');" >
+					<i class="fa fa-times" style="color:red" />					
+					<f:ajax  execute="@this" render="tbReprogramacion" listener="#{cargaElectivaB.eliminarRecuperacion(itemRegistrotd)}"  />
+				</h:commandLink>				
+				</p:column>
+				</p:dataTable>
+				<div class="paneles" >
+				<span class="column" style="background-color: green;padding: 5px 2px;color: white" >
+				Reprogramacion
+				</span>
+				</div>
+				
+				
+				<f:facet name="footer">
+	                        <div style="display: block;text-align: right">
+	                            <h:commandLink styleClass="boton-rojo"  onclick="dlRecuperacion.hide()">
+		                            SALIR
+		                            <f:ajax execute="@this" />
+	                        	</h:commandLink>
+	                        </div>
+	                        
+	              </f:facet>
+			</p:dialog>
+			
+			
+			<p:dialog widgetVar="dlManteRecuperacion" header="..: RECUPERACION - REPROGRAMACION :.." modal="true" resizable="false" closeOnEscape="true" width="500" >
+				<div  class="paneles">
+					<h:outputLabel value="Fecha " />
+					<h:outputLabel id="txtFechaRecuperacion" value="#{cargaElectivaB.registrotd.fecha}" />
+					
+					<br />
+					<h:outputLabel value="Total Minutos " />	
+					<h:outputLabel id="txtTotalMinutos" value="#{cargaElectivaB.registrotd.totalMinutos()}" />
+				</div>
+			
+				<h:outputLabel   value="TIPO CLASE" />
+				<h:selectOneMenu id="cbTipoClaseR" value="#{cargaElectivaB.registrotm.tipoClase}">
+					<f:selectItem itemLabel="RECUPERACION"  itemValue="2" /> 
+					<f:selectItem itemLabel="REPROGRAMACION" itemValue="3" />
+					<f:ajax  execute="@this" render="txtFutR lblFutR"   /> 
+				</h:selectOneMenu>
+				<br />
+				<h:outputLabel  id="lblFutR"  value="#{cargaElectivaB.registrotm.tipoClase eq 2?'F.U.T':'INFORME'}" />
+				<h:inputText id="txtFutR" value="#{cargaElectivaB.registrotm.fut}" maxlength="10"  style="#{ component.valid ? '' : 'border-color:red;'}"  required="true"  />
+				<br />
+				<h:outputLabel value="TIPO HORA" />      
+                    <h:selectOneMenu id="cbTipoHoraR" value="#{cargaElectivaB.registrotm.tipoHora}" required="true" >
+                        <f:selectItem itemLabel="--Selecciona--" />
+                        <f:selectItems value="#{cargaElectivaB.tipoHoraL}" var="tipoHora" itemLabel="#{tipoHora.descripcion} - #{tipoHora.duracion}" itemValue="#{tipoHora.tipoHora}" />
+                        <f:ajax execute="@this"  />
+                    </h:selectOneMenu>
+                    <br />
+				<h:outputLabel  value="FECHA INICIO" />
+				<p:calendar id="txtFechaInicioR"  value="#{cargaElectivaB.registrotm.fecha_inicio}"  mindate="#{cargaElectivaB.registrotd.fecha}" pattern="dd-MM-yyyy"  mask="true" required="true" />
+				
+				<br />
+				<h:outputLabel  value="HORA INICIO" />
+				<p:calendar  id="txtHoraInicioR" value="#{cargaElectivaB.registrotm.hora_inicio}"  size="8" minHour="8" stepMinute="5" mask="true"   pattern="HH:mm" timeOnly="true" showButtonPanel="true" required="true"  >
+				<p:ajax event="dateSelect" process="@this"  update="txtHoraFinalR" />
+				</p:calendar>
+				
+				<h:outputLabel  value="HORA FINAL" />
+				<p:calendar id="txtHoraFinalR" value="#{cargaElectivaB.registrotm.hora_fin}" size="8" minHour="#{cargaElectivaB.registrotm.hora_inicio.hours}" stepMinute="5" mask="true" pattern="HH:mm" timeOnly="true"   showButtonPanel="true"  required="true"  />
+				<br  />
+				<div class="paneles" >
+				<h:commandLink styleClass="boton-normal" >
+					<i class="fa fa-plus" />
+					AGREGAR
+					<f:ajax execute="@this txtFutR  txtFechaInicioR txtHoraInicioR txtHoraFinalR cbTipoHoraR cbTipoClaseR" render="txtFutR tbListaRecuperacion txtFechaInicioR txtHoraInicioR txtHoraFinalR btAceptarR"  listener="#{cargaElectivaB.agregarRecuperacion}" />
+				</h:commandLink>
+				</div>
+				<p:dataTable id="tbListaRecuperacion" value="#{cargaElectivaB.registrotmL}" var="itemRegistroTM"  rowIndexVar="status">
+				
+				<p:column headerText="N." width="10">
+					#{status+1}
+				</p:column>
+			
+				<p:column headerText="Fecha" >
+				
+			
+					<h:outputLabel value="#{itemRegistroTM.fecha_inicio}" >
+					<f:convertDateTime pattern="EEEEE dd MMMM yyyy" ></f:convertDateTime>
+					
+					</h:outputLabel>
+					
+				</p:column>
+				<p:column headerText="Hora Inicio" width="50">
+				<h:outputLabel value="#{utilB.convertTimes(itemRegistroTM.hora_inicio)}" />
+					
+				</p:column>
+				
+				<p:column headerText="Hora Final" width="50">
+					<h:outputLabel value="#{utilB.convertTimes(itemRegistroTM.hora_fin)}" />
+				
+				</p:column>
+				<p:column headerText="Minutos" width="50">
+					 <h:outputLabel value="#{itemRegistroTM.totalMinutos()}" />
+				
+				</p:column>
+				
+				<p:column  width="20">
+				<h:commandLink title="Eliminar" >
+					<i class="fa fa-times" style="color: red" />
+					<f:ajax  execute="@this" render="tbListaRecuperacion :frmRecuperacion:btAceptarR" listener="#{cargaElectivaB.quitarRecuperacion(status)}" />
+				</h:commandLink>
+				
+				</p:column>
+				
+				   <p:columnGroup type="footer">
+		            <p:row>
+		                <p:column colspan="4" style="text-align:right" footerText="Total Minutos:" />
+		                <p:column footerText="#{cargaElectivaB.totalMinutos}" />
+		            </p:row>
+		        </p:columnGroup>
+				</p:dataTable>
+				
+			
+				
+				<f:facet name="footer">
+                        <div style="display: block;text-align: right">
+                        <h:commandLink id="btAceptarR" styleClass="boton-verde" disabled="#{cargaElectivaB.registrotmL.size() eq 0}" >
+                            ACEPTAR
+                            <f:ajax execute="@this tbListaRecuperacion"  render=":frmRecuperacion:tbReprogramacion" listener="#{cargaElectivaB.insertarReprogramacion}" />
+                        </h:commandLink >
+                            <h:commandLink  styleClass="boton-rojo" onclick="dlManteRecuperacion.hide()">
+                            CANCELAR
+                            <f:ajax execute="@this" render="txtFutR  txtFechaInicioR txtHoraInicioR txtHoraFinalR cbTipoHoraR cbTipoClaseR"  resetValues="true" />
+                        </h:commandLink>
+                        </div>
+                        
+              </f:facet>
+			</p:dialog>
+			
+			
+			
+		
+			
+			
+			</h:form>
+      </ui:define>
+      
+      
+    </ui:composition>
+

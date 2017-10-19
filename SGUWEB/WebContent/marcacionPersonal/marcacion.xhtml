@@ -1,0 +1,659 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ht="http://xmlns.jcp.org/jsf/passthrough"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <h:head>
+        <title>..::. REGISTRO DE ENTRADA .::..</title>     
+         <link rel="shortcut icon" type="image/x-icon" href="/imagen/java/icono/marcacion.ico" />
+         <link   type="text/css" rel="stylesheet" href="../../resources/css/font-awesome.css" />
+        
+        <style>
+        *{padding: 0px;margin: 0px;font-family: sans-serif;list-style: none;text-decoration: none}
+        input:focus{outline: none}
+        html,body,form{display: block;height: 100%;width: 100%;color:#636E7B;font-size: 13px;}           
+        textarea{display: block;width: 100%;height: 80px;resize:none}      
+        .ui-datatable-odd{background-color: white}        
+        .column{display: inline-block;vertical-align: top;}
+        .paneles{border: 1px solid silver;background-color: white;margin: 0px 2px 2px 2px}
+        .tiempo{font-size: 2.0em;position: absolute;top: 5px;right:10px;color: white}        
+        .notify{ width: 250px;padding: 10px 5px;border-radius: 5px;color: white}
+        .error{background-color: red}
+        .correcto{background-color: #008000}
+        .boton{background: rgba(46,75,143,1);color: white;margin:  2px;border-radius:5px;display: inline-block;text-align: center;padding: 10px 20px}
+        .boton i{font-size: 3.0em;display: block}
+        .boton label{font-size: 1.5em;display: block;padding: 10px 0px}
+        span.boton{background: rgba(46,75,143,0.5)}
+        ::-webkit-input-placeholder {   color: silver}
+        
+        #persona #persona-menu{height: 100%;padding: 0px 5px; }
+        #persona #persona-menu #persona-menu-cabecera{display: block;margin: 5px 0px;}
+        #persona #persona-menu #persona-menu-img a{display:block;border-radius:50%;border: 2px solid rgb(236,196,46)}
+        #persona #persona-menu #persona-menu-img img{display:block;border-radius:50%;width: 60px;height: 60px;margin: 2px}
+        #persona #persona-menu #persona-menu-dato{padding: 10px 5px ;width: 200px }
+        #persona #persona-menu #persona-menu-dato label{display: block;}
+        #persona #persona-menu #persona-menu-dato #lbNombres{color:#333}
+        #persona #persona-menu #persona-menu-dia{}
+        #persona #persona-menu #persona-menu-dia #persona-menu-dia-body{height: 90%;overflow: auto;}
+        
+        #persona #persona-menu #persona-menu-dia ul{height: 25px;}
+        #persona #persona-menu #persona-menu-dia >ul{background: rgba(46,75,143,1);color: white}
+        #persona #persona-menu #persona-menu-dia ul li{display: inline-block;vertical-align:top;border: 1px solid silver;margin-left: -4px;height: 100%;text-align: center;}
+        #persona #persona-menu #persona-menu-dia ul li:nth-child(1){width: 90px}
+        #persona #persona-menu #persona-menu-dia ul li:nth-child(2){width: 50px}
+        #persona #persona-menu #persona-menu-dia ul li:nth-child(3){width: 50px}
+        #persona #persona-menu #persona-menu-dia ul li:nth-child(4){width: 30px}
+        #persona #persona-menu #persona-menu-dia ul li:nth-child(5){width: 30px;color: red}
+        #persona #persona-menu #persona-menu-dia #persona-menu-dia-body ul:HOVER li{background: #e8e6e6}
+        #persona #persona-menu #persona-menu-dia #persona-menu-dia-body ul.select li{background-color: #1765b2;color: white}
+        
+        #persona #persona-registro{padding: 5px}
+        #persona #persona-registro >div{margin: 10px 0px;}
+         #persona #persona-registro #persona-registro-botonera div{}
+        #persona #persona-registro #persona-registro-botonera div:nth-child(1){margin-right: 50px}
+        #persona #persona-registro #persona-registro-botonera div:nth-child(2){}
+        #persona #persona-registro #persona-registro-botonera b{font-size: 2em ;display: block;}
+        
+        
+        
+        
+        #btSalir{font-size: 1.8em;color:red;position: absolute;top:2px;right:8px;transition:all 0.3s}
+        #btSalir:hover i:BEFORE {content: "\f063"}
+        #btSalir:hover {transform: rotate(90deg);}
+        
+        .actividad{margin: 6px 2px;background: white;} 
+        .actividad .actividad-cabecera{display: block;background-color: #1765b2;padding: 4px 2px;color: white}
+        .actividad .actividad-cabecera label{display: inline-block;vertical-align: top;width: 92%}
+        .actividad .actividad-cabecera a{color: white}
+        .actividad .actividad-dato{width: 80%}
+        .actividad .actividad-grafico{width: 19%;background-color: silver;height: 100%;text-align: center;cursor: pointer;}
+        .actividad-detalle{display: none;background: white;margin: 5px 0px 0px 10px;text-align: right;}
+        .actividad-detalle ul li{display: inline-block;border: 1px solid silver;padding: 5px;margin-right: -4px}
+        
+        #total-minuto{font-size:1.5em;position:absolute;bottom:10px;right: 5px;z-index: 99;padding: 10px 15px;    color: white;    background: rgba(0,0,0,0.5);border-radius:4px}
+        #txtBusqueda{border: none;background: transparent;font-size: 2.0em;color: white;border-bottom: 1px solid silver;padding: 10px 2px;text-align: center}
+        
+        
+         /*========= MODAL ============*/
+		 .modal{width: 400px;min-height: 100px;background-color: white;margin: 0 auto;border-radius: 0px 0px 5px 5px ;position: fixed;top: 5%;left: 40%;display: block;z-index: 9999}
+		 .modal-titulo{display: block;background-color:  #0069b3;color: white;padding: 3px 5px;font-size: 1.2em}
+		 .modal-fondo{width: 100%;height: 100%;background-color: rgba(0,0,0,0.8);position: fixed;display: block; top:0;;left: 0;color:white;z-index: 9998}
+		 .modal-cuerpo{padding: 5px 1px}            
+		 .modal-icono{font-size:4.0em;text-align:center;color:red;width: 80px}
+		 .modal-texto{ font-size: 1.2em;width: 315px;line-height: 20px; color:silver}
+		 .modal-botonera{display: block;width: 100%;padding: 5px 0px;text-align: center}
+		 .modal-botonera a{padding: 2px 4px;min-width: 40px;display: inline-block;border-radius: 3px;color: white;font-size: 1.2em;border: 1px solid}
+		 .modal-botonera a.positivo{background-color: #337ab7;border-color: #2e6da4}
+		 .modal-botonera a.positivo:HOVER{background-color: #286090}
+		 .modal-botonera a.negativo{background-color: #d9534f;border-color: #d43f3a}
+		 .modal-botonera a.negativo:HOVER{background-color: #c9302c}    
+		 #persona{ ;display: block;width: 100%;height: 90%; position: relative;z-index: 10; }
+		 #noche-dia{background:url('/imagen/java/fondo.png');background-size: contain;height: 100%;transition: all 1s}
+		 
+		
+		 	 
+    </style>
+    
+   
+        
+    </h:head>
+    <h:body>
+        
+    <div id="noche-dia" >
+    <h:form id="frmMarcacion" prependId="false"  ht:autocomplete="off"   >
+    
+    <p:remoteCommand name="btActualiza" process="@this" update="pnListaDia" actionListener="#{marcacionPersonalB.actualiza}"  />
+    
+    <div style="position: relative ;top: 0;left: 0;display: block;width: 100%;min-height: 50px;background-color: rgba(250,250,250,0.2)" >
+	    		<h:commandLink id="btAgregar" >	    		
+	    		<f:ajax execute="@this" listener="#{marcacionPersonalB.agregarCookie}" />	    		
+	    		</h:commandLink>
+	    		
+	    		
+	    		<img id="imgLogo" src="/imagen/java/logoupsb.png" alt="" style="width: 60px; height: 60px" />
+	    		
+			    
+			    <div class="column"  >
+			   
+			   		 <h:inputText id="txtBusqueda" value="#{marcacionPersonalB.codDocumento}" ht:placeholder="D.N.I" required="true" maxlength="8" size="8" rendered="#{marcacionPersonalB.validacion}" />
+			   		 <h:outputLabel value="Estacion no Registrada !..." rendered="#{not marcacionPersonalB.validacion}" style="    font-size: 3.0em;color: #fff9f9;padding: 9px 0px;display: inline-block;" />
+			    </div>
+			    
+			    <h:commandButton  id="btIngresar" value="ingresar" style="display: none" >
+		                            <f:ajax execute="@this txtBusqueda" render="pnPrincipal  txtBusqueda"  listener="#{marcacionPersonalB.acceso}" />
+		         </h:commandButton>
+		         <div class="tiempo" >
+		         <i class="fa fa-clock-o" />
+		         <b  >00:00</b>
+		         </div>
+			     			    
+	    </div>
+	    <div id="persona"   >
+		
+	    <h:panelGroup layout="block"  id="pnPrincipal" style="height: 100%" >	
+	    
+	   
+	    
+	        
+	    <h:panelGroup layout="block" rendered="#{marcacionPersonalB.bandera}" style="position: relative;  background-color:#eaeaea    ;height: 100%;"  >
+	     <script>
+				$("#persona-menu-dia-body").scroll(function(){
+					var scrollBooton=$("#pnListaDia").height() - $("#persona-menu-dia-body").height() - $("#persona-menu-dia-body").scrollTop();
+	    			console.log(scrollBooton);
+	    			if(scrollBooton==-3){
+	    				
+	    				btActualiza();
+	    			}
+	    			
+	    		});
+		    </script>
+	  
+	    <h:commandLink id="btSalir" title="REGRESAR" >	    
+				  	
+				  <i class="fa fa-times" />
+				  <f:ajax execute="@this" render="pnPrincipal" listener="#{marcacionPersonalB.cerrar}" />
+		</h:commandLink>
+	    
+		    <div  id="persona-menu"  class="column" >
+		    <div id="persona-menu-cabecera"  class="paneles" >
+		    <div id="persona-menu-img"   class="column "  >
+		    	<a  href="#"  >
+		    	<h:graphicImage  id="imgPersona" value="SVerImagenAlumno?alumno=#{marcacionPersonalB.persona.persona}" />
+		    	</a>
+		    	</div>
+		    	<div id="persona-menu-dato" class=" column " >
+		    	<h:outputLabel id="lbNombres" value="#{marcacionPersonalB.persona.paterno} #{marcacionPersonalB.persona.materno} #{marcacionPersonalB.persona.nombres}" />
+		    	
+		    	 <h:outputLabel id="lbFecha" value="#{marcacionPersonalB.calendarioPersonal.fechaDesde} | #{marcacionPersonalB.calendarioPersonal.fechaHasta}" />  
+
+			    <h:outputLabel id="lbCalendario" value="#{marcacionPersonalB.calendario.descripcion}" />
+		    	</div>
+		    
+		    </div>
+		    <div id="persona-menu-dia"  class="paneles" style="height: 80%"  >
+			    <ul>		   
+				    <li>Fecha</li>
+				    <li>Entra</li>
+				    <li>Sali</li>
+				    <li>Min</li>
+				    <li>Tar</li>
+			    </ul>
+		  	<div id="persona-menu-dia-body">
+		  
+		    <h:panelGroup layout="block" id="pnListaDia" style="border:1px solid silver" >
+		   
+		    
+		    <ui:repeat var="itemMarcacionPersonal" value="#{marcacionPersonalB.marcacionPersonalL}" varStatus="index" >
+		    <ul>		   
+		    <li>#{itemMarcacionPersonal.fecha}</li>
+		    <li>#{utilB.convertTimes(itemMarcacionPersonal.ingreso)}</li>
+		    <li>#{utilB.convertTimes(itemMarcacionPersonal.salio)}</li>
+		    <li>#{itemMarcacionPersonal.minutos()}</li>
+		    <li>#{itemMarcacionPersonal.tardanza()}</li>		
+		    </ul>
+		    </ui:repeat>		    
+		    </h:panelGroup>		    
+		
+		    </div> 
+		    <div>
+		    
+		    <h:outputLabel id="lblDia" value="Dias: " >
+		    #{marcacionPersonalB.marcacionPersonalL.size()}
+		    </h:outputLabel>
+		    
+		    <h:outputLabel id="lblfalta" value="Faltas: " >
+		    #{marcacionPersonalB.totalFalta()}
+		    </h:outputLabel>
+		    
+		    
+		     <h:outputLabel id="lblFeriado" value="Feriados: " >
+		    0
+		    </h:outputLabel>
+		    </div> 
+		   </div>
+		 
+		    
+		    	
+		  </div>
+		 <div  id="persona-registro" class="column" >
+		  
+		 <div id="persona-registro-botonera" >
+		    <div class="column">
+		    <span>INGRESO LABORAL</span>
+		    <br />
+			     <h:commandLink  id="btEntrada"  styleClass="boton" disabled="#{marcacionPersonalB.marcacionPersonal.ingreso ne null}" >
+				  	<i class="fa fa-sign-in" />
+				  	<b>#{marcacionPersonalB.marcacionPersonal.ingreso ne null?utilB.convertTimes(marcacionPersonalB.marcacionPersonal.ingreso):'Entrada'} </b>
+				    
+				    <f:ajax execute="@this" render="@this btSalida pnListaDia btRefrigerioEntrada" listener="#{marcacionPersonalB.insertarEntrada}" />
+			    </h:commandLink>
+		    
+			    <h:commandLink id="btSalida"   styleClass="boton"  onclick="#{utilB.convertTimes(utilB.HoraHoy())  le utilB.convertTimes(marcacionPersonalB.calendarioDia.salida)?  &quot;return confirmacion(this,'¿ Esta seguro salir antes?')&quot; : 'return true'  }" disabled="#{marcacionPersonalB.marcacionPersonal.ingreso eq null?true:marcacionPersonalB.marcacionPersonal.salio ne null}"  >
+				   <i class="fa fa-sign-out" />			
+				  
+				   <b>#{marcacionPersonalB.marcacionPersonal.salio ne null?utilB.convertTimes(marcacionPersonalB.marcacionPersonal.salio):'Salida'}</b>				    
+				    <f:ajax execute="@this" render="@this pnListaDia" listener="#{marcacionPersonalB.insertarSalida}" />
+			    </h:commandLink>
+		    
+		    </div>
+		   <div class="column">
+		      <span>REFRIGERIO</span>
+		      <br />
+			   <h:commandLink id="btRefrigerioEntrada"   styleClass="boton" disabled="#{marcacionPersonalB.marcacionPersonal.ingreso eq null?true:marcacionPersonalB.marcacionPersonal.refriIngreso ne null}" >
+			     	<i class="fa fa-cutlery" />
+			     	<b> #{marcacionPersonalB.marcacionPersonal.refriIngreso ne null?utilB.convertTimes(marcacionPersonalB.marcacionPersonal.refriIngreso):'Inicio'} </b>		     	
+			    	<f:ajax execute="@this" render="@this btRefrigerioSalida" listener="#{marcacionPersonalB.insertarRefriEntrada}" />
+			    </h:commandLink>
+			    
+			    <h:commandLink id="btRefrigerioSalida"  styleClass="boton" disabled="#{marcacionPersonalB.marcacionPersonal.refriIngreso eq null?true: marcacionPersonalB.marcacionPersonal.refriSalio ne null}" >
+			        <i class="fa fa-cutlery" />
+			        <b> #{marcacionPersonalB.marcacionPersonal.refriSalio ne null?utilB.convertTimes(marcacionPersonalB.marcacionPersonal.refriSalio):'Final'} </b>
+			     	
+			    	<f:ajax execute="@this" render="@this" listener="#{marcacionPersonalB.insertarRefriSalida}" />
+			    </h:commandLink>
+		   </div>
+		 </div>
+		 
+		 
+		 
+		 <div id="persona-registro-actividad" >
+		 ACTIVIDADES
+			 <h:commandLink title="Agregar Objectivo"   >
+				<i class="fa fa-plus" style="color:green;" />
+			 <f:ajax execute="@this" render=":frmMarcacion:txtObjectivo" listener="#{marcacionPersonalB.nuevoActividad}" />
+		 	</h:commandLink>
+		 <h:panelGroup layout="block" id="pnActividad" styleClass="pnCirculo" >
+		 	
+		 	<ui:repeat var="itemActividad" value="#{marcacionPersonalB.actividadL}">
+		 		<div  >
+		 		
+		 		
+		 		
+		 		<div class="actividad" >
+		 		<div class="actividad-cabecera">
+		 		
+		 			<h:outputLabel value="#{itemActividad.marcacionPersonalActividad.fechaInicio}" >
+		 			
+		 			<f:convertDateTime pattern="EEEEE dd MMMMM yyyy" />
+		 			</h:outputLabel>
+		 			
+		 		
+		 		
+			 			<h:commandLink title="Editar" >
+		 				<i class="fa fa-pencil" />
+		 				<f:ajax execute="@this" render=":frmMarcacion:txtObjectivo" listener="#{marcacionPersonalB.editarActividad(itemActividad.marcacionPersonalActividad)}" />		 				
+		 				</h:commandLink>
+							
+							<h:commandLink title="Eliminar"   onclick="return confirmacion(this,'¿ Esta seguro eliminar?')" >
+				 			<i class="fa fa-times" />
+				 			<f:ajax execute="@this" render=":frmMarcacion:pnActividad" listener="#{marcacionPersonalB.eliminarActividad(itemActividad.marcacionPersonalActividad)}" />
+							</h:commandLink>
+		 		</div>
+		 		<div class="column actividad-dato"  >
+		 			<p>#{itemActividad.marcacionPersonalActividad.objectivo}</p>
+		 			
+		 			
+		 			
+		 			<div>
+		 				
+		 			
+		 			<h:commandLink title="Agregar"  >
+				 			<i class="fa fa-plus" />
+				 			<f:ajax execute="@this" render=":frmMarcacion:txtAvance :frmMarcacion:txtNivel" listener="#{marcacionPersonalB.nuevoActividadItem(itemActividad.marcacionPersonalActividad.actividad)}" />
+							</h:commandLink>
+			 			
+		 			</div>
+					
+					
+		 		</div>
+		 		<div class="column actividad-grafico"  >
+		 		
+		 	
+		 			<p:knob id="knob"  value="#{itemActividad.total()}" width="60" height="60" disabled="true" backgroundColor="white" foregroundColor="red" />
+		 		
+		 		
+		 		</div>
+		 	
+		 		</div>
+		 		
+		 		
+		 			  
+				<div class="actividad-detalle"  >
+				<h:panelGroup id="pnActividadItem" layout="block"   >
+				<ui:repeat var="itemActividadItem" value="#{itemActividad.marcacionActividadItemL}">
+					<ul>
+						<li>#{itemActividadItem.avance}</li>
+						<li>#{itemActividadItem.nivel}</li>
+						<li>#{itemActividadItem.fecha}</li>
+						<li>
+							<h:commandLink title="Editar">
+		 						<i class="fa fa-pencil" />
+		 						<f:ajax execute="@this" render=":frmMarcacion:txtAvance :frmMarcacion:txtNivel"  listener="#{marcacionPersonalB.editarActividadItem(itemActividadItem)}" />		 				
+		 					</h:commandLink>
+
+						</li>
+						<li>
+							<h:commandLink title="Eliminar">
+		 						<i class="fa fa-trash-o" />
+		 						<f:ajax execute="@this" render=":frmMarcacion:pnActividad" listener="#{marcacionPersonalB.elimnarActividadItem(itemActividadItem)}"  />		 				
+		 					</h:commandLink>
+						</li>
+					</ul>
+				</ui:repeat>
+				</h:panelGroup>
+				</div>
+				
+		 	</div>
+		 	
+		 	
+		 	</ui:repeat>
+		 
+		 </h:panelGroup>
+		
+		 </div>
+		 
+		    
+		  
+		    </div>
+		    </h:panelGroup>
+		       </h:panelGroup>
+	    </div>
+   
+	    
+	    
+	    
+	    <p:dialog  header="Ingresa Actividad" widgetVar="dlgActividad" modal="true" closeOnEscape="true" resizable="false" >
+	    	<h:outputLabel for="txtObjectivo" value="Objectivo" />
+	    	<h:inputTextarea id="txtObjectivo" value="#{marcacionPersonalB.marcacionPersonalActividad.objectivo}"  required="true" />
+	    	<f:facet name="footer">
+	    	<h:commandLink>
+	    	Ingresar
+	    	<f:ajax execute="@this txtObjectivo" render="txtObjectivo pnActividad"  listener="#{marcacionPersonalB.insertarActividad}" />
+	    	</h:commandLink>
+	    	
+	    	</f:facet>
+	    </p:dialog>
+	    
+	    
+	    
+	    
+	    
+	    <p:dialog header="Ingresar Avance" widgetVar="dlgAvance" modal="true" closeOnEscape="true"  resizable="false" >
+	    <h:outputLabel value="Avance" />
+	    <h:inputTextarea id="txtAvance" value="#{marcacionPersonalB.marcacionActividadItem.avance}" required="true" />
+	    <br />
+	    <h:outputLabel value="Nivel" />
+	    <h:inputText id="txtNivel" value="#{marcacionPersonalB.marcacionActividadItem.nivel}" maxlength="3" required="true" />
+	    
+	    <f:facet name="footer">
+	    <h:commandLink>
+	    Ingresar	    
+	    <f:ajax    execute="@this txtAvance txtNivel"  render="txtAvance txtNivel  :frmMarcacion:pnActividad" listener="#{marcacionPersonalB.insertarActividadItem}" />
+	    </h:commandLink>
+	    
+	    
+	    </f:facet>
+	    
+	    </p:dialog>
+	    
+	    
+     </h:form>
+    </div>
+    		
+    		 
+    
+    
+    
+    
+         <script  type="text/javascript">
+         //<![CDATA[
+         
+         
+         var colores = [ "#000000","#000b12","#001524","#002036","#002A47","#003559","#00406B","#004a7c","#00558E","#005FA0","#006AB2","#0074C3","#007FD5","#007FD5","#0074C3","#006AB2","#005FA0","#00406B","#003559","#002A47","#001524","#000b12","#000000"];
+         var hours = new Date().getHours();
+         var index=hours;
+       
+         $('#noche-dia').css({'background-color': colores[index]});         
+                  
+        
+    	 setInterval(function(){        	        
+          	
+        	 $('#noche-dia').css({'background-color': colores[index]})
+        	index++;
+        	 if(index==20){
+        		 index=0; 
+        	 }
+        
+       	  console.log(index);
+         },360000)
+    
+
+      
+         
+         
+         
+         var banderaTecla=false;
+         var banderaM=false;
+         var idGeneral;
+
+         function confirmacion(obj,cadena){
+             idGeneral=obj;
+             if(banderaM){
+                 $(".modal-fondo").remove();
+                 $(".modal").remove();
+                 bandera=false;
+                 return true;
+             }else{
+                if(! $('.modal-fondo').hasClass("modal-fondo")){
+                    $('body').append('<div class="modal-fondo"  /> ');
+                     $('body').append('<div class="modal" ><div class="modal-titulo" > INTRANET  </div><div class="modal-cuerpo"> <div class="column modal-icono"><i class="fa fa-exclamation "  /></div><div class="column modal-texto"><span>' +cadena+'</span></div></div><hr/><div class="modal-botonera"><a  class="positivo"  onclick="valida(true)" >Si</a> <a class="negativo" onclick="valida(false)" > No</a></div>  </div>');
+                     }else{
+                     $(".modal-fondo").remove();
+                     $(".modal").remove();
+                }                    
+                 
+                 return false;
+             }
+             
+         }
+         
+         function valida(estado){
+        	 banderaM=estado;           
+             $(idGeneral).click();            
+         }
+         
+         
+         
+         var tiempo;
+         var num=0;
+         function iniciar(){
+        	 tiempo=setInterval(function(){
+        	
+        		 num++;
+        		 if(num==180){
+        			 $("#btSalir").click();
+        		 }
+        		 
+        	 },1000);
+        	 
+         }
+         
+         function detener(){
+        	 clearInterval(tiempo);
+        	 num=0;
+         }
+         
+         $( document ).on( "mousemove", function(  ) {
+        	 num=0;      
+      });
+         
+         
+        
+        var alto=$(window).height() - $(".cabecera").height();
+        
+        $( window ).resize(function() {
+        	 alto=$(window).height() - $(".cabecera").height();
+             $(".cuerpo-principal").css({"height":alto + "px"});
+        	});
+    	
+        $(document).ready(function(){   
+      
+		
+
+        	
+			
+        	
+        	var tmr = 0;
+        	$("#imgLogo").mousedown(function () {
+        	  tmr = setTimeout(function () {
+        		  $("#btAgregar").click();        	  
+        	  }, 5000);
+        	}).mouseup(function () {
+        	  clearTimeout(tmr);
+        	});
+        	
+        	
+        	
+        	
+        	
+        	
+        	
+        	
+        	$("body").keydown(function(event){
+       
+        		if(event.which==17){
+        			banderaTecla=true;
+        		}
+        		
+        	}).keyup(function(event){
+        		
+        		if(event.which==17){
+        			banderaTecla=false;
+        		}
+        	}); 
+        	
+        	
+        	$("#txtBusqueda").focus();
+        	  $("#persona").click(function(){
+                  $("#txtBusqueda").focus();
+                  
+             });
+        	
+        	  $("body").on("click","#persona-menu-dia-body ul",function(){
+        		  
+        		  
+        		  if(banderaTecla){
+        			  $(this).toggleClass("select");
+             		 
+             		 var totalMinuto=0;
+             		 $("#persona-menu-dia-body ul.select").each(function(i){
+             			 totalMinuto+=parseInt($(this).children("li").eq(3).text());
+             		 });
+             		 
+             		 
+             		
+             		
+             	
+             		 if(totalMinuto!=0){
+             			var hora=parseInt(totalMinuto/60);
+                		 var min=parseInt(totalMinuto % 60);
+             			 $("#total-minuto").remove();
+             			 $('body').append('<div id="total-minuto" >'+ hora +':'+min+' </div>');	 
+             		 }else{
+             			 $("#total-minuto").remove();	 
+             		 }
+        		  }
+        	  });
+        	  
+        	  
+       
+        	  
+        	
+        
+			$("body").on("click",".actividad-grafico",function(){
+        		
+        		$(this).parent().next().slideToggle("fast");
+        	});
+        	
+        	
+        	
+        	
+        	
+          
+        	
+        	
+             
+                
+         setInterval(function(){
+             var tiempo = new Date();
+             var hora = '0' + tiempo.getHours();
+             var minuto ='0'+ tiempo.getMinutes() ;  
+             var segundo =  '0' + tiempo.getSeconds()  ;
+             
+             $(".tiempo b").text(hora.substr(-2) +":"+ minuto.substr(-2) );
+             
+         },600);       
+                
+                
+        });
+            var tiempo;
+            var cont=10;
+            var bandera=true;
+            function start(){
+                cont=10;
+               
+                if (bandera){
+                    console.log("entre");
+                    tiempo=setInterval(function(){
+                    
+                        if(cont>=1){
+                            cont--;
+                            console.log(cont);
+                            bandera=false;
+                        }else{
+                              cont=10;                           
+                            bandera=true;
+                            $("#btRegresar").click();
+
+                        }
+
+
+                    },3000);
+                    
+                }
+                 
+            }
+            
+            function stop(){                 
+                clearInterval(tiempo);              
+            }
+            
+            
+            function notificacion(msg,speed,fadeSpeed,type){
+                $('.notify').remove();
+
+			      if (typeof fade != "undefined"){
+			      clearTimeout(fade);
+			      }
+			      $('body').append('<div class="notify '+type+'" style="display:none;position:fixed;right:10px"><p>'+msg+'</p></div>');
+			
+			      notifyHeight = $('.notify').outerHeight();
+			
+			      $('.notify').css('bottom',-notifyHeight).animate({bottom:10,opacity:'toggle'},speed);
+			
+			      fade = setTimeout(function(){
+			
+			      $('.notify').animate({bottom:notifyHeight+10,opacity:'toggle'}, speed);
+			
+			      }, fadeSpeed);
+			}
+            
+            //]]>
+    </script>
+    </h:body>
+    
+</html>
+

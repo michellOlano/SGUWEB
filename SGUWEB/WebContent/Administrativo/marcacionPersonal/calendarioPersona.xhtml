@@ -1,0 +1,260 @@
+<ui:composition   xmlns="http://www.w3.org/1999/xhtml"
+                            xmlns:h="http://xmlns.jcp.org/jsf/html"
+                            xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                            xmlns:f="http://xmlns.jcp.org/jsf/core"
+                            xmlns:p="http://primefaces.org/ui"
+                          xmlns:hp="http://xmlns.jcp.org/jsf/passthrough"
+                            template="/Administrativo/plantilla.xhtml">
+              
+            <ui:define name="titulo">
+            CALENDARIO PERSONAL
+            
+            </ui:define>
+               <ui:define name="contenido">
+<h:form id="Frm" prependId="false"  hp:autocomplete="off"  >
+<div class="paneles" >
+<div class="column" >
+<h:graphicImage id="imgFoto" value="SVerImagenAlumno?alumno=#{calendarioPersonalB.persona.persona}" width="80" height="80" />
+</div>
+<div class="column" >
+<h:outputLabel value="Paterno" />
+<h:inputText id="txtPaterno" value="#{calendarioPersonalB.persona.paterno}" disabled="true"  />
+<br />
+<h:outputLabel value="Materno" />
+<h:inputText id="txtMaterno" value="#{calendarioPersonalB.persona.materno}" disabled="true" />
+<br />
+<h:outputLabel value="Nombres" />
+<h:inputText id="txtNombres" value="#{calendarioPersonalB.persona.nombres}" disabled="true" />
+</div>
+</div>
+<div class="paneles">
+<h:commandLink id="btBusqueda"  styleClass="boton-normal" >
+<i class="fa fa-search" />
+Buscar
+<f:ajax execute="@this" render="txtPaternoB txtMaternoB txtNombresB" listener="#{calendarioPersonalB.busqueda}" />
+</h:commandLink>
+
+</div>
+
+
+
+<h:panelGroup layout="block" id="pnPanel" >
+
+
+<h:panelGroup layout="block" id="pnCalendarioPersonal" rendered="#{calendarioPersonalB.indice eq 1}" >
+
+
+<div class="paneles">
+<h:commandLink  id="btNuevo" styleClass="boton-normal" disabled="#{calendarioPersonalB.persona eq null}" >
+<i class="fa fa-file-text-o" />
+Nuevo Horario
+<f:ajax execute="@this" render=":Frm:cbCalendario :Frm:txtFechaInicio :Frm:txtFechaFinal :Frm:txtObservacion" listener="#{calendarioPersonalB.nuevoCalendarioPersonal}" />
+</h:commandLink>
+</div>
+
+<p:dataTable id="tbCalendarioPersonal" value="#{calendarioPersonalB.calendarioPersonalL}" var="itemCalendarioPersonal" selectionMode="single" rowKey="#{itemCalendarioPersonal}" selection="#{calendarioPersonalB.calendarioPersona}"  rowIndexVar="status" emptyMessage="" >
+<p:ajax event="rowDblselect"  update="pnPanel" listener="#{calendarioPersonalB.selectCalendarioPersonal}" />
+<p:column  headerText="N" width="10" >
+	#{status+1}
+</p:column>
+<p:column  headerText="Institucion" width="150" >
+	#{itemCalendarioPersonal.itemInstitucion.descripcion} 
+</p:column>
+
+<p:column  headerText="Horario" >
+	#{itemCalendarioPersonal.calendario} - #{itemCalendarioPersonal.itemCalendario.descripcion}
+</p:column>
+<p:column  headerText="Fecha Inicio" width="60" >
+	#{itemCalendarioPersonal.fechaDesde}
+</p:column>
+<p:column  headerText="Fecha Final" width="60" >
+	#{itemCalendarioPersonal.fechaHasta}
+</p:column>
+
+<p:column  width="10" >
+	<h:commandLink id="btEditar" title="Editar" >
+	<i class="fa fa-pencil" />
+	<f:ajax execute="@this" render=":Frm:cbCalendario :Frm:cbinstitucion :Frm:txtFechaInicio :Frm:txtFechaFinal :Frm:txtObservacion" listener="#{calendarioPersonalB.editarCalendarioPersonal(itemCalendarioPersonal)}" />
+	</h:commandLink >
+	
+	
+</p:column>
+<p:column width="10">
+<h:commandLink id="btEliminar" title="Eliminar" onclick="return confirmacion(this,'¿ Esta seguro eliminar ?');"  >
+	<i class="fa fa-times" />
+	<f:ajax execute="@this" render="tbCalendarioPersonal" listener="#{calendarioPersonalB.eliminarCalendarioPersonal(itemCalendarioPersonal)}" />
+	</h:commandLink >
+
+</p:column>
+  </p:dataTable>
+
+</h:panelGroup>
+
+<h:panelGroup layout="block" id="pnPersonalDescanso" rendered="#{calendarioPersonalB.indice eq 2}" >
+
+<div  class="paneles" >
+<h:commandLink  styleClass="boton-normal" >
+Atras
+<f:ajax execute="@this" render="pnPanel" listener="#{calendarioPersonalB.atras}" />
+</h:commandLink>
+
+<h:commandLink id="btNuevoPersonalDescanso" styleClass="boton-normal" >
+Nuevo Descanso
+<f:ajax execute="@this" render="cbTipoDescansoPD txtFechaInicioPD txtFechaFinalPD txtDescripcionPD" resetValues="true" listener="#{calendarioPersonalB.nuevoPersonalDescanso}" />
+</h:commandLink>
+</div>
+<p:dataTable id="tbCalendarioPersonalDescanso" value="#{calendarioPersonalB.calendarioPersonalDescansoL}" var="itemCalendarioPersonalDescanso" rowIndexVar="status" >
+<f:facet name="header">
+#{calendarioPersonalB.calendarioPersona.itemCalendario.descripcion}
+</f:facet>
+<p:column  headerText="Nr" width="10" >
+#{status+1}
+</p:column>
+
+<p:column  headerText="Tipo Descanso" width="100" >
+#{itemCalendarioPersonalDescanso.itemTipoDescanso.descripcion}
+</p:column>
+<p:column  headerText="Descripcion" >
+#{itemCalendarioPersonalDescanso.descripcion}
+</p:column>
+
+<p:column  headerText="Fecha Inicio" width="60" >
+#{itemCalendarioPersonalDescanso.fechaInicio}
+</p:column>
+<p:column  headerText="Fecha Final" width="60" >
+#{itemCalendarioPersonalDescanso.fechaFinal}
+</p:column>
+<p:column  width="10" >
+	<h:commandLink id="btEditar" title="Editar" >
+	<i class="fa fa-pencil" />
+	<f:ajax execute="@this" render=":Frm:cbTipoDescansoPD :Frm:txtFechaInicioPD :Frm:txtFechaFinalPD :Frm:txtDescripcionPD" resetValues="true" listener="#{calendarioPersonalB.editaPersonalDescanso(itemCalendarioPersonalDescanso)}" />
+	</h:commandLink >
+</p:column>
+<p:column  width="10" >
+	<h:commandLink id="btEliminar" title="Eliminar" onclick="return confirmacion(this,'¿ Esta seguro eliminar?')" >
+	<i class="fa fa-times" />
+	<f:ajax execute="@this" render="tbCalendarioPersonalDescanso"  listener="#{calendarioPersonalB.eliminaPersonalDescanso(itemCalendarioPersonalDescanso)}" />
+	</h:commandLink >
+</p:column>
+</p:dataTable>
+</h:panelGroup>
+</h:panelGroup>
+
+
+<p:dialog header="..: Calendario Personal :.." modal="true" resizable="false" closeOnEscape="true" widgetVar="dlCalendarioPersonal"  >
+<h:outputLabel for="cbCalendario" value="Calendario" />
+<h:selectOneMenu id="cbCalendario" value="#{calendarioPersonalB.calendarioPersona.calendario}" required="true" >
+<f:selectItems value="#{calendarioPersonalB.calendarioL}" var="itemCalendario" itemValue="#{itemCalendario.calendario}" itemLabel="#{itemCalendario.calendario} #{itemCalendario.descripcion}" />
+</h:selectOneMenu>
+<br />
+<h:outputLabel for="cbinstitucion" value="Institucion" />
+<h:selectOneMenu id="cbinstitucion" value="#{calendarioPersonalB.calendarioPersona.institucion}" required="true" >
+<f:selectItems value="#{calendarioPersonalB.institucionL}" var="itemInstitucion" itemValue="#{itemInstitucion.institucion}" itemLabel="#{itemInstitucion.descripcion}" />
+</h:selectOneMenu>
+<br />
+
+<h:outputLabel for="txtFechaInicio" value="Fecha Inicio" />
+<p:calendar id="txtFechaInicio" value="#{calendarioPersonalB.calendarioPersona.fechaDesde}" pattern="dd-MM-yyyy" required="true" mask="true" >
+<p:ajax event="dateSelect"  update="txtFechaFinal" process="@this" />
+</p:calendar>
+<br />
+<h:outputLabel for="txtFechaFinal" value="Fecha Final" />
+<p:calendar id="txtFechaFinal" value="#{calendarioPersonalB.calendarioPersona.fechaHasta}" pattern="dd-MM-yyyy" required="true"  mask="true" mindate="#{calendarioPersonalB.calendarioPersona.fechaDesde}" />
+<br />
+<h:outputLabel for="txtObservacion" value="Observacion" />
+<br />
+<h:inputTextarea id="txtObservacion" />
+<f:facet name="footer">
+<div style="display: block;text-align: right;">
+<h:commandLink styleClass="boton-rojo" onclick="dlCalendarioPersonal.hide()" >
+Salir
+<f:ajax execute="@this" />
+</h:commandLink>
+
+<h:commandLink styleClass="boton-normal" >
+Aceptar
+<f:ajax execute="@this cbCalendario cbinstitucion txtFechaInicio txtFechaFinal" render="txtFechaInicio cbCalendario txtFechaFinal tbCalendarioPersonal" listener="#{calendarioPersonalB.insertarCalendarioPersonal}"  />
+</h:commandLink>
+
+</div>
+
+</f:facet>
+</p:dialog>
+
+<p:dialog header="Personal Descanso" widgetVar="dlPersonalDescanso" modal="true" resizable="false"  closeOnEscape="true" >
+<h:outputLabel value="Tipo" />
+<h:selectOneMenu id="cbTipoDescansoPD" value="#{calendarioPersonalB.calendarioPersonalDescanso.tipoDescanso}" required="true" >
+<f:selectItems value="#{calendarioPersonalB.tipoDescansoL}" var="itemTipoDescanso" itemLabel="#{itemTipoDescanso.descripcion}" itemValue="#{itemTipoDescanso.tipoDescanso}" />
+</h:selectOneMenu>
+<br />
+<h:outputLabel value="Fecha Inicio" />
+<p:calendar id="txtFechaInicioPD" value="#{calendarioPersonalB.calendarioPersonalDescanso.fechaInicio}" pattern="dd-MM-yyyy" mindate="#{calendarioPersonalB.calendarioPersona.fechaDesde}" maxdate="#{calendarioPersonalB.calendarioPersona.fechaHasta}" navigator="true" mask="true" size="8" required="true" >
+<p:ajax event="dateSelect"  update="txtFechaFinalPD" process="@this" />
+</p:calendar>
+<br />
+<h:outputLabel value="Fecha Final" />
+<p:calendar id="txtFechaFinalPD" value="#{calendarioPersonalB.calendarioPersonalDescanso.fechaFinal}" pattern="dd-MM-yyyy" mindate="#{calendarioPersonalB.calendarioPersonalDescanso.fechaInicio}" maxdate="#{calendarioPersonalB.calendarioPersona.fechaHasta}" navigator="true" mask="true" size="8" required="true" />
+<br />
+<h:outputLabel value="Descripcion" />
+<h:inputTextarea  id="txtDescripcionPD" value="#{calendarioPersonalB.calendarioPersonalDescanso.descripcion}" />
+
+
+<f:facet name="footer">
+<h:commandLink styleClass="boton-rojo" onclick="dlPersonalDescanso.hide()" >
+Salir
+<f:ajax execute="@this" />
+</h:commandLink>
+
+<h:commandLink styleClass="boton-normal"  >
+Aceptar
+<f:ajax execute="@this cbTipoDescansoPD txtFechaInicioPD txtFechaFinalPD txtDescripcionPD"  render="cbTipoDescansoPD txtFechaInicioPD txtFechaFinalPD txtDescripcionPD tbCalendarioPersonalDescanso"  listener="#{calendarioPersonalB.insertaPersonalDescanso}" />
+</h:commandLink>
+
+</f:facet>
+
+</p:dialog>
+
+
+
+<p:dialog  header="..: Busqueda persona :.."  modal="true" resizable="false" closeOnEscape="true" widgetVar="dlBusqueda" width="500"  >
+<h:outputLabel value="Paterno" />
+<h:inputText id="txtPaternoB"  value="#{calendarioPersonalB.paterno}" >
+<f:ajax  execute="@this" render="tbPersona" listener="#{calendarioPersonalB.filtroPersonal}" />
+</h:inputText>
+<br />
+<h:outputLabel value="Materno" />
+<h:inputText id="txtMaternoB" value="#{calendarioPersonalB.materno}" >
+<f:ajax  execute="@this" render="tbPersona" listener="#{calendarioPersonalB.filtroPersonal}" />
+</h:inputText>
+<br />
+<h:outputLabel value="Nombres" />
+<h:inputText id="txtNombresB" value="#{calendarioPersonalB.nombres}" >
+<f:ajax  execute="@this" render="tbPersona" listener="#{calendarioPersonalB.filtroPersonal}" />
+</h:inputText>
+
+
+
+
+<p:dataTable id="tbPersona" value="#{calendarioPersonalB.personaL}" var="itemPersona" rowIndexVar="status" selectionMode="single" selection="#{calendarioPersonalB.persona}" rowKey="#{itemPersona.persona}" scrollable="true" scrollHeight="300" emptyMessage="" >
+ <p:ajax event="rowDblselect" update="imgFoto txtPaterno txtMaterno  txtNombres tbCalendarioPersonal btNuevo" listener="#{calendarioPersonalB.selectPersona()}"  oncomplete="dlBusqueda.hide()" />
+<p:column headerText="N." width="10" >
+	#{status+1}
+</p:column>
+<p:column headerText="Datos" >
+	#{itemPersona.paterno} #{itemPersona.materno} #{itemPersona.nombres}
+ </p:column>
+</p:dataTable>
+<f:facet name="footer">
+<h:commandLink styleClass="boton-rojo" onclick="dlBusqueda.hide()" >
+Salir
+<f:ajax execute="@this" />
+</h:commandLink>
+
+</f:facet>
+
+</p:dialog>
+
+</h:form>
+</ui:define>
+</ui:composition>
+

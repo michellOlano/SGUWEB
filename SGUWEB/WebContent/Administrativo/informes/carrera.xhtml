@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<h:head>
+<link   type="text/css" rel="stylesheet" href="/SGAWEB/resources/css/administrativo/style.css" />
+        <link   type="text/css" rel="stylesheet" href="/SGAWEB/resources/css/font-awesome.css" />
+<title>
+CARRERA
+
+</title>
+<style>
+.bloquear{position: relative;}
+.bloquear:before{content: "";width: 100%;height: 100%;background: rgba(0,0,0,0.7);position: absolute;cursor: no-drop}   
+
+</style>
+<h:body>
+<h:form prependId="false" >
+<div class="paneles" >
+<h:outputLabel for="txtCarrera" value="Carrera" />
+<h:inputText id="txtCarrera" value="#{carreraB.carrera.carrera}" disabled="#{not carreraB.bandera}" required="true" style="#{ component.valid ? '' : 'border-color:red;'}" /><br />
+<h:outputLabel for="txtDescripcion" value="Descripcion" />
+<h:inputText id="txtDescripcion" value="#{carreraB.carrera.descripcion}" disabled="#{not carreraB.bandera}" required="true" style="#{ component.valid ? '' : 'border-color:red;'}"  /><br />
+<h:outputLabel for="txtAbreviatura" value="Abreviatura" />
+<h:inputText id="txtAbreviatura" value="#{carreraB.carrera.abreviatura}" disabled="#{not carreraB.bandera}"  /><br />
+<h:outputLabel for="cbEstado" value="Estado" />
+<h:selectOneMenu id="cbEstado" value="#{carreraB.carrera.estadoRegistro}" disabled="#{not carreraB.bandera}"  > 
+<f:selectItem itemLabel="Habilitado" itemValue="1"  />
+<f:selectItem itemLabel="Deshabilitado" itemValue="0"  />
+
+</h:selectOneMenu>
+</div>
+<div class="paneles" >
+<h:commandLink  id="btNuevo" styleClass="boton-normal" disabled="#{ carreraB.bandera}"  >
+<i class="fa fa-file-o" />
+Nuevo
+<f:ajax execute="@this" render="txtCarrera txtDescripcion txtAbreviatura cbEstado btNuevo btGuardar btEditar btCancelar"   listener="#{carreraB.nuevo}" />
+</h:commandLink>
+
+<h:commandLink id="btGuardar" styleClass="boton-normal" disabled="#{not carreraB.bandera}"  >
+<i class="fa fa-floppy-o"  />
+Guardar
+<f:ajax execute="@this txtCarrera txtDescripcion txtAbreviatura cbEstado" render="txtCarrera txtDescripcion txtAbreviatura cbEstado btNuevo btGuardar btEditar btCancelar tbCarrera" listener="#{carreraB.guardar}" />
+</h:commandLink>
+
+<h:commandLink id="btEditar" styleClass="boton-normal" disabled="#{ carreraB.bandera}"  >
+<i class="fa fa-pencil" />
+Editar
+<f:ajax execute="@this" render="txtDescripcion txtAbreviatura cbEstado btNuevo btGuardar btEditar btCancelar" listener="#{carreraB.editar}" />
+</h:commandLink>
+
+<h:commandLink id="btCancelar" styleClass="boton-normal" disabled="#{not carreraB.bandera}"  >
+<i class="fa fa-undo" />
+Cancelar
+<f:ajax execute="@this" render="txtCarrera txtDescripcion txtAbreviatura cbEstado btNuevo btGuardar btEditar btCancelar" listener="#{carreraB.cancelar}" resetValues="true" />
+</h:commandLink>
+
+<h:commandLink id="btImprimir" styleClass="boton-normal" >
+Imprimir
+</h:commandLink>
+</div>
+
+<div id="tabla-carrera">
+<p:dataTable id="tbCarrera" value="#{carreraB.carrerasL}" var="itemCarrera" selection="#{carreraB.carrera}" rowKey="#{itemCarrera.carrera}" selectionMode="single"  rowIndexVar="status"  >
+<p:ajax event="rowSelect"  update="txtCarrera txtDescripcion txtAbreviatura cbEstado" />
+<p:column  headerText="N." width="20" >
+#{status+1}
+</p:column>
+
+
+<p:column  headerText="Carrera" width="100" >
+#{itemCarrera.carrera}
+</p:column>
+
+<p:column  headerText="Descripcion">
+#{itemCarrera.descripcion}
+</p:column>
+
+
+<p:column  headerText="Abreviatrua" width="100">
+#{itemCarrera.abreviatura}
+</p:column>
+
+</p:dataTable>
+
+</div>
+
+
+</h:form>
+
+</h:body>
+</h:head>
+</html>

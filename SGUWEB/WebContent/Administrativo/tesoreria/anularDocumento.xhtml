@@ -1,0 +1,143 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<h:head>
+<title>Anular Documento</title>
+<link   type="text/css" rel="stylesheet" href="../../resources/css/administrativo/style2.css" />
+<link   type="text/css" rel="stylesheet" href="../../resources/css/font-awesome.css" />
+
+<script>
+$(document).ready(function(){
+
+});
+
+function recargar(){
+	alert("cargando");
+}
+
+</script>
+</h:head>
+<h:body>
+<h:form id="frmAnulaDocumento" prependId="false" >
+<h:outputLabel value="Fecha" />
+<p:calendar value="#{anulaDocumentoB.fecha}" pattern="dd-MM-yyyy" mask="true" navigator="true" size="10"   >
+  <p:ajax event="dateSelect"  process="@this" update="pnComprobante" listener="#{anulaDocumentoB.filtrarComprobante}" oncomplete="" />
+</p:calendar>
+
+
+<h:inputText id="txtNumeroComprobante" value="#{anulaDocumentoB.numero}" maxlength="20"  > 
+<f:ajax execute="@this"  render="pnComprobante" listener="#{anulaDocumentoB.filtrarComprobante}" />
+ </h:inputText>
+
+
+ 
+<h:panelGroup  layout="block" id="pnComprobante" >
+
+
+
+<ui:repeat var="itemTipoDocumento" value="#{anulaDocumentoB.tipoDocumentoPersonaL}">
+
+<h:panelGroup layout="block" rendered="#{itemTipoDocumento.pagoPersonaL.size() ne 0}" >
+<h:outputLabel  value="#{itemTipoDocumento.tipoDocumento.descripcion}"  /> 
+
+<h:outputLabel  value="#{itemTipoDocumento.pagoPersonaL.size()}"  />
+<hr />
+</h:panelGroup>
+ 
+<div>
+
+
+<ui:repeat var="itemPagoPersona" value="#{itemTipoDocumento.pagoPersonaL}">
+<h:panelGroup id="pnFicha"   styleClass="paneles column"  style="opacity:#{itemPagoPersona.estadoRegistro eq 24?'0.5':'1'}" >
+	<h:commandLink  title="Anular" disabled="#{itemPagoPersona.estadoRegistro eq 24}" onclick="$(this).parent().addClass('select')"  >
+	#{itemPagoPersona.numeroComprobante}
+	<br  />
+	#{itemPagoPersona.montoTotal}
+	<br />
+	#{itemPagoPersona.itemFormaPago.descripcion}
+
+	
+	<f:ajax execute="@this" render=":frmAnulaDocumento:tbDetallePagoPersona :frmAnulaDocumento:txtNumero :frmAnulaDocumento:imgFoto :frmAnulaDocumento:txtPaterno :frmAnulaDocumento:txtMaterno :frmAnulaDocumento:txtNombres :frmAnulaDocumento:txtMotivo" listener="#{anulaDocumentoB.selectComprobante(itemPagoPersona)}" />
+	</h:commandLink>
+
+</h:panelGroup>
+	
+
+</ui:repeat>
+</div>
+</ui:repeat>
+
+
+
+
+</h:panelGroup>
+
+<p:dialog widgetVar="dlgAnular" header="Anular Documento" modal="true" resizable="false" closeOnEscape="true" width="700" >
+
+<div class="column" >
+<div>
+<div class="column">
+	<h:graphicImage id="imgFoto" value="SVerImagenAlumno?alumno=#{anulaDocumentoB.persona.persona}" style="width:80px" />
+	</div>
+	<div class="column">
+	<h:inputText id="txtNumero" value="#{anulaDocumentoB.pagoPersona.numeroComprobante}"  disabled="true" />
+	<br />
+	<h:inputText id="txtPaterno" value="#{anulaDocumentoB.persona.paterno}"  disabled="true" />
+	<br />
+	<h:inputText id="txtMaterno" value="#{anulaDocumentoB.persona.materno}" disabled="true"  />
+	<br />
+	<h:inputText id="txtNombres" value="#{anulaDocumentoB.persona.nombres}" disabled="true"  />
+	<br />
+	
+	</div>
+
+</div>
+	
+
+<h:outputLabel value="Motivo" />
+
+<h:inputTextarea id="txtMotivo" value="#{anulaDocumentoB.pagoPersona.observacion}" required="true"  />
+
+</div>
+
+
+<div class="column" style="width: 55%" >
+<p:dataTable id="tbDetallePagoPersona" value="#{anulaDocumentoB.detallePagoPersonaL}" var="itemDetallePagoPersona"  rowIndexVar="status"   >
+<p:column headerText="Nr." width="10" >
+#{status +1}
+</p:column>
+<p:column  headerText="Descripcion" >
+#{itemDetallePagoPersona.numeroCuota} |  #{itemDetallePagoPersona.itemConcepto.descripcion}
+</p:column>
+<p:column  headerText="Monto" width="50" >
+#{itemDetallePagoPersona.montoTotal}
+</p:column>
+ <p:columnGroup type="footer">
+    <p:row>
+                <p:column colspan="2" style="text-align:right" footerText="Total..." />                
+                <p:column footerText="#{anulaDocumentoB.pagoPersona.montoTotal}" style="color:#0088CE!important" />
+    </p:row>
+ </p:columnGroup>
+ 
+</p:dataTable>
+</div>
+
+
+<f:facet name="footer">
+
+<h:commandLink styleClass="boton-normal" >
+Aceptar
+<p:ajax  process="@this txtMotivo" update="txtMotivo @(.select)"  listener="#{anulaDocumentoB.anular}" />
+</h:commandLink>
+
+</f:facet>
+</p:dialog>
+</h:form>
+</h:body>
+</html>

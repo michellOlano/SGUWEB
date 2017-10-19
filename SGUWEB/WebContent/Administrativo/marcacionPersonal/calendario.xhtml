@@ -1,0 +1,453 @@
+<ui:composition   xmlns="http://www.w3.org/1999/xhtml"
+                  xmlns:h="http://xmlns.jcp.org/jsf/html"
+                  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                  xmlns:f="http://xmlns.jcp.org/jsf/core"
+                  xmlns:hp="http://xmlns.jcp.org/jsf/passthrough"
+                  xmlns:p="http://primefaces.org/ui"
+                  xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+                  template="/Administrativo/plantilla.xhtml">
+              
+            <ui:define name="titulo">
+            
+            
+            </ui:define>
+               <ui:define name="contenido">
+
+ <script>
+       var bandera=false;
+       var idGeneral;
+    
+       function confirmacion(obj,cadena){
+           idGeneral=obj;
+           if(bandera){
+               $(".modal-fondo").remove();
+               $(".modal").remove();
+               bandera=false;
+               return true;
+           }else{
+              if(! $('.modal-fondo').hasClass("modal-fondo")){
+                  $('body').append('<div class="modal-fondo"  /> ');
+                   $('body').append('<div class="modal" ><div class="modal-titulo" > INTRANET  </div><div class="modal-cuerpo"> <div class="column modal-icono"><i class="fa fa-exclamation "  /></div><div class="column modal-texto"><span>' +cadena+'</span></div></div><hr/><div class="modal-botonera"><a  class="positivo"  onclick="valida(true)" >Si</a> <a class="negativo" onclick="valida(false)" > No</a></div>  </div>');
+                   }else{
+                   $(".modal-fondo").remove();
+                   $(".modal").remove();
+              }                    
+               
+               return false;
+           }
+           
+       }
+       
+       function valida(estado){
+           bandera=estado;           
+           $(idGeneral).click();            
+       }
+       
+       
+       $(document).ready(function(){
+    	   var alto;  
+    	   var scrollTop;
+    	   scrollTop =($("#horario-cuerpo").offset()==undefined?0:$("#horario-cuerpo").offset().top);
+    	   alto= $(window).height() - scrollTop;
+    	   $("#horario-cuerpo").css("height",(alto-5)+"px");
+    	   
+    	   
+    	   
+    	   $(window).resize(function(){	
+    		   
+    		   scrollTop =($("#horario-cuerpo").offset()==undefined?0:$("#horario-cuerpo").offset().top);
+    		   alto= $(window).height() - $("#horario-cuerpo").offset().top;
+        	   $("#horario-cuerpo").css("height",(alto-5)+"px");
+    	   });
+    	 
+    	
+    	   	  var banderaMouse=true;
+    		  var inicio;
+    		  var ejeY;
+    		  var ejeX;
+    		  
+    		  $('body').on('mousemove','.column-enabled', function(event){
+    			  
+    			
+    			  ejeY=(event.pageY - this.offsetTop)+ ($("#horario-cuerpo").scrollTop() - $("#cabecera").height()) ;
+    			  ejeX=event.pageX - this.offsetLeft;
+    			  $("#toltip").css("left",(event.pageX+30)-$("#column-nav").width());
+    			  $("#toltip").css("top",(event.pageY+5)- $("#cabecera").height());
+    			  
+    			  if (banderaMouse){	 
+    				  inicio=ejeY;
+    				  
+    			  }
+    			  var hora="00" + Math.floor(ejeY / 60);
+    			  var minuto="00" + ejeY % 60;
+    			  $("span.lblFin").text( hora.substr(-2) +":" +minuto.substr(-2))
+    			  $(this).children("div.item").css("height", (ejeY - inicio) +"px");
+    			  
+    			  
+    		  });
+    		  
+    		  $('body').on('mousedown','.column-enabled', function(event){
+    		  //$(".column-dia").mousedown(function(event){
+    			  banderaMouse=false;
+    			   
+    			  var hora= "00" + Math.floor(inicio / 60);
+    			  var minuto="00" + (inicio % 60);
+    			  
+    			  $("span.lblInicio").text(hora.substr(-2) +":" +minuto.substr(-2)) 
+    			  $(this).append('<div class="item" />');
+    			  $(this).children('div.item').css("top", inicio+"px");
+    			  
+    			  $("#toltip").css("display","block");
+    		  });
+    		  $('body').on('mouseup','.column-enabled', function(event){
+    			
+    				
+    				banderaMouse=true;
+    				$("#toltip").css("display","none");
+    				
+    				$(this).children('div.item').remove();
+    				
+    			
+    				if(ejeY>inicio){
+    					entrada=new Date();
+    					entrada.setHours( Math.floor(inicio / 60), (inicio % 60), 00, 00);
+    					salida=new Date();
+    					salida.setHours(Math.floor(ejeY / 60), (ejeY % 60), 00, 00);
+    					
+    					PF('entrada').setDate(entrada);
+    					PF('salida').setDate(salida);
+    					PF('dlCalendarioDia').show();	
+    					$("#cbDia").val($(this).data("dia"));
+    			
+    				}
+    				
+    				
+    		  });
+    		  
+    		  
+    		});  
+       
+       </script>
+
+<style>
+*{padding: 0;margin: 0px;  -webkit-user-select: none;    -moz-user-select: none;    -ms-user-select: none;    user-select: none; }
+.card {width: 150px;text-align: center;}
+.card img{display: inline-block;}
+.item{display: block;width: 100%;position: absolute; background-color: rgba(0,0,0,0.5)}
+.column-horario:first-child{width: 5%}
+#horario-cuerpo{height: 400px;overflow: auto;}
+.celda-dia{position:absolute ;    outline: 1px solid #f8b27a ;background: url('https://d1eoen8uf6k03z.cloudfront.net/assets/primaerp-1.5.20.1/background/stripe-387c6ea8b1cd00c8580f5c899100583d.png');    background-color: #fdeadb !important;width: 100% ;overflow: hidden;   }
+.celda-dia label{display: block;}
+.celda-dia:hover div.sub-menu{display: block!important;} 
+.sub-menu{position: absolute;top: 3px;right: 5px;display: none;}
+#horario-cabecera{height: 30px;display: block;background-color: #0088CE; ;font-size: 0px;border-bottom: 1px solid silver}
+#pnHorario{font-size: 0px;}
+#pnHorario > div{width: 13.18%;    position: relative;    border-right: 1px solid silver;    height: 1440px;font-size: 15px;}
+#pnHorario > div:first-child{width: 5.10%}
+#horario-cabecera span{height:100%;display: inline-block;vertical-align: top;text-align: center;color: white;width: 13%;border-right: 1px solid silver;font-size: 16px;line-height: 30px;}
+#horario-cabecera span:first-child{width: 5%}
+#horario-cuerpo{display: block;width: 100%;}
+
+#column-hora{background-color: #0088CE}
+#column-hora span{    outline: 1px solid silver;    display: block;    text-align: center;    line-height: 60px;    color: white;}
+#toltip{position: absolute;display:none;background-color: rgba(0,0,0,0.9);color: white;padding: 5px ;border-radius:3px;z-index: 2}
+</style>
+
+<h:form id="Frm" prependId="false" hp:autocomplete="off">
+
+<h:panelGroup  layout="block" id="pnPrincipal" >
+
+<h:panelGroup  layout="block" id="pnCalendario" rendered="#{calendarioHorarioB.index eq 1}" >
+
+
+
+<div class="paneles" >
+<h:outputLabel value="Calendario" />
+<h:inputText id="txtCalendarioC" value="#{calendarioHorarioB.calendario.descripcion}" disabled="#{not calendarioHorarioB.banderaC}" required="true" size="50" style="#{ component.valid ? '' : 'border-color:red;'}"    />
+<br />
+
+<h:outputLabel value="Abreviatura" />
+<h:inputText id="txtAbreviaturaC" value="#{calendarioHorarioB.calendario.abreviatura}" disabled="#{not calendarioHorarioB.banderaC}" />
+<br />
+
+<h:outputLabel value="Estado" />
+<h:selectOneMenu id="cbEstadoC" value="#{calendarioHorarioB.calendario.estadoRegistro}" disabled="#{not calendarioHorarioB.banderaC}" >
+<f:selectItem itemLabel="Habilitado" itemValue="1" />
+<f:selectItem itemLabel="Deshabilitado" itemValue="2" />
+</h:selectOneMenu>
+
+
+
+
+</div>
+<div  class="paneles" >
+<h:commandLink id="btNuevoC" styleClass="boton-normal" disabled="#{calendarioHorarioB.banderaC}" >
+<i class="fa fa-file-text-o" />
+Nuevo
+<f:ajax  execute="@this" render="txtCalendarioC txtAbreviaturaC cbEstadoC btNuevoC btGuardarC btCancelarC btEditarC" listener="#{calendarioHorarioB.nuevoCalendario}"  />
+</h:commandLink>
+<h:commandLink id="btGuardarC" styleClass="boton-normal" disabled="#{not calendarioHorarioB.banderaC}" >
+<i class="fa fa-floppy-o" />
+Guardar
+<f:ajax  execute="@this txtCalendarioC txtAbreviaturaC cbEstadoC" render="txtCalendarioC txtAbreviaturaC cbEstadoC  btNuevoC btGuardarC btCancelarC btEditarC tbCalendario" listener="#{calendarioHorarioB.insertarCalendario}"  />
+</h:commandLink>
+
+<h:commandLink id="btCancelarC" styleClass="boton-normal" disabled="#{not calendarioHorarioB.banderaC}" >
+<i class="fa fa-floppy-o" />
+Cancelar
+<f:ajax  execute="@this " render="txtCalendarioC txtAbreviaturaC cbEstadoC  btNuevoC btGuardarC btCancelarC btEditarC" listener="#{calendarioHorarioB.cancelarCalendario}"  />
+</h:commandLink>
+
+<h:commandLink id="btEditarC" styleClass="boton-normal" disabled="#{calendarioHorarioB.banderaC}" >
+<i class="fa fa-pencil" />
+Editar
+<f:ajax  execute="@this " render="txtCalendarioC txtAbreviaturaC cbEstadoC  btNuevoC btGuardarC btCancelarC btEditarC" listener="#{calendarioHorarioB.editarCalendario}"  />
+</h:commandLink>
+
+
+
+</div>
+<div class="paneles">
+<h:inputText hp:placeholder="Busqueda"  value="#{calendarioHorarioB.calendarioF}" >
+<f:ajax execute="@this" render="tbCalendario" listener="#{calendarioHorarioB.filtarCalendario}" />
+</h:inputText>
+</div>
+<div class="paneles" >
+
+<p:dataTable  id="tbCalendario" value="#{calendarioHorarioB.calendarioL}" var="itemCalendario" selectionMode="single" selection="#{calendarioHorarioB.calendario}" rowKey="#{itemCalendario.calendario}" rowIndexVar="status">
+<f:facet name="header">
+<div style="text-align: right;" >
+<h:commandLink immediate="true" title="Vista Previa" target="_blank" actionListener="#{utilB.imprimirIreports('administrativo/marcacionPersonal/calendario', 1)}"   >
+<i class="fa fa-print" />
+
+</h:commandLink>
+</div>
+
+</f:facet>
+<p:ajax event="rowSelect"  update="txtCalendarioC txtAbreviaturaC cbEstadoC " />
+<p:ajax event="rowDblselect"  update="pnPrincipal" listener="#{calendarioHorarioB.mostrarCalendarioDia}" />
+<p:column headerText="N." width="10">
+#{status+1}
+</p:column>
+<p:column  headerText="Calendario" >
+#{itemCalendario.calendario} - #{itemCalendario.descripcion}
+
+</p:column>
+
+<p:column  headerText="Abreviatura" width="100" >
+#{itemCalendario.abreviatura}
+</p:column>
+
+<p:column width="10">
+<h:commandLink id="btEliminarC" onclick="return confirmacion(this,'¿ Esta seguro eliminar?')" >
+<i class="fa fa-times"  style="color:Red" />
+
+<f:ajax  execute="@this " render="tbCalendario" listener="#{calendarioHorarioB.eliminarCalendario(itemCalendario)}"  />
+</h:commandLink>
+</p:column>
+
+</p:dataTable>
+</div>
+
+</h:panelGroup>
+
+
+
+
+<b id="toltip"  ><span class="lblInicio" /> - <span class="lblFin" /></b>
+
+
+
+
+
+<h:panelGroup  layout="block" id="pnCalendarioDia" rendered="#{calendarioHorarioB.index eq 2}"  >
+
+<div class="paneles">
+
+
+
+<h:commandLink id="btNuevoD" styleClass="boton-normal" disabled="#{calendarioHorarioB.banderaD}">
+<i class="fa fa-file-text-o" />
+Nuevo 
+<f:ajax execute="@this " render="cbDia txtEntrada txtSalida txtEntradaRe txtSalidaRe btNuevoD btCancelarD btRegresarD" listener="#{calendarioHorarioB.nuevoCalendarioDia}" />
+</h:commandLink>
+<h:commandLink id="btCancelarD" styleClass="boton-normal" disabled="#{not calendarioHorarioB.banderaD}">
+<i class="fa fa-reply" />
+Cancelar
+<f:ajax execute="@this" render="btNuevoD btCancelarD btRegresarD" listener="#{calendarioHorarioB.cancelarCalendarioDia}" />
+</h:commandLink>
+
+<h:commandLink id="btRegresarD" styleClass="boton-normal" disabled="#{calendarioHorarioB.banderaD}">
+<i class="fa fa-arrow-left" />
+Regresar
+<f:ajax execute="@this"  render="pnPrincipal" listener="#{calendarioHorarioB.regresar}"  />
+</h:commandLink>
+
+<h:commandLink styleClass="boton-normal">
+<i class="fa fa-users" />
+Personal
+
+<f:ajax execute="@this" render="pnPrincipal" listener="#{calendarioHorarioB.mostrarPersonalHorario}" />
+</h:commandLink>
+
+
+</div>
+
+
+	
+	
+	
+	
+	
+
+	
+	<div class="paneles" >
+	<h2 style="text-align: center;" >
+	<h:outputLabel  id="lbCalendario" value="#{calendarioHorarioB.calendario.descripcion}" />
+	</h2>
+	<div class="paneles" >
+	<h:outputLabel id="lbTotalDuracion" value="Total Duracion:" >
+		#{calendarioHorarioB.totalDuracion()}
+	</h:outputLabel>
+	</div>
+	
+	
+	<div id="horario-cabecera" >
+	<span >Hora	</span>
+	<span >Lunes</span>
+	<span >Martes</span>
+	<span >Miercoles</span>
+	<span >Jueves</span>
+	<span >Viernes</span>
+	<span >Sabado</span>
+	<span >Domingo</span>
+	</div>
+	
+	<div id="horario-cuerpo" >
+		<h:panelGroup layout="block" id="pnHorario"  >
+		<div id="column-hora" class="column ">
+			<span>00:00</span><span>01:00</span>
+			<span>02:00</span><span>03:00</span>
+			<span>04:00</span><span>05:00</span>
+			<span>06:00</span><span>07:00</span>
+			<span>08:00</span><span>09:00</span>
+			<span>10:00</span><span>11:00</span>
+			<span>12:00</span><span>13:00</span>
+			<span>14:00</span><span>15:00</span>
+			<span>16:00</span><span>17:00</span>
+			<span>18:00</span><span>19:00</span>
+			<span>20:00</span><span>21:00</span>
+			<span>22:00</span><span>23:00</span>
+		</div>
+		<ui:repeat var="itemCalendarioDia" value="#{calendarioHorarioB.calendarioDiaL}" varStatus="index" >
+		<div  class="column column-dia " data-dia="#{index.index+1}"  >
+		<div class="celda-dia" style="display: #{itemCalendarioDia.dia eq 0?'none':'block'};height: #{itemCalendarioDia.alto()}px;top:#{itemCalendarioDia.top()}px">
+		<div style="padding: 15px 5px;color:#3a3a3a ">
+			<label> Inicio:  #{itemCalendarioDia.entrada}</label>
+			<label> Final :#{itemCalendarioDia.salida}</label>
+			
+			<label> Duracion : #{itemCalendarioDia.tiempo()}</label>
+			<label> Refrigerio : #{itemCalendarioDia.refriEntrada} - #{itemCalendarioDia.refriSalida}</label>
+		
+		</div>
+			
+			<div class="sub-menu">
+				<h:commandLink title="Editar" >
+				<i class="fa fa-pencil" />
+				<f:ajax execute="@this" render=":Frm:cbDia :Frm:txtEntrada :Frm:txtSalida :Frm:txtEntradaRe :Frm:txtSalidaRe " listener="#{calendarioHorarioB.editarCalendarioDia(itemCalendarioDia)}" />
+				</h:commandLink>
+				
+				<h:commandLink title="Eliminar" onclick="return confirmacion(this,'¿ Esta seguro eliminar ');" >
+				<i class="fa fa-times" />
+				<f:ajax execute="@this"  render=":Frm:pnHorario :Frm:lbTotalDuracion" listener="#{calendarioHorarioB.eliminarCalendarioDia(itemCalendarioDia)}" />
+				</h:commandLink>
+			
+			</div>
+			
+		</div>
+		
+		</div>
+		</ui:repeat>
+		</h:panelGroup>
+	
+	</div>
+	
+	</div>
+	
+	</h:panelGroup>
+
+
+<h:panelGroup layout="block" id="pnCalendarioPersonal" rendered="#{calendarioHorarioB.index eq 3}" >
+<div class="paneles" >
+<h:commandLink styleClass="boton-normal" >
+Atras
+<f:ajax execute="@this" render="pnPrincipal" listener="#{calendarioHorarioB.regresar}" />
+</h:commandLink>
+</div>
+<h2 style="text-align: center;" >
+	#{calendarioHorarioB.calendario.descripcion}
+	</h2>
+<div>
+	<ui:repeat var="itemCalendarioPersonal" value="#{calendarioHorarioB.calendarioPersonalL}">
+		<div class="paneles column card" >
+		 <img src="SVerImagenAlumno?alumno=#{itemCalendarioPersonal.itemPersonal.persona}" style="width: 80;height: 80px" />
+		<p>#{itemCalendarioPersonal.itemPersonal.itemPersona.paterno} #{itemCalendarioPersonal.itemPersonal.itemPersona.materno} #{itemCalendarioPersonal.itemPersonal.itemPersona.nombres}</p>
+		
+		</div>
+	</ui:repeat>
+</div>
+
+
+</h:panelGroup>
+
+
+</h:panelGroup>
+
+
+<p:dialog header=".. Ingreso Calendario Dia" widgetVar="dlCalendarioDia"  modal="true" resizable="false" closeOnEscape="true">
+<h:outputLabel for="cbDia" value="Dia" />
+<h:selectOneMenu id="cbDia" value="#{calendarioHorarioB.calendarioDia.dia}">
+<f:selectItem itemLabel="Lunes" itemValue="1"/>
+<f:selectItem itemLabel="Martes" itemValue="2"/>
+<f:selectItem itemLabel="Miercoles" itemValue="3"/>
+<f:selectItem itemLabel="Jueves" itemValue="4"/>
+<f:selectItem itemLabel="Viernes" itemValue="5"/>
+<f:selectItem itemLabel="Sabado" itemValue="6"/>
+<f:selectItem itemLabel="Domingo" itemValue="7"/>
+</h:selectOneMenu>
+<br />
+<h:outputLabel  for="txtEntrada" value="Entrada" />
+
+<p:calendar id="txtEntrada" value="#{calendarioHorarioB.calendarioDia.entrada}" timeOnly="true" pattern="HH:mm" required="true" mask="true" stepMinute="5" size="5" widgetVar="entrada"	 />
+
+
+<br />
+<h:outputLabel for="txtSalida" value="Salida" />
+
+<p:calendar  id="txtSalida"  value="#{calendarioHorarioB.calendarioDia.salida}"   timeOnly="true" pattern="HH:mm" required="true" mask="true" stepMinute="5" size="5" widgetVar="salida"	 />
+
+<br />
+<h:outputLabel  for="txtEntradaRe" value="Refri. Entrada" />
+<p:calendar id="txtEntradaRe"  value="#{calendarioHorarioB.calendarioDia.refriEntrada}"   timeOnly="true" pattern="HH:mm" mask="true" stepMinute="5" size="5" 	/>
+<br />
+
+<h:outputLabel for="txtSalidaRe"  value="Refri. Salida" />
+<p:calendar  id="txtSalidaRe"  value="#{calendarioHorarioB.calendarioDia.refriSalida}"   timeOnly="true" pattern="HH:mm"  mask="true" stepMinute="5" size="5" 	/>
+
+<f:facet name="footer"  >
+<div style="display:block;text-align: right; ">
+<h:commandLink styleClass="boton-normal">
+	Aceptar
+<f:ajax execute="@this cbDia txtEntrada txtSalida txtEntradaRe txtSalidaRe" render=":Frm:pnHorario :Frm:lbTotalDuracion :Frm:btNuevoD :Frm:btCancelarD :Frm:btRegresarD" listener="#{calendarioHorarioB.insertarCalendarioDia}"  />
+</h:commandLink>
+
+
+</div>
+
+</f:facet>
+</p:dialog>
+
+</h:form>
+
+</ui:define>
+</ui:composition>

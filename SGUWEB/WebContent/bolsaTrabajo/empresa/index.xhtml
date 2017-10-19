@@ -1,0 +1,425 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:hp="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+
+<h:head>
+<title>Bolza de Trabajo - Empresa</title>
+ <script src="//maps.googleapis.com/maps/api/js?key=AIzaSyCFJlMsrZAAi-ci-EQMdWQfkibceGpPQrI"  defer="defer" type="text/javascript" /> 
+ <script type="text/javascript" src="#{utilB.ruta}/SGAWEB/resources/js/jquery.geocomplete.js"/>   
+ <script src="#{utilB.ruta}/SGAWEB/resources/js/util.js" />
+ <link   type="text/css" rel="stylesheet" href="/SGAWEB/resources/css/bolsaTrabajo/style.css" />
+ <link   type="text/css" rel="stylesheet" href="/SGAWEB/resources/css/font-awesome.css" />  
+<style>
+.ficha-aviso {border-radius:5px;border: 1px solid silver ;box-shadow:0 0 6px 0 rgba(0,0,0,0.1);margin: 10px auto;background-color: white;height: 140px;width: 80%}
+.ficha-aviso:hover{background-color: #efefef}
+.ficha-aviso div{padding: 10px 2px}
+.ficha-aviso div b{color: #1e82c4;text-transform: capitalize;font-size: 2.0em}
+.ficha-aviso div:LAST-CHILD {width: 15%;background: #f4f4f4;}
+.notify{ width: 250px;padding: 10px 5px;border-radius: 5px;color: white}
+.error{background-color: red}
+.correcto{background-color: #008000}
+
+.caja-filtro{border: 1px solid silver;margin: 2px 0px;color: silver;padding: 0px 5px}
+.caja-filtro:BEFORE{content: "\f002";font-family: 'FontAwesome';}
+.caja-filtro input[type="text"] {;padding: 5px!important;width: 90%;border: none;}
+.imagen-logo{cursor: pointer;}
+textarea{width: 100%;resize: none;    height: 70px;}
+.valida-caja{border-color:red!important}
+.empresa-item ul li{ display: inline-block;vertical-align: top;border: 1px solid ;height: 20px;width: 20px;text-align: center;}
+.empresa-item ul li a{display: block;height: 100%;width: 100%;}
+#pnAvisoEmpresa ul,#pnAvisoEmpresa ol{list-style: inside; }
+#subMenu{position: absolute;right: 0;border: 1px solid silver;background-color: white;display: none;}
+#subMenu a{display: block;padding: 2px 4px;text-align: left;}
+</style>
+<script>
+$(document).ready(function(){
+	$("body").on("click","#imgLogo",function(e){
+		e.preventDefault();			
+		$("#btExaminar").click();		
+	});
+	
+	
+	   $("body").on("change","#btExaminar",function (){    
+		   $("#btinsertarImagen").click();
+		   
+	 }); 
+	   
+	   $("body").on("click","#btOpcion",function (e){    
+		   e.preventDefault();		   
+		   $("#subMenu").slideToggle("fast");
+		   
+	 }); 
+
+});
+</script>
+<h:body>
+<f:event type="preRenderView" listener="#{usuarioTrabajoB.verificarSesion}" />
+
+
+<h:form enctype="multipart/form-data" prependId="false"  style="display:none">
+<p:fileUpload id="btExaminar" value="#{usuarioTrabajoB.file}" mode="simple" allowTypes="/(\.|\/)(gif|jpe?g|png)$/"  />
+<h:commandLink  id="btinsertarImagen" styleClass="boton-verde" action="#{usuarioTrabajoB.insertarImagenEmpresa}">			                ACEPTAR 
+</h:commandLink>
+</h:form>
+
+
+<h:form id="frmEmpresa" prependId="false">
+<header >
+
+<div class="column" style="width: 70%">
+	<img src="/imagen/java/logoupsb.png" alt="" style="width: 60px; height: 60px"  />
+		<div class="column" >
+		<h1 >OPORTUNIDADES LABORALES UPSB</h1>
+		</div>
+
+	</div>
+<div class="column" style="width: 29%;text-align: right;">
+	
+	<div class="column" >
+	<div class="column" style="padding: 5px 10px">
+	<h3  style="color:white">#{usuarioTrabajoB.empresaTrab.descripcion}</h3>
+	<a id="btOpcion" href=""><i class="fa fa-bars" /></a>
+	</div>
+	
+	<h:graphicImage id="imgLogo" styleClass="column"    value="SimagenBD?opcion=7&amp;codigo=#{usuarioTrabajoB.empresaTrab.empresa}" style="border: 1px solid silver;width: 60px;height: 60px"  />
+	</div>
+	<div id="subMenu"   >
+		<h:commandLink  >
+				<i class="fa fa-key" />
+				Cambiar Contraseña
+				<f:ajax execute="@this" listener="#{bandejaEmpresaB.nuevaClave}" />
+				</h:commandLink>
+		
+		
+		<h:commandLink>
+			<i class="fa fa-sign-out" />
+			Cerrar Sesion
+			<f:ajax execute="@this"  listener="#{usuarioTrabajoB.cerrarSesion}" />
+		</h:commandLink>
+	</div>
+	
+</div>
+</header>
+
+
+#{bandejaEmpresaB.load(usuarioTrabajoB.empresaTrab)}
+
+
+		
+<h:panelGroup layout="block"  id="pnAvisoPrincipal" >
+
+	<h:panelGroup   layout="block" id="pnAviso" rendered="#{bandejaEmpresaB.index eq 1}"  >
+	<div class="paneles" style="text-align: right;" >
+		<h:commandLink id="btNuevoAvisos" styleClass="boton-normal"  >
+		<i class="fa fa-bullhorn" />			
+			Nuevo Aviso
+			<f:ajax execute="@this" render="cbAreaA txtCargoA txtDescripcionA txtFunctionesA txtRequisitoA  txtHorarioA txtLugarA txtLatitudA txtLongitudA txtLugarA  txtVacanteA txtSalarioA" listener="#{bandejaEmpresaB.nuevaEmpresaVacante}"   />
+		</h:commandLink>
+	</div>
+	<div class="paneles caja-filtro" >
+			
+			<h:inputText  id="txtBusqueda" value="#{bandejaEmpresaB.cargoF}" hp:placeholder="Busqueda Aviso" >
+			<f:ajax event="change"  execute="@this " render="pnEmpresaPaginada"   listener="#{bandejaEmpresaB.mostrarAviso}"  />
+			</h:inputText>
+	</div>
+	
+	<div class="empresa-item paneles" >
+
+		
+		<ui:repeat var="itemPagina" value="#{bandejaEmpresaB.empresaVacanteAreaL}" varStatus="index" step="10"  >		
+		
+			<h:commandLink style="color:#{index.index eq bandejaEmpresaB.desdeP?'red':'black'}">			
+						<b style="margin: 0px 5px">#{index.index}</b>
+					<f:ajax execute="@this" render=":frmEmpresa:pnAvisoPrincipal" listener="#{bandejaEmpresaB.paginarVacante(index.index,index.index+10)}" />
+					</h:commandLink>
+		</ui:repeat>
+
+	
+	</div>
+		<h:panelGroup layout="block" id="pnEmpresaPaginada" >
+		
+		
+		<ui:repeat var="itemEmpresa" value="#{bandejaEmpresaB.empresaVacanteAreaL}" offset="#{bandejaEmpresaB.desdeP}" size="#{bandejaEmpresaB.hastaP}"  >
+		<h:commandLink>
+			<div class="ficha-aviso" >
+			<div  class="column" style="width: 80%;" >
+			<b>#{itemEmpresa.empresaVacante.cargo}</b>
+			<p>#{itemEmpresa.empresaVacante.descripcion}</p>
+			</div>
+			<div  class="column"  >
+			<h:outputLabel>
+				<i class="fa fa-clock-o" />
+			#{itemEmpresa.empresaVacante.creacionFecha}
+		
+			</h:outputLabel>
+			<br />
+			
+			<h:outputLabel>
+				<i class="fa fa-map-marker" />
+			Lima
+		
+			</h:outputLabel>
+			<br />
+			
+			<h:outputLabel title="Area" >	
+			<i class="fa fa-th" />
+			#{itemEmpresa.area.descripcion}
+			</h:outputLabel>
+			
+			
+			</div>
+			</div>
+		<f:ajax  execute="@this" render=":frmEmpresa:pnAvisoPrincipal" listener="#{bandejaEmpresaB.selectEmpresaVacante(itemEmpresa.empresaVacante)}" />
+		</h:commandLink>
+		
+		</ui:repeat>
+		</h:panelGroup>
+	</h:panelGroup>
+	
+	<h:panelGroup id="pnAvisoEmpresa" layout="block" rendered="#{bandejaEmpresaB.index eq 2}" >
+	
+	
+	<div class="paneles" style="padding: 10px"  >
+	<h2>#{bandejaEmpresaB.empresaTrab.descripcion}</h2>
+	
+	<p>#{bandejaEmpresaB.empresaVacante.descripcion}</p>
+	<hr />
+	<div style="display: block;width: 100%" >
+	<span class="column" style="width: 80%;color:orange;font-weight: bold;" >SOBRE AVISO</span>
+		<span class="column" >Publicado: 
+		<h:outputLabel  value="#{bandejaEmpresaB.empresaVacante.creacionFecha}"  />
+		</span>
+	</div>
+	
+	<b>Salario</b><br />
+	#{bandejaEmpresaB.empresaVacante.salario}<br />
+	<b>horario</b><br />
+	#{bandejaEmpresaB.empresaVacante.horario}<br />
+	<b>Funciones</b><br />
+	<h:outputLabel value="#{bandejaEmpresaB.empresaVacante.funciones}" escape="false"  />
+	<br />
+	<b>Requisitos</b><br />
+	<h:outputLabel value="#{bandejaEmpresaB.empresaVacante.requisito}" escape="false"  />
+	<br />
+	<b>Direccion</b><br />
+	#{bandejaEmpresaB.empresaVacante.direccion}<br />
+	
+	<p:gmap  center="#{bandejaEmpresaB.centerGeoMap}" zoom="12" type="ROADMAP"  model="#{bandejaEmpresaB.draggableModel}" widgetVar="map" mapTypeControl="false"  style="width:600px;height:300px"  />
+	
+	
+
+
+
+	
+	
+	
+	</div>
+	<div class="paneles" style="text-align: right;"  >
+	<h:commandLink id="btCerrarAviso" styleClass="boton-normal" disabled="#{bandejaEmpresaB.empresaVacante.estadoRegistro eq 0}"  onclick="return confirmacion(this,'¿ Esta seguro ?');"  >
+	<i class="fa fa-sign-in" />
+	Cerrar Aviso
+	<f:ajax execute="@this" render="@this btEditarAviso" listener="#{bandejaEmpresaB.cerrarAviso}"  />
+	</h:commandLink>
+	
+	<h:commandLink styleClass="boton-normal" onclick="dlgPersonaVacante.show()"  >
+	<i class="fa fa-user-o" />
+	Postulantes
+	<f:ajax execute="@this" render="pnPersonaVacante" listener="#{bandejaEmpresaB.listarPersonaVacante}"  />
+	</h:commandLink>
+	
+	<h:commandLink id="btEditarAviso" styleClass="boton-normal" disabled="#{bandejaEmpresaB.empresaVacante.estadoRegistro eq 0}" onclick="dlgEmpresaAviso.show()" >
+	<i class="fa fa-pencil" />
+	Editar
+	<f:ajax execute="@this" render="cbAreaA txtCargoA txtDescripcionA txtFunctionesA  txtRequisitoA txtHorarioA txtLugarA txtSalarioA txtLatitudA  txtLongitudA txtVacanteA " />
+	</h:commandLink>
+	
+	
+	<h:commandLink styleClass="boton-normal" >
+	<i class="fa fa-arrow-left" />
+	Atras
+	<f:ajax execute="@this" render="pnAvisoPrincipal" listener="#{bandejaEmpresaB.detalleAviso}" />
+	
+	</h:commandLink>
+	</div>
+	</h:panelGroup>
+
+</h:panelGroup>	
+
+
+<p:dialog widgetVar="dlgEmpresaAviso" header="..: AVISO EMPRESA :.." modal="true" resizable="false" closeOnEscape="true" height="400"  width="650" >
+
+<h:outputLabel value="Area" />
+<h:selectOneMenu id="cbAreaA" value="#{bandejaEmpresaB.empresaVacante.area}"  required="true" style="#{ component.valid ? '' : 'border-color:red;'}" >
+<f:selectItems value="#{bandejaEmpresaB.areaL}" var="itemArea" itemLabel="#{itemArea.descripcion}" itemValue="#{itemArea.area}" />
+</h:selectOneMenu>
+<br />
+<h:outputLabel value="Cargo" /> <br />
+<h:inputText id="txtCargoA" value="#{bandejaEmpresaB.empresaVacante.cargo}"   required="true" style="width: 100%;#{ component.valid ? '' : 'border-color:red;'}"/>
+<br />
+
+<h:outputLabel value="Descripcion" /><br />
+<h:inputTextarea id="txtDescripcionA" value="#{bandejaEmpresaB.empresaVacante.descripcion}"  required="true" style="#{ component.valid ? '' : 'border-color:red;'}"/>
+<br />
+<h:outputLabel value="Functiones" /><br />
+
+
+<p:editor id="txtFunctionesA" value="#{bandejaEmpresaB.empresaVacante.funciones}"  controls="bold italic | color  | 		bullets numbering  " height="100" />
+
+
+<h:outputLabel value="Requisitos" /><br />
+
+<p:editor id="txtRequisitoA" value="#{bandejaEmpresaB.empresaVacante.requisito}"  controls="bold italic | color  | 		bullets numbering  " height="100" />
+
+
+<h:outputLabel value="Direccion de trabajo" /><br />
+<h:inputTextarea id="txtLugarA" value="#{bandejaEmpresaB.empresaVacante.direccion}" />
+<br />
+<div >
+	<h:outputLabel value="Latitud" />
+	<h:inputText id="txtLatitudA" value="#{bandejaEmpresaB.empresaVacante.latitud}" />
+	<h:outputLabel value="longitud" />
+	<h:inputText id="txtLongitudA" value="#{bandejaEmpresaB.empresaVacante.longitud}" />
+	<h:commandLink  onclick="dlgMap.show()" >
+	<i class="fa fa-map-o" />
+	<f:ajax execute="@this" render="gmap" listener="#{bandejaEmpresaB.nuevoMap}" />
+	</h:commandLink>
+
+</div>
+
+<h:outputLabel value="horario" />
+<h:inputText id="txtHorarioA" value="#{bandejaEmpresaB.empresaVacante.horario}" style="width: 80%" />
+<div>
+<h:outputLabel value="Salario" />
+<h:inputText id="txtSalarioA" value="#{bandejaEmpresaB.empresaVacante.salario}" size="5" />
+<h:outputLabel value="vacantes"  />
+<h:inputText hp:type="number" id="txtVacanteA" value="#{bandejaEmpresaB.empresaVacante.numero}" style="width: 50px" />
+
+</div>
+
+
+
+<f:facet name="footer">
+<div style="display: block;text-align: right;">
+	<h:commandLink styleClass="boton-normal" >
+		<i class="fa fa-floppy-o" />
+		Guardar 
+		<f:ajax execute="cbAreaA txtCargoA txtDescripcionA txtFunctionesA   txtHorarioA  txtLugarA txtLatitudA  txtVacanteA txtRequisitoA txtSalarioA" render=" cbAreaA txtCargoA txtDescripcionA txtFunctionesA pnAvisoPrincipal"  listener="#{bandejaEmpresaB.insertarEmpresaVacante}" />
+	</h:commandLink>
+	
+	<h:commandLink styleClass="boton-normal" onclick="dlgEmpresaAviso.hide()" >
+	<i class="fa fa-reply" />
+		Cancelar
+		<f:ajax execute="@this" render="cbAreaA txtCargoA txtDescripcionA txtFunctionesA   txtHorarioA txtLugarA txtVacanteA" resetValues="true" />
+	</h:commandLink>
+
+</div>
+
+</f:facet>
+
+
+</p:dialog>
+
+
+
+
+
+
+<p:dialog header="Postulantes"  widgetVar="dlgPersonaVacante" modal="true" resizable="false"  closeOnEscape="true"  width="400" height="450" >
+<h:panelGroup id="pnPersonaVacante" layout="block"  >
+<ui:repeat var="itemPersonaVacante" value="#{bandejaEmpresaB.personaPostulanteAvisoL}">
+<div class="paneles"  style="height: 80px" >
+	<div class="column" style="width: 21%;height: 100%" >
+	<img src="SimagenBD?opcion=2&amp;codigo=#{itemPersonaVacante.persona.persona}" alt="Imagen Persona" style="border: 1px solid silver;height: 100%;width: 100%" />
+	
+	</div>
+	<div class="column" style="width: 78%;height: 100%" >
+	<div style="height: 50px;padding: 0px 5px" >
+		#{itemPersonaVacante.personaPostulante.fechaRegistro}
+		<br />
+		#{itemPersonaVacante.persona.paterno}
+		#{itemPersonaVacante.persona.materno}
+		#{itemPersonaVacante.persona.nombres}
+	
+	</div>
+		<div class="paneles" >
+			<a title="Curriculum" href="http://localhost:8080/SGAWEB/faces/bolsaTrabajo/persona/SarchivoBD?opcion=2&amp;codigo=#{itemPersonaVacante.personaPostulante.persona}" target="_blank" >
+		<i class="fa fa-file-text-o" />
+			Ver Curriculum
+			</a>
+		</div>
+	</div>
+	
+</div>
+
+</ui:repeat>
+</h:panelGroup>
+
+<f:facet name="footer">
+<div style="display: block;text-align: right;">
+<h:commandLink styleClass="boton-rojo" onclick="dlgPersonaVacante.hide()" >
+<i class="fa fa-sign-out" />
+Salir
+<f:ajax execute="@this" />
+</h:commandLink>
+
+</div>
+
+</f:facet>
+</p:dialog>
+
+<p:dialog header="..:: Ubicacion Geografica :.." widgetVar="dlgMap"  modal="true" height="350" width="600" resizable="false" closeOnEscape="true"  >
+
+<p:gmap id="gmap" center="#{bandejaEmpresaB.centerGeoMap}" zoom="12" type="ROADMAP"  model="#{bandejaEmpresaB.draggableModel}" widgetVar="map" onPointClick="handlePointClick(event);" style="width:100%;height:100%"  >
+<p:ajax event="markerDrag" listener="#{bandejaEmpresaB.onMarkerDrag}" update="txtLatitudA  txtLongitudA " />
+</p:gmap>
+<f:facet name="footer">
+<div style="display: block;text-align: right;">
+<h:commandLink styleClass="boton-rojo" onclick="dlgMap.hide()" >
+<i class="fa fa-sign-out" />
+Salir
+<f:ajax execute="@this" />
+</h:commandLink>
+
+</div>
+
+</f:facet>
+</p:dialog>
+
+
+<p:dialog widgetVar="dlgSeguridad" header="..: Cambiar Contraseña :.." modal="true" resizable="false" closeOnEscape="true" >
+		<h:outputLabel value=" Clave" />
+		<h:inputSecret  id="txtClaveA" value="#{bandejaEmpresaB.claveA}" required="true" /><br />
+		<h:outputLabel value="Nueva Clave" />
+		<h:inputSecret  id="txtClaveN" value="#{bandejaEmpresaB.claveN}" required="true" /><br />
+		<h:outputLabel value="Repetir Clave" />
+		<h:inputSecret id="txtClaveR" value="#{bandejaEmpresaB.claveR}" required="true" />
+	<f:facet name="footer">
+	<div style="display: block;text-align: right;">
+	<h:commandLink styleClass="boton-normal"   >
+	Aceptar
+	<f:ajax execute="@this txtClaveA txtClaveN txtClaveR" render="txtClaveA txtClaveN txtClaveR" listener="#{bandejaEmpresaB.cambiarClave}" />
+	</h:commandLink>
+	
+	</div>
+	
+	
+	</f:facet>
+	</p:dialog>
+	
+
+
+
+
+</h:form>
+
+
+</h:body>
+</h:head>
+</html>

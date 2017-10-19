@@ -1,0 +1,368 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head lang="es" >
+         <script src="#{utilB.ruta}/SGUWEB/resources/js/util.js" />          
+         <link  type="text/css" rel="stylesheet" href="/SGUWEB/resources/css/docente/style2.css" />   
+         <link  type="text/css" rel="stylesheet" href="/SGUWEB/resources/css/font-awesome.css" />
+        <script>      
+        function isPageVisible()
+		{
+			var browserHide;
+			//var browserSupportVisibility;
+			if(typeof document.hidden !== undefined)
+			{
+				//opera 12.0  FF 18+
+				browserHide = 'hidden';
+				//pageVisibility = 'visibilitychange';
+			}
+			else if(typeof document.mozHidden !== undefined)
+			{
+				browserHide = 'mozHidden';
+				//pageVisibility = 'mozvisibilitychange';
+			}
+			else if(typeof document.msHidden !== undefined)
+			{
+				browserHide = 'msHidden';
+				//pageVisibility = 'msvisibilitychange';
+			}
+			else if(typeof document.webkitHidden !== undefined)
+			{
+				browserHide = 'webkitHidden';
+				//pageVisibility = 'webkitvisibilitychange';
+			}
+
+			if(document[browserHide])
+			{
+				console.log('page is invisible');
+				//page is visible
+				return false;
+			}
+			else
+			{	
+				console.log('page is visible');
+				//page is not visible
+				return true;
+			}
+		}
+        
+        function onevent(e){
+            
+            if(e.status==='begin'){
+            	$('body').removeClass('loaded');
+            	 
+                console.log("esperando")
+            }
+            if(e.status==='success') {
+            	console.log("correcto")
+                    
+            } 
+            if(e.status==='complete') {
+              
+            	console.log("completado")
+            	 
+            	$('body').addClass('loaded');
+            } 
+          }
+        
+        
+        var i=300;
+        var processTimer;
+            $(document).ready(function(){                 
+                $('#icon-config').click(function(e){
+                  	e.preventDefault();
+                     $( "#opciones-persona" ).slideToggle("fast");
+                   
+                });   
+                timedCount();
+            });
+            
+            function timedCount() {        		    
+    		    processTimer = setTimeout("timedCount()", 1000);
+    		    minutos="00"+Math.floor(i/60);
+    		    segundos="00" + Math.floor(i-(60*minutos));
+    		    $("#tiempo-usuario").text("00"+":"+minutos.substr(-2) + ":" + segundos.substr(-2)); 
+    		    i--;
+	    		    if(i==280){
+	   		    	 if(!isPageVisible())
+	   					{					
+	   							
+	   				     pushMensage('MENSAJE','Su sesion esta apunto de cerrarse');
+	   				}
+	   		    }
+    		  }
+			$( document ).on( "mousemove", function( event ) {                
+            	
+                i=300;
+          
+         });
+            
+            
+            
+            var bandera=false;
+            var idGeneral;
+         
+            function confirmacion(obj,cadena){
+                idGeneral=obj;
+                if(bandera){
+                    $(".modal-fondo").remove();
+                    $(".modal").remove();
+                    bandera=false;
+                    return true;
+                }else{
+                   if(! $('.modal-fondo').hasClass("modal-fondo")){
+                       $('body').append('<div class="modal-fondo"  /> ');
+                        $('body').append('<div class="modal" ><div class="modal-titulo" > INTRANET  </div><div class="modal-cuerpo"> <div class="column modal-icono"><i class="fa fa-exclamation "  /></div><div class="column modal-texto"><span>' +cadena+'</span></div></div><hr/><div class="modal-botonera"><a  class="positivo"  onclick="valida(true)" >Si</a> <a class="negativo" onclick="valida(false)" > No</a></div>  </div>');
+                        }else{
+                        $(".modal-fondo").remove();
+                        $(".modal").remove();
+                   }                    
+                    
+                    return false;
+                }
+                
+            }
+            
+            function valida(estado){
+                bandera=estado;           
+                $(idGeneral).click();            
+            }
+            function notificacion(msg,speed,fadeSpeed,type){
+                $('.notify').remove();
+
+				      if (typeof fade != "undefined"){
+				      clearTimeout(fade);
+				      }
+				      $('body').append('<div class="notify '+type+'" style="display:none;position:fixed;right:10px"><p>'+msg+'</p></div>');
+				
+				      notifyHeight = $('.notify').outerHeight();
+				
+				      $('.notify').css('top',-notifyHeight).animate({top:10,opacity:'toggle'},speed);
+				
+				      fade = setTimeout(function(){
+				
+				      $('.notify').animate({top:notifyHeight+10,opacity:'toggle'}, speed);
+				
+				      }, fadeSpeed);
+				}    
+            
+            function terminoSesion(){
+        		$('#modalSesion').css('display','block');
+        		clearTimeout(processTimer);
+        		}
+
+        </script>
+        
+        
+         <style>
+       
+                  
+    </style>
+    	<f:event type="preRenderView" listener="#{usuarioB.validaClaveDocente}" />
+        <f:event type="preRenderView" listener="#{usuarioB.verificarSesion}" />
+           <title>
+           <ui:insert name="titulo"> 
+           </ui:insert>     
+           </title>
+    </h:head>
+    
+    
+    
+             
+    <h:body styleClass="loaded" >
+    
+    <div id="modalSesion" style="display: none;width: 100%;height: 100%;background-color: rgba(0,0,0,0.8);position:fixed;top: 0;left: 0;font-family:sans-serif;z-index: 99">
+	    <div style="display: block;width: 400px;border-radius:5px;position: absolute;top: 60px;left: 40%;background-color: white;z-index: 100" >
+	    <div style="display: block;background: #007cff;color: white;padding: 5px 2px">
+	    	<b>..: Sesion Caducada :..</b>
+	    </div>
+	    <div style="display: block;padding: 7px 10px">
+		    <div style="display: inline-block;vertical-align: top;">
+		    	<i class="fa fa-clock-o" style="font-size: 5.0em;color: red" />
+		    </div>
+	    
+		    <div style="display: inline-block;vertical-align: top;width: 300px;padding: 15px 2px;text-align: justify;">
+		    	<p>La sesion ha caducado, por favor, pulse sobre el boton.</p>
+		    </div>
+	    </div>
+	    <div style="display: block;border-top: 1px solid silver; text-align: center;">
+	    	<a id="btVover" href="#" onclick="window.location='#{facesContext.externalContext.requestContextPath}/faces/index.xhtml';" style="display: inline-block;padding: 8px ;background-color: green;color: white;margin: 4px 2px;border-radius:4px">
+		    	<i class="fa fa-refresh" />		    	
+		    	Aceptar
+	    	</a>
+	    </div>
+	    
+	    
+	    </div>
+    </div>
+    
+     <p:idleMonitor onactive="console.log('ACTIVO')" onidle="terminoSesion()" timeout="300000">
+               <p:ajax event="active"  listener="#{utilB.eliminarSesiones}"   oncomplete="console.log('limpiar')"  />
+    </p:idleMonitor>
+    
+    
+  
+    
+    
+     <div id="loader-wrapper">
+       		<div style=" display: block;position: relative;left: 45%;top: 35%;">
+       			<div id="logo"  />       			
+		       		<div id="loader" />
+       		</div>
+		    <div class="loader-section section-left" />
+		    <div class="loader-section section-right" />		 
+	</div>
+		
+		
+    
+                       <h:form prependId="false" >
+                           <p:dialog    header="..: CAMBIO DE CONTRASEÑA :.."  widgetVar="dlgCambiarClave" modal="true"  resizable="false" >
+                           <h:outputLabel  value="Contraseña actual" /><br/>
+                           <h:inputSecret id="txt" value="#{usuarioB.clave}" required="true"/><br/>
+                           <h:outputLabel  value="Contraseña nueva" /><br/>
+                           <h:inputSecret value="#{usuarioB.claveN}" required="true"/><br/>
+                           <h:outputLabel  value="Repita la contraseña" /><br/>                            
+                           <h:inputSecret value="#{usuarioB.claveR}"/>
+                           <f:facet name="footer">
+                                            <h:commandLink>
+                                            Aceptar
+                                            <f:ajax  execute="@form" listener="#{usuarioB.cambiarClaveDocente}" />
+                                            </h:commandLink>
+                           
+                           
+                           </f:facet>
+                           </p:dialog>
+                        </h:form>
+        
+        
+        <div id="wrapper">
+        <ui:insert name="cabecera">    
+                <header >
+                
+                <div class="header-hgroup column"  >  
+                    <h:form id="frmCabecera" prependId="false" styleClass="column">
+                    <a href="/SGUWEB/faces/Docente/index.xhtml" >
+                    
+                        
+                        <h:graphicImage  styleClass="column" width="80" height="80" title="#{itemInstitucion.descripcion}" value="SimagenBD?opcion=6&amp;codigo=#{usuarioB.institucion.institucion}"/>
+                    </a>  
+                    <h:panelGroup id="pnDatosInstitucion" layout="block" styleClass="lema column"  >    
+                     
+                        	
+                            <h1>#{usuarioB.institucion.descripcion}</h1>                         
+                            <h3>#{usuarioB.institucion.subTitulo}</h3>
+                       </h:panelGroup>
+                     </h:form>
+                    </div>
+                    
+                    <div class="header-person column">
+                        <div class="header-person-det column">
+                        
+                           <span id="nomPerson">#{usuarioB.persona.nombreCompletos()} </span>
+                           <span id="userPerson">#{usuarioB.usuario.usuario} </span>    
+                             
+                                
+                                                                                
+                            <span  > <b id="tiempo-usuario" style="color:white"  >00:00:00</b>
+                            	<a id="icon-config" href="" ><i class="fa fa-cog" />
+                            </a></span>
+                            
+                            <h:form>
+                                
+                            <div id="opciones-persona" >
+                                <h:commandLink   action="/Docente/datos/misDatos.xhtml?faces-redirect=true">
+                                <i class="fa fa-user-circle-o" />
+                                Mi Perfil
+                                </h:commandLink>
+                                <h:commandLink   action="/Docente/CambiarClave?faces-redirect=true">
+                                <i class="fa fa-key" />
+                                Cambiar Clave
+                                </h:commandLink>
+                                
+                                <h:commandLink  action="#{usuarioB.cerrarSesion}" >
+                                <i class="fa fa-sign-out" />
+                                Cerrar Sesion
+                                </h:commandLink>
+                                    
+                                    
+                            </div>
+                            </h:form>
+                        </div>
+                        <div class="header-person-img column">                         
+                                  
+                        <img src="SVerImagenAlumno?alumno=#{usuarioB.persona.persona}" class="img-person" width="70px" height="70px" id="button"  />
+                        </div>
+                   
+                    </div>
+                   
+               </header> 
+        </ui:insert>
+       
+        <div id="wrapper-nav-section">
+          
+                <nav  class="column">
+                    <div id="opc-inst-period" >                            
+                            <h:form prependId="false">
+                                <label >Institución: </label>                                
+                                <h:selectOneMenu id="cbInstitucion" value="#{usuarioB.institucionS}" >
+                                <f:selectItems value="#{usuarioB.institucionL}" var="itemInstitucion"  itemLabel="#{itemInstitucion.descripcion}" itemValue="#{itemInstitucion.institucion}" />
+                                <f:ajax execute="@this" render="cbPeriodo :frmCabecera:pnDatosInstitucion" listener="#{usuarioB.listarPeriodoPersonal}" />
+                                </h:selectOneMenu>
+                            	<label >Periodo: </label>
+                                <h:selectOneMenu value="#{usuarioB.periodoS}" id="cbPeriodo" >                           
+                                    <f:selectItems value="#{usuarioB.periodoL}" var="itemPeriodo" itemValue="#{itemPeriodo.periodo}" itemLabel="#{itemPeriodo.desPeriodo}"/>                                    
+                                                  <f:ajax execute="@this"    listener="#{periodoB.refrescar()}" />
+                                </h:selectOneMenu>                                
+                            </h:form>                       
+                    </div>
+                     <ul id="main-lista">
+                         <ui:repeat value="#{usuarioB.menuL}" var="itemPadre" >
+                                   <li>
+                                         <i class="#{itemPadre.icono}" /> 
+                                            #{itemPadre.descripcion}
+                                       <ul id="lista-hijo">
+                                           <ui:repeat value="#{itemPadre.menuL}" var="itemHijo">
+                                               <li>                                                   
+                                                   <a href="#{itemHijo.ruta}"  title="#{itemHijo.descripcion}">
+                                                       <span style="">#{itemHijo.descripcion}</span>
+                                                   </a>
+                                               </li>
+                                   
+                                        </ui:repeat>
+                                       </ul>
+                                   </li>                                  
+                            </ui:repeat>
+                        </ul>
+                </nav>
+
+            <!--             AREA DE TRABAJO                     -->
+             <section class="column" id="wrapper-section">                
+                    <ui:insert name="contenido">
+                
+                        
+                        
+                    </ui:insert>
+                    <h:form prependId="false" >
+			            <h:panelGroup layout="block"  rendered="#{usuarioB.usuarioP ne null}"  >
+			            <div class="column"  style="position: fixed;right: 5px;bottom: 10px;padding: 5px;background-color: white" >
+				            <h:commandLink>
+				            Regresar
+				            <f:ajax  execute="@this" listener="#{usuarioB.regresarAdministrador}" />
+				            </h:commandLink>
+			            
+			            </div>
+			            			            
+			            </h:panelGroup>        
+                    </h:form>
+            
+              </section>
+            
+        </div>
+        </div>
+    </h:body>
+</html>
+

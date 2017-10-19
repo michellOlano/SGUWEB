@@ -1,0 +1,437 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"     
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+
+        <meta charset="utf-8"/>     
+       
+        <script  type="text/javascript" src="/SGAWEB/resources/js/printArea.js" />
+        <script src="#{utilB.ruta}/SGAWEB/resources/js/modal.js"></script>
+        <link type="text/css" href="/SGAWEB/resources/css/alumno/style2.css" rel="stylesheet"/>     
+        <link type="text/css" rel="stylesheet" href="/SGAWEB/resources/css/font-awesome.css" />
+
+        <script>
+        
+        function isPageVisible()
+		{
+			var browserHide;
+			//var browserSupportVisibility;
+			if(typeof document.hidden !== undefined)
+			{
+				//opera 12.0  FF 18+
+				browserHide = 'hidden';
+				//pageVisibility = 'visibilitychange';
+			}
+			else if(typeof document.mozHidden !== undefined)
+			{
+				browserHide = 'mozHidden';
+				//pageVisibility = 'mozvisibilitychange';
+			}
+			else if(typeof document.msHidden !== undefined)
+			{
+				browserHide = 'msHidden';
+				//pageVisibility = 'msvisibilitychange';
+			}
+			else if(typeof document.webkitHidden !== undefined)
+			{
+				browserHide = 'webkitHidden';
+				//pageVisibility = 'webkitvisibilitychange';
+			}
+
+			if(document[browserHide])
+			{
+				console.log('page is invisible');
+				//page is visible
+				return false;
+			}
+			else
+			{	
+				console.log('page is visible');
+				//page is not visible
+				return true;
+			}
+		}
+		
+        function pushMensage(titulo,mensaje){
+    		var title = titulo
+    		var extra = {
+    		icon: "http://localhost:8080/imagen/java/SGUWEB.png",
+    		body: mensaje
+    	
+    		}
+    				// Lanzamos la notificación
+    		var noti=new Notification( title, extra)
+    		noti.onclick=function(){
+    			
+    			console.log("click")
+    		}
+    	}
+      
+        
+        
+        
+        
+        
+        var i=300;
+   
+		timedCount();
+		var processTimer;
+		function timedCount() {
+		    
+		    processTimer = setTimeout("timedCount()", 1000);
+		    /*
+		    if(i==30) {
+		    	 $('body').append('<div class="sesionUsuario" style="display:none;position:fixed;right:10px"><b>0</b></div>');
+            	 $('.sesionUsuario').css('bottom',0).animate({bottom:30,opacity:'toggle'},500);
+            
+		    }
+		    */
+		    
+		     if(i==60){
+		    	 if(!isPageVisible())
+					{					
+							
+				     pushMensage('MENSAJE','Su sesion esta apunto de cerrarse');
+				}
+		    	 
+		    	
+		    }
+		    
+		    minutos="00"+Math.floor(i/60);
+		    segundos="00" + Math.floor(i-(60*minutos));
+		    $("#tiempo-usuario").text("00"+":"+minutos.substr(-2) + ":" + segundos.substr(-2));
+		    
+		    $(".sesionUsuario b").text(i);
+		    
+		    i--;
+		  }
+		function terminoSesion(){
+		$('#modalSesion').css('display','block');
+		clearTimeout(processTimer);
+		}
+
+
+            $(document).ready(function() {
+
+            	
+            	
+            	
+            	$("#lbLogoTipo").click(function(e){
+            		e.preventDefault();
+            		
+            		$("#header-lista-institucion").addClass("mostrar-lista-institucion");
+            		
+            	});
+            	
+            	$("#close-lista-institucon").click(function (e){
+            		e.preventDefault();
+            		$("#header-lista-institucion").removeClass("mostrar-lista-institucion");
+            		
+            	});
+            	
+            	
+            	 
+                 var bandera=true;
+				$('#btMenu').click(function(e){
+					e.preventDefault();
+					if(bandera){
+						$('.MenuPrincipal').addClass('ocultar');
+						$('.MenuPrincipal').removeClass('mostrar');
+                                                 $("#wrapper-section").animate({"width": "97%"}, 400);
+					}else{
+						$('.MenuPrincipal').addClass('mostrar');
+						$('.MenuPrincipal').removeClass('ocultar');	
+                                                $("#wrapper-section").animate({"width": "79%"}, 400);
+                                                
+					}
+					bandera=!bandera;
+					
+				});
+
+                $(".mensajeS").css("opacity", 0).animate({"opacity": 1}, 2000, function() {
+                    $(this).animate({"opacity": 0}, 4000);
+                });
+                $('#icon-config').click(function() {
+                    $("#conf-persona-ventana").slideToggle("fast");
+
+                });
+                  $(".btResponder").click(function(e){
+                    e.preventDefault();
+                    
+                    $(this).next("div").addClass("mostrar");
+                });
+                  
+               
+                  
+            });
+
+            $( document ).on( "mousemove", function( event ) {
+                
+            	if(30>i){
+            		fade = setTimeout(function(){
+                        $('.sesionUsuario').animate({bottom:0,opacity:'toggle'}, 500);
+
+                        }, 500);
+            	}
+                i=300;
+              //  $('.sesionUsuario').css('bottom',30).animate({bottom:0,opacity:'toggle'},500);
+         });
+        
+     
+            
+       
+        </script>
+
+        <style>
+          .sesionUsuario{background-color:rgba(0,0,0,0.5); width: 60px;height:60px;;border-radius: 5px;color: white;text-align: center;border-radius:50%;border:1px solid red}
+          .sesionUsuario b{font-size: 2.5em;color: red;line-height: 60px}
+            .titulo{color: #0073AA;text-transform: uppercase;font-weight: bold;font-size: 18px;margin:  20px ;display: block}
+            .columna{display: inline-block;width: 130px;margin-left: 50px;}
+            .icon-menu:before{content:"\e9bd";}
+            .icon-menu:n{display:block;width:97%;font-size:1.8em;text-align: right;}
+            .MenuPrincipal-alumno{background-color: silver}
+            
+            .foro{background-color: red;display: block;width: 300px;position: fixed;right: 10px;bottom: 0px;height: 85%;border: 1px solid;}
+            .foro.minimixar{height: 6.5%;}
+            .foro-cabecera{height: 70px;display: block;background-color: #019EE3;position: relative;padding: 0px 5px}
+            .foro-cuerpo{display: block;height: 88%;background-color: silver;overflow:  scroll}
+            .foro-cuerpo:hover{overflow-y:  scroll}
+            .foro-cuerpo-pregunta{position: relative;display: block;min-height: 5px;width: 95%;background-color: white;;margin: 5px 10px;padding: 5px}
+            .foro-cuerpo-pregunta:hover .foro-cuerpo-pregunta-eliminar{display: block}
+            .foro-cuerpo-pregunta-eliminar{position: absolute;top: 5px;right: 15px;display: none}
+            .foro-cuerpo-respuesta-eliminar{position: absolute;top: 0px;right: 5px;display: none}
+            .foro-cuerpo-respuesta{display: block;width: 90%;margin: 0px 0px 10px 15px;}
+            .foro-cuerpo-respuesta-item{position: relative;display: block;margin-bottom: 5px}
+            .foro-cuerpo-respuesta-item:hover{background-color: #A9A9A9}
+            .foro-cuerpo-respuesta-item:hover .foro-cuerpo-respuesta-eliminar{display: block}
+            .burbuja{width: 35px;height: 35px;border-radius: 50%;display: inline-block;vertical-align: top}
+            
+            #header-lista-institucion{background-color:rgba(0,0,0,0.8) ;display: block;width: 100%;position: absolute;top: 0;left: 0;z-index: 10;height:0;overflow:hidden;transition:all 0.5s}
+            #header-lista-institucion.mostrar-lista-institucion{height: 120px}
+            .itemInstitucion{display: inline-block;vertical-align: top;padding: 5px;margin: 7px 2px;border-radius:5px}
+            .itemInstitucion:HOVER {background-color: red}
+            #lblMenuPadre{display: block;background: white}
+            #lblMenuPadre li{padding: 5;margin: 0;background: white;transition:all 0.2s}
+            #lblMenuPadre li:hover{background: silver}
+            #lblMenuPadre >li{position: relative;display: inline-block;vertical-align: top;}
+            #lblMenuPadre >li label{text-transform: capitalize}
+            #lblMenuPadre >li:hover  .lblMenuHijo {display: block;}
+            .lblMenuHijo{display: none;position: absolute;left:0;min-width:150px;z-index: 2}
+            .lblMenuHijo li{display: block;}
+            .lblMenuHijo li a{display: block;}
+
+           
+            
+	
+}
+            
+        </style>
+
+		<f:event type="preRenderView" listener="#{usuarioB.verificarSesion}" />
+        <title>
+            
+            <ui:insert name="titulo">
+
+            </ui:insert> 
+
+        </title>
+    </h:head>
+    <h:body  >
+    
+    
+    <p:idleMonitor onactive="console.log('ACTIVO')" onidle="terminoSesion()" timeout="300000">
+               <p:ajax event="active"  listener="#{utilB.eliminarSesiones}"   oncomplete="console.log('limpiar')"  />
+    </p:idleMonitor>
+    
+    
+    
+    <div id="modalSesion" style="display: none;width: 100%;height: 100%;background-color: rgba(0,0,0,0.8);position: fixed ;top: 0;left: 0;font-family:sans-serif;z-index: 1">
+	    <div style="display: block;width: 400px;border-radius:5px;position: absolute;top: 60px;left: 40%;background-color: white;z-index: 2" >
+	    <div style="display: block;background: #007cff;color: white;padding: 5px 2px">
+	    	<b>..: Sesion Caducada :..</b>
+	    </div>
+	    <div style="display: block;padding: 7px 10px">
+		    <div style="display: inline-block;vertical-align: top;">
+		    	<i class="fa fa-clock-o" style="font-size: 5.0em;color: red" />
+		    </div>
+	    
+		    <div style="display: inline-block;vertical-align: top;width: 300px;padding: 15px 2px;text-align: justify;">
+		    	<p>La sesion ha caducado, por favor, pulse sobre el siguiente boton para volver a acceder a la aplicacion.</p>
+		    </div>
+	    </div>
+	    <div style="display: block;border-top: 1px solid silver; text-align: center;">
+	    	<a id="btVover" href="#{facesContext.externalContext.requestContextPath}/faces/index.xhtml"  style="display: inline-block;padding: 8px ;background-color: green;color: white;margin: 4px 2px;border-radius:4px">
+		    	<i class="fa fa-refresh" />		    	
+		    	Volver a la aplicacion.
+	    	</a>
+	    </div>
+	    
+	    
+	    </div>
+    </div>
+    
+    
+    
+    
+        <div id="wrapper">
+            <ui:insert name="cabecera">
+            <h:form prependId="false" >
+            
+             <div id="header-lista-institucion"  >
+                    <ui:repeat var="itemInstitucion" value="#{usuarioB.institucionL}">
+                    <div class="itemInstitucion"  >
+                    <h:commandLink>
+                    	<h:graphicImage  width="80" height="80" title="#{itemInstitucion.descripcion}"    value="SimagenBD?opcion=3&amp;codigo=#{itemInstitucion.institucion}"   />
+                    	<f:ajax execute="@this" render=":frm:cmbPeriodo " listener="#{usuarioB.mostrarAlumnoPeriodo(itemInstitucion.institucion)}" />
+                    </h:commandLink>
+                    </div>
+                    
+                    </ui:repeat>
+                <a id="close-lista-institucon" title="Cerrar" style="color: red;position: absolute;bottom: 5px;right: 5px" >
+                <i class="fa fa-times" />
+                
+                </a>    
+             </div>
+            </h:form>
+            <div class="wrapper-header sm-header-a">
+            
+                    <header class="header"  >
+                   
+                        <div class="header-hgroup column"  >
+                        
+                         <h:form id="frmCabecera" prependId="false" >
+                        <div class="column">
+                        <a id="lbLogoTipo" href="/SGAWEB/faces/Alumno/index.xhtml">                            
+                            <h:graphicImage  id="imgLogoTipo"  width="80" height="80"  styleClass="column"   value="SimagenBD?opcion=3&amp;codigo=#{usuarioB.institucionS}"   />
+                        </a>
+                        </div>
+                                                
+                            <div class="column lema" >
+                                <h1 ><h:outputLabel id="lbTitulo" value="#{usuarioB.institucion.titulo}" />  </h1>
+                                <h3 ><h:outputLabel id="lbSubTitulo" value="#{usuarioB.institucion.subTitulo}" /> </h3>
+                            </div>
+                           </h:form> 
+                        </div>
+				
+                        
+                        <div class="header-person column"  >
+                            <div class="header-person-det column" >
+                                
+                                <span class=" span" id="nomPerson">#{usuarioB.persona.nombreCompletos()}</span>
+                                <span class="font20 span" style="color:yellow">     #{usuarioB.carrera.descripcion}</span>
+                                <br />                 
+                                
+                                <div style="color: white" >
+                                <i class="fa fa-clock-o" />
+                                <span id="tiempo-usuario"  >
+                                00:00:00
+                                </span>
+                                </div>        
+                                
+                               
+                                <span  id="icon-config" >
+                                <i class="fa fa-cog" />
+                                </span>
+                                <h:form>
+                                    <div id="conf-persona-ventana" >
+                                        <a href="/SGAWEB/faces/Alumno/misDatos.xhtml" >
+                                        <i class="fa fa-user-circle-o" />
+                                        Mi Perfil
+                                        </a>
+                                           
+                                        <a href="/SGAWEB/faces/Alumno/CambiarClave.xhtml"  >
+                                        <i class="fa fa-key" />
+                                        Cambiar Clave
+                                        </a>
+                                        <h:commandLink   action="#{usuarioB.cerrarSesion}" >
+	                                        <i class="fa fa-sign-out" />
+	                                        Cerrar Sesion
+                                        </h:commandLink>
+                                          
+                                    </div>
+                                </h:form>
+                            </div>
+                            <div class="header-person-img column"  >
+                                <img src="SVerImagenAlumno?alumno=#{usuarioB.persona.persona}" class="img-person" />   
+                                <span  id="userPerson" >#{usuarioB.usuarios.usuario} </span>  
+                            </div>                          
+                        </div>
+                    </header> 
+                </div>
+
+            </ui:insert>
+
+            <!--   </header> -->
+
+            <div  id="wrapper-nav-section" >
+            
+            
+            
+            
+            
+                <!--             MENU DE LA PAGINA                     -->
+                <nav id="main" class=" MenuPrincipal mostrar" >
+                    
+                    <div style="box-shadow:0px 0px 8px 0px rgba(50, 50, 50, 0.63)" >
+                    <ul id="lblMenuPadre" >
+			            <ui:repeat value="#{usuarioB.menuL}" var="itemMenuPadre" > 
+			            	<li  ><label>
+			            	#{itemMenuPadre.descripcion.toLowerCase()}
+			            	<i class="fa fa-sort-desc" />
+			            	
+			            	</label> 
+			            	<ul class="lblMenuHijo" >                                    
+                                  <ui:repeat value="#{itemMenuPadre.menuL}" var="itemMenuHijo">
+                                    
+                                  <li>
+                                  <a  href="#{itemMenuHijo.ruta}" >
+                                  <i class="#{itemMenuHijo.icono}" />
+                                  #{itemMenuHijo.descripcion}
+                                  </a>
+                                  </li>
+                                  </ui:repeat>
+			                </ul>
+			                </li>
+			            </ui:repeat>
+			            </ul>
+                    
+                    </div>
+					<div id="opc-inst-period"  >
+						<h:form id="frm" prependId="false">
+                    
+                        <label  >Periodo </label>
+                       
+                            <h:selectOneMenu value="#{usuarioB.periodoS}" id="cmbPeriodo" >                                                          
+
+                                <f:selectItems value="#{usuarioB.periodoL}" var="periodo" itemValue="#{periodo.periodo}" itemLabel="#{periodo.desPeriodo}" />
+                                <p:ajax process="@this" update="@this :pnAreaTrabajo" listener="#{usuarioB.periodoSeccionado}" />
+                            </h:selectOneMenu>
+                        </h:form>
+
+                    </div>
+                    
+                </nav>
+
+                <section  id="wrapper-section"  >
+                    <article class="contenido" >   
+                        <h:panelGroup layout="block" id="pnAreaTrabajo" >
+
+                            <ui:insert name="contenido">
+                         
+                            </ui:insert>         
+                        </h:panelGroup>
+
+                    </article>
+                </section>
+
+            </div>
+           
+        </div>
+            
+    </h:body>
+</html>
+

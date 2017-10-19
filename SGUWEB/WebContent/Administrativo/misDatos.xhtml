@@ -1,0 +1,142 @@
+<ui:composition 
+        
+	        	xmlns="http://www.w3.org/1999/xhtml"
+	        	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	        	xmlns:p="http://primefaces.org/ui"
+	        
+	      		xmlns:h="http://xmlns.jcp.org/jsf/html"
+        		xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="plantilla.xhtml">
+            
+            <ui:define name="titulo">
+                
+                CAMBIAR DATOS
+                
+            </ui:define>    
+                    
+        <ui:define name="contenido">    
+        
+            <h:form id="Datos" prependId="false" >
+                 #{perfilAdminB.load(usuarioB.persona)}
+          <i class="fa fa-address-card-o" />
+          	Datos Personales
+			 <div class="paneles">
+			  <h:outputLabel  for="txtNombre" value="Nombre "/>
+                <h:inputText id="txtNombre" value="#{perfilAdminB.persona.nombres}" disabled="true" /><br/>
+
+
+
+                <h:outputLabel for="txtPaterno" value="Ape. Paterno "/>
+                <h:inputText id="txtPaterno" value="#{perfilAdminB.persona.paterno}" disabled="true" />
+                <br/>
+
+
+
+                <h:outputLabel for="txtMaterno" value="Ape. Materno "/>
+                <h:inputText id="txtMaterno" value="#{perfilAdminB.persona.materno}" disabled="true" />
+                <br/>
+                <h:outputLabel for="txtDni" value="DNI: "/>
+                <h:inputText id="txtDni" value="#{perfilAdminB.persona.numero_documento}" disabled="#{not perfilAdminB.bandera}"  /><br/>
+				<h:outputLabel for="txtNacimiento" value="Fe. Nacimiento"/>
+				<p:calendar id="txtNacimiento" value="#{perfilAdminB.persona.fecha_nacimiento}" pattern="dd-MM-yyyy" mask="true" disabled="#{not perfilAdminB.bandera}" maxdate="#{utilB.fechaHoy()}" navigator="true" size="10"  />
+				<br/>
+				<h:outputLabel for="rbSexo" value="Sexo"/>
+				<h:selectOneRadio id="rbSexo" value="#{perfilAdminB.persona.sexo}" disabled="#{not perfilAdminB.bandera}" >
+				<f:selectItem itemLabel="Hombre" itemValue="1" />
+				<f:selectItem itemLabel="Mujer" itemValue="2" />
+				</h:selectOneRadio>
+				<br />
+				<h:outputLabel for="cbEstadoCivil" value="Estado Civil"/>
+				<h:selectOneMenu id="cbEstadoCivil" value="#{perfilAdminB.persona.estado_civil}" disabled="#{not perfilAdminB.bandera}" >
+				<f:selectItems value="#{perfilAdminB.estadoCivilL}" var="itemEstadoCivil" itemValue="#{itemEstadoCivil.estadoCivil}" itemLabel="#{itemEstadoCivil.descripcion}" />
+				</h:selectOneMenu>
+				
+ 				</div>
+ 				Datos Referenciales
+ 				<div  class="paneles" >
+ 				 <h:outputLabel for="txtTelefono" value="Telefono "/>
+                <h:inputText id="txtTelefono" value="#{perfilAdminB.persona.telefono}" disabled="#{not perfilAdminB.bandera}"  maxlength="7" size="15"  />
+        
+                <h:outputLabel for="txtCelular" value="Celular "/>
+                <h:inputText id="txtCelular" value="#{perfilAdminB.persona.celular}" disabled="#{not perfilAdminB.bandera}" maxlength="9" size="15"  />
+                <br/>
+
+                <h:outputLabel for="txtCorreoP" value="Correo P"/>
+                <h:inputText id="txtCorreoP" value="#{perfilAdminB.persona.emailP}" size="50"  disabled="#{not perfilAdminB.bandera}" style="#{ component.valid ? '' : 'border-color:red;'}"  >
+                	<f:validator validatorId="validarCorreo"  />   
+                </h:inputText>
+                <br/>
+
+                <h:outputLabel for="txtCorreoS" value="Correo S."/>
+                <h:inputText id="txtCorreoS" value="#{perfilAdminB.persona.emailS}"  size="50"  disabled="#{not perfilAdminB.bandera}" style="#{ component.valid ? '' : 'border-color:red;'}" >
+                <f:validator validatorId="validarCorreo"  />  
+                </h:inputText> 				
+ 				</div>
+ 				
+ 				
+ 				<i class="fa fa-map-marker" />
+ 				Ubigeo Direccion
+ 				<div class="paneles" >
+ 				<h:outputLabel value="Ubigeo "/>
+			
+				
+				<br />
+				 
+                 <h:selectOneMenu  id="cbDepartamento" value="#{perfilAdminB.codDepartamento}" disabled="#{not perfilAdminB.bandera}"  >
+                 <f:selectItem itemLabel="--Select --" />
+                 <f:selectItems value="#{perfilAdminB.departamentoL}" var="itemDepartamento"  itemLabel="#{itemDepartamento.descripcion}" itemValue="#{itemDepartamento.departamento}" />
+                 <f:ajax execute="@this" render="cbProvincia cbDistrito" listener="#{perfilAdminB.mostrarProvincia}" /> 
+                 </h:selectOneMenu>
+             
+           
+                 <h:selectOneMenu id="cbProvincia" value="#{perfilAdminB.codProvincia}" disabled="#{not perfilAdminB.bandera}" >
+                 <f:selectItem itemLabel="--Select --" />
+                 <f:selectItems value="#{perfilAdminB.provinciaL}" var="itemProvincia" itemLabel="#{itemProvincia.descripcion}" itemValue="#{itemProvincia.provincia}" />
+                 <f:ajax execute="@this" render="cbDistrito" listener="#{perfilAdminB.mostrarDistrito}" />
+                 </h:selectOneMenu>
+             
+               
+                 <h:selectOneMenu id="cbDistrito" value="#{perfilAdminB.codDistrito}" disabled="#{not perfilAdminB.bandera}" >
+                 <f:selectItem itemLabel="--Select --" />
+                 <f:selectItems value="#{perfilAdminB.distritoL}" var="itemDistrito" itemLabel="#{itemDistrito.descripcion}" itemValue="#{itemDistrito.distrito}" />
+                 </h:selectOneMenu>
+				
+				
+				<br />
+                <h:outputLabel for="txtDireccion" value="Direccion "/><br/>
+                <h:inputTextarea id="txtDireccion" value="#{perfilAdminB.persona.direccion_recidencial}" disabled="#{not perfilAdminB.bandera}" />
+ 				
+ 				
+ 				
+ 				
+ 				</div>
+               
+
+
+                <div class="paneles">
+                    <h:commandLink  id="btEditar"  styleClass="boton-normal" disabled="#{perfilAdminB.bandera}"  >
+                    <i class="fa fa-pencil" />
+                    Editar
+                    <f:ajax execute="@this" render="txtNacimiento rbSexo cbEstadoCivil txtDireccion txtTelefono txtCelular  txtCorreoP txtCorreoS  txtDni cbDepartamento  cbProvincia cbDistrito  btCancelar btGuardar btEditar"  listener="#{perfilAdminB.editar}" />
+                    </h:commandLink>
+                    <h:commandLink id="btGuardar" styleClass="boton-normal" disabled="#{not perfilAdminB.bandera}" >
+                    <i class="fa fa-floppy-o" />
+                    Guardar
+                    <f:ajax execute="@this txtNacimiento rbSexo cbEstadoCivil txtDireccion txtTelefono txtCelular txtCorreoP txtCorreoS  txtDni cbDepartamento  cbProvincia cbDistrito" render="txtNacimiento rbSexo cbEstadoCivil txtDireccion txtTelefono txtCelular  txtCorreoP txtCorreoS  txtDni cbDepartamento  cbProvincia cbDistrito btCancelar btGuardar btEditar"  listener="#{perfilAdminB.insertar}" />
+                    </h:commandLink>
+                    <h:commandLink     id="btCancelar" class="boton-normal" disabled="#{not perfilAdminB.bandera}" >
+                    <i class="fa fa-reply" />
+                    Cancelar
+                    <f:ajax execute="@this" render="txtNacimiento rbSexo cbEstadoCivil txtDireccion txtTelefono txtCelular  txtCorreoP txtCorreoS  txtDni cbDepartamento  cbProvincia cbDistrito btCancelar btGuardar btEditar" resetValues="true" listener="#{perfilAdminB.cancelar}" />
+                    </h:commandLink>
+                    
+                 </div>
+                
+               
+                 
+                 
+        </h:form>
+           
+        </ui:define>
+            
+        </ui:composition>

@@ -1,0 +1,468 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="REPORTE DE NO ADEUDO" language="groovy" pageWidth="842" pageHeight="650" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="5" bottomMargin="5" uuid="bccedf52-7722-413b-a74d-990834fbe4a7">
+	<property name="ireport.zoom" value="1.2100000000000017"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="Crosstab Data Text" hAlign="Center"/>
+	<parameter name="@LSCODIGO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["D:\\michell O.C\\SGAWEB\\WebContent\\ireport\\alumno\\facturacion\\"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[------ALVARO
+SELECT		CONVERT(VARCHAR(20), TD.PERSONA) AS CODIGO
+			 , DP.APELLIDO_PATERNO + ' ' + DP.APELLIDO_MATERNO + ' ' + DP.NOMBRES AS NOMBRES,
+			  ' '+CASE WHEN TC.CARRERA=5 AND TD.CONCEPTO=297 THEN 'CAMPO CLINICO' ELSE TC.DESCRIPCION END AS CONCEPTO
+			  ,CASE WHEN TD.CONCEPTO = '0000000040' THEN CAST(TD.NUM_CUOTA AS VARCHAR(6)) + 'º  CUOTA'  WHEN TD.CONCEPTO = '0000000074' THEN CAST(TD.NUM_CUOTA AS VARCHAR(6)) + 'º  CUOTA' ELSE ''
+			   END AS CUOTA
+			, DI.SF_PERIODO_CONCEPTO  (2,TD.PERSONA,'','','')	 CARRERAS
+			  ,(SELECT PP.DESCRIPCION FROM UPA.ACA_PERIODOS PP WHERE PP.PERIODO=TD.PERIODO AND PP.INSTITUCION=TD.INSTITUCION  ) AS PERIODO
+
+			  ,ISNULL((SELECT TOP 1 AL.ALUMNO FROM SIGU.ACA_ALUMNO AL WHERE AL.PERSONA = TD.PERSONA AND AL.ESTADO_REGISTRO=1),'') AS ALUMNO
+		,CASE WHEN  TD.ESTADO_REGISTRO='27' THEN TD.MONTO_TOTAL ELSE '0' END AS TOTAL
+			  ,CASE WHEN  TD.ESTADO_REGISTRO='27' THEN TD.MONTO_TOTAL ELSE '0' END AS TOTAL2
+			  ,0 TOTAL3
+
+
+			  ,'DEUDAS POR SEMESTRE :' AS TITULO
+			  ,'INVERSION POR SEMESTRE :' AS TITULO2
+			 , DI.SF_DATOS_OBLIGATORIOS (1,TD.PERSONA,'','','','') CICLO
+	  			  , DI.SF_DATOS_OBLIGATORIOS (2,TD.PERSONA,'','','','') TURNO
+ 				--,DI.SF_DATOS_OBLIGATORIOS (7,TD.PERSONA,TD.PERIODO,TD.CONCEPTO,TD.NUM_CUOTA,'') INVERFECHA
+			,UPPER(USER_NAME()) USUARIO
+
+
+FROM         SIGU.TES_CUENTA_PERSONA AS TD INNER JOIN
+                       SIGU.ACA_ALUMNO AS AL ON TD.INSTITUCION = AL.INSTITUCION AND TD.PERSONA = AL.PERSONA AND AL.ESTADO_REGISTRO=1 INNER JOIN
+                      UPA.DAT_PERSONAS AS DP ON TD.PERSONA = DP.PERSONA INNER JOIN
+                      SIGU.TES_CONCEPTOS AS TC ON TD.CONCEPTO = TC.CONCEPTO AND TD.TIPO_CONCEPTO = TC.TIPO_CONCEPTO --INNER JOIN
+
+ WHERE	   TD.INSTITUCION NOT IN ('2', '3', '4', '5') AND TD.ESTADO_REGISTRO NOT IN ( 2) AND TC.DESCRIPCION NOT LIKE '%PROS%'
+			AND TC.DESCRIPCION NOT LIKE '%CARPE%' AND TC.DESCRIPCION NOT LIKE '%INSCRI%' AND TC.DESCRIPCION NOT LIKE '%INCRI%'
+			AND TD.PERSONA LIKE $P{@LSCODIGO}
+			AND AL.ESTADO_REGISTRO NOT IN (2)
+
+
+
+UNION
+
+
+
+SELECT		CONVERT(VARCHAR(20), TD.PERSONA) AS CODIGO
+			 , DP.APELLIDO_PATERNO + ' ' + DP.APELLIDO_MATERNO + ' ' + DP.NOMBRES AS NOMBRES
+			 , ' '+ CASE WHEN TC.DESCRIPCION='PENSION' THEN 'MORA' END AS CONCEPTO
+			  ,CASE WHEN TD.CONCEPTO = '0000000040' THEN CAST(TD.NUM_CUOTA AS VARCHAR(6)) + 'º  CUOTA'  WHEN TD.CONCEPTO = '0000000074' THEN CAST(TD.NUM_CUOTA AS VARCHAR(6)) + 'º  CUOTA' ELSE ''
+			   END AS CUOTA
+			, DI.SF_PERIODO_CONCEPTO  (2,TD.PERSONA,'','','')	 CARRERAS
+			  ,(SELECT PP.DESCRIPCION FROM UPA.ACA_PERIODOS PP WHERE PP.PERIODO=TD.PERIODO AND PP.INSTITUCION=TD.INSTITUCION  ) AS PERIODO
+			  ,ISNULL((SELECT TOP 1 AL.ALUMNO FROM SIGU.ACA_ALUMNO AL WHERE AL.PERSONA = TD.PERSONA AND AL.ESTADO_REGISTRO=1),'') AS ALUMNO
+		  , CAST(SIGU.SF_INTERESX(1,2, TD.FECHA_VENCIMIENTO, 0, TD.MONTO_INTERES, TD.ESTADO_REGISTRO) AS DECIMAL(18,2)) TOTAL
+			    ,CAST(SIGU.SF_INTERESX(1,2, TD.FECHA_VENCIMIENTO, 0, TD.MONTO_INTERES, TD.ESTADO_REGISTRO) AS DECIMAL(18,2)) TOTAL2
+			     ,0 TOTAL3
+
+			  ,'DEUDAS POR SEMESTRE :' AS TITULO
+			  ,'INVERSION POR SEMESTRE :' AS TITULO2
+			, DI.SF_DATOS_OBLIGATORIOS (1,TD.PERSONA,'','','','') CICLO
+	  	  , DI.SF_DATOS_OBLIGATORIOS (2,TD.PERSONA,'','','','') TURNO
+ 		--		,DI.SF_DATOS_OBLIGATORIOS (7,TD.PERSONA,TD.PERIODO,TD.CONCEPTO,TD.NUM_CUOTA,'') INVERFECHA
+			,UPPER(USER_NAME()) USUARIO
+
+
+
+FROM         SIGU.TES_CUENTA_PERSONA AS TD INNER JOIN
+                      SIGU.ACA_ALUMNO AS AL ON TD.INSTITUCION = AL.INSTITUCION AND TD.PERSONA = AL.PERSONA AND AL.ESTADO_REGISTRO=1 INNER JOIN
+                      UPA.DAT_PERSONAS AS DP ON TD.PERSONA = DP.PERSONA INNER JOIN
+                      SIGU.TES_CONCEPTOS AS TC ON TD.CONCEPTO = TC.CONCEPTO AND TD.TIPO_CONCEPTO = TC.TIPO_CONCEPTO INNER JOIN
+                      UPA.ACA_PERIODOS AS AP ON TD.PERIODO = AP.PERIODO AND TD.INSTITUCION = AP.INSTITUCION
+                      LEFT OUTER JOIN UPA.ACA_CARRERAS AS CAR ON TD.CARRERA = CAR.CARRERA
+ WHERE	   TD.INSTITUCION NOT IN ('2', '3', '4', '5') AND TD.ESTADO_REGISTRO <> '2' AND TD.CONCEPTO  IN ('0000000040')
+			AND TD.PERSONA LIKE $P{@LSCODIGO}
+			AND AL.ESTADO_REGISTRO NOT IN (2) AND TC.DESCRIPCION NOT LIKE '%PROS%'
+			AND TC.DESCRIPCION NOT LIKE '%CARPE%' AND TC.DESCRIPCION NOT LIKE '%INSCRI%']]>
+	</queryString>
+	<field name="CODIGO" class="java.lang.String"/>
+	<field name="NOMBRES" class="java.lang.String"/>
+	<field name="CONCEPTO" class="java.lang.String"/>
+	<field name="CUOTA" class="java.lang.String"/>
+	<field name="CARRERAS" class="java.lang.String"/>
+	<field name="PERIODO" class="java.lang.String"/>
+	<field name="ALUMNO" class="java.lang.String"/>
+	<field name="TOTAL" class="java.math.BigDecimal"/>
+	<field name="TOTAL2" class="java.math.BigDecimal"/>
+	<field name="TOTAL3" class="java.lang.Integer"/>
+	<field name="TITULO" class="java.lang.String"/>
+	<field name="TITULO2" class="java.lang.String"/>
+	<field name="CICLO" class="java.lang.String"/>
+	<field name="TURNO" class="java.lang.String"/>
+	<field name="USUARIO" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="128">
+			<staticText>
+				<reportElement uuid="77e4b733-6b6d-4755-8425-57604463295e" x="0" y="51" width="46" height="20"/>
+				<box leftPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CODIGO : ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="adf5019b-9715-497b-9892-136783f230a8" x="112" y="51" width="54" height="20"/>
+				<box leftPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ALUMNOS : ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="4a592808-9bab-41a8-9bf5-ed48da32f7be" x="400" y="51" width="53" height="20"/>
+				<box leftPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CARRERA : ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="de28f3c9-655f-4543-8a91-a560ff0916c5" x="578" y="51" width="36" height="20"/>
+				<box leftPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CICLO : ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="506bf425-ef6b-40be-94b9-502a400b7da4" x="651" y="51" width="41" height="20"/>
+				<box leftPadding="2"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TURNO : ]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="138fdfeb-9514-41e8-868d-2fab84b5ada2" x="45" y="51" width="56" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ALUMNO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="b5b3838c-50f9-462b-a84c-dd6cace4f732" x="165" y="51" width="213" height="20"/>
+				<box leftPadding="3"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRES}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="114bd7d8-5301-4693-bd5a-f4b0d6acb004" x="453" y="51" width="121" height="20"/>
+				<box leftPadding="3"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CARRERAS}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="a6fce44e-feaf-44f9-9d04-343084b0d89f" x="614" y="51" width="26" height="20"/>
+				<box leftPadding="3"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CICLO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="2b58c437-4b40-4dd8-bd34-0b0dfde53d0d" x="692" y="51" width="77" height="20"/>
+				<box leftPadding="3"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TURNO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="901afe3b-e611-4902-9c15-b08af7b0aaa6" x="0" y="72" width="802" height="15"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[El Departamento de Caja emite el Estado de Cuenta Según detalle : ]]></text>
+			</staticText>
+			<subreport>
+				<reportElement uuid="94fc973a-7102-4683-aec8-3086c32be9b6" x="0" y="92" width="802" height="36"/>
+				<subreportParameter name="@LSCODIGO">
+					<subreportParameterExpression><![CDATA[$P{@LSCODIGO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "REPORTE DE NO ADEUDO_DATA_MENU.jasper"]]></subreportExpression>
+			</subreport>
+			<image scaleImage="FillFrame">
+				<reportElement uuid="2d0953b9-1654-49bd-9efb-be3805030d0e" x="0" y="0" width="769" height="48"/>
+				<imageExpression><![CDATA["http://190.43.16.151:8080/imagen/java/reporte/banner.png"]]></imageExpression>
+			</image>
+			<line>
+				<reportElement uuid="5b321cf4-10e2-4744-8a53-8c2b28d10bfc" x="8" y="48" width="761" height="1" forecolor="#CCCCCC"/>
+			</line>
+		</band>
+	</pageHeader>
+	<lastPageFooter>
+		<band height="30">
+			<staticText>
+				<reportElement uuid="46d04454-5991-4c9e-9511-d470a006b56c" x="0" y="0" width="801" height="30"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[NOTA: El presente documento brinda información referencial de su estado de cuenta, su verificación y validación será realizada por el área de contabilidad.
+La Gerencia de Contabilidad y Finanzas emitirá el reporte y/o constancia de no adeudar a la universidad con valor oficial para los trámites pertinentes.]]></text>
+			</staticText>
+		</band>
+	</lastPageFooter>
+	<summary>
+		<band height="361" splitType="Stretch">
+			<crosstab>
+				<reportElement uuid="a562b35b-76e3-49d8-9dcd-b50a5290414a" x="0" y="0" width="802" height="197"/>
+				<rowGroup name="CONCEPTO" width="130" totalPosition="End">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{CONCEPTO}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents backcolor="#F0F8FF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField>
+								<reportElement uuid="9cf87a6d-aa47-4caa-8365-6f5124467910" style="Crosstab Data Text" x="0" y="0" width="130" height="15"/>
+								<textElement verticalAlignment="Middle">
+									<font size="9"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{CONCEPTO}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents backcolor="#005FB3" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<staticText>
+								<reportElement uuid="8b6d95fd-58fc-4dbd-891c-c30418ade9cc" x="0" y="0" width="192" height="15" forecolor="#FFFFFF"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="9"/>
+								</textElement>
+								<text><![CDATA[TOTAL POR CICLO]]></text>
+							</staticText>
+						</cellContents>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<rowGroup name="CUOTA" width="62" totalPosition="End">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{CUOTA}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents backcolor="#F0F8FF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField>
+								<reportElement uuid="f4461075-0541-4509-b0c7-fbd8e689761d" style="Crosstab Data Text" x="0" y="0" width="62" height="15"/>
+								<textElement verticalAlignment="Middle">
+									<font size="9"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{CUOTA}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents backcolor="#BFE1FF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+						</cellContents>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<columnGroup name="PERIODO" height="20" totalPosition="End">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{PERIODO}]]></bucketExpression>
+					</bucket>
+					<crosstabColumnHeader>
+						<cellContents backcolor="#F0F8FF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField>
+								<reportElement uuid="78102b66-f673-4607-a1c4-800dad0ac116" style="Crosstab Data Text" x="0" y="0" width="50" height="20"/>
+								<textElement verticalAlignment="Middle">
+									<font size="9"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$V{PERIODO}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabColumnHeader>
+					<crosstabTotalColumnHeader>
+						<cellContents backcolor="#BFE1FF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+						</cellContents>
+					</crosstabTotalColumnHeader>
+				</columnGroup>
+				<measure name="TOTALMeasure" class="java.math.BigDecimal" calculation="Sum">
+					<measureExpression><![CDATA[$F{TOTAL}]]></measureExpression>
+				</measure>
+				<crosstabCell width="50" height="15">
+					<cellContents>
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement uuid="58d60701-628d-4971-9cf4-31f00edf21d2" style="Crosstab Data Text" x="0" y="0" width="50" height="15"/>
+							<textElement verticalAlignment="Middle">
+								<font size="9"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$V{TOTALMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="0" height="15" columnTotalGroup="PERIODO">
+					<cellContents backcolor="#BFE1FF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell height="0" rowTotalGroup="CUOTA">
+					<cellContents backcolor="#BFE1FF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="0" height="0" rowTotalGroup="CUOTA" columnTotalGroup="PERIODO">
+					<cellContents backcolor="#BFE1FF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell height="15" rowTotalGroup="CONCEPTO">
+					<cellContents backcolor="#005FB3" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement uuid="613bc53d-f0ea-4d74-8f86-f1648145a9bd" style="Crosstab Data Text" x="0" y="0" width="50" height="15" forecolor="#FFFFFF"/>
+							<textElement verticalAlignment="Middle">
+								<font size="9"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$V{TOTALMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="0" height="15" rowTotalGroup="CONCEPTO" columnTotalGroup="PERIODO">
+					<cellContents backcolor="#005FB3" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+					</cellContents>
+				</crosstabCell>
+			</crosstab>
+			<crosstab>
+				<reportElement uuid="29d504ce-ae1b-49bf-ba16-e89d7d8afe22" x="-1" y="277" width="802" height="84"/>
+				<rowGroup name="CONCEPTO" width="200" totalPosition="End">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{CONCEPTO}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents backcolor="#F0F8FF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField>
+								<reportElement uuid="58026e5f-52ed-4742-9809-080123d06d01" style="Crosstab Data Text" x="0" y="0" width="200" height="15"/>
+								<textElement/>
+								<textFieldExpression><![CDATA[$V{CONCEPTO}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents backcolor="#BFE1FF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<staticText>
+								<reportElement uuid="bdaa7bb1-86c6-49f9-bbee-4f3011b1c968" x="0" y="0" width="200" height="15"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<text><![CDATA[DEUDA TOTAL]]></text>
+							</staticText>
+						</cellContents>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<columnGroup name="ALUMNO" height="20" totalPosition="End">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{ALUMNO}]]></bucketExpression>
+					</bucket>
+					<crosstabColumnHeader>
+						<cellContents backcolor="#F0F8FF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+						</cellContents>
+					</crosstabColumnHeader>
+					<crosstabTotalColumnHeader>
+						<cellContents backcolor="#BFE1FF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<staticText>
+								<reportElement uuid="26010848-e360-40ce-90a7-a95677d3ce92" x="0" y="0" width="50" height="20"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<text><![CDATA[Total ALUMNO]]></text>
+							</staticText>
+						</cellContents>
+					</crosstabTotalColumnHeader>
+				</columnGroup>
+				<measure name="TOTALMeasure" class="java.math.BigDecimal" calculation="Sum">
+					<measureExpression><![CDATA[$F{TOTAL}]]></measureExpression>
+				</measure>
+				<crosstabCell width="0" height="15">
+					<cellContents>
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="50" height="15" columnTotalGroup="ALUMNO">
+					<cellContents backcolor="#BFE1FF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement uuid="78e8af0c-c0f1-497f-8829-c162fc35d0eb" style="Crosstab Data Text" x="0" y="0" width="50" height="15"/>
+							<textElement/>
+							<textFieldExpression><![CDATA[$V{TOTALMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="0" height="16" rowTotalGroup="CONCEPTO">
+					<cellContents backcolor="#BFE1FF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell height="16" rowTotalGroup="CONCEPTO" columnTotalGroup="ALUMNO">
+					<cellContents backcolor="#BFE1FF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement uuid="17b31a5a-c14e-41ea-b55d-de7b63683ee5" style="Crosstab Data Text" x="0" y="0" width="50" height="15"/>
+							<textElement/>
+							<textFieldExpression><![CDATA[$V{TOTALMeasure}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+			</crosstab>
+		</band>
+	</summary>
+</jasperReport>

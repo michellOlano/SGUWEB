@@ -1,0 +1,243 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<h:head>
+  		<link   type="text/css" rel="stylesheet" href="/SGAWEB/resources/css/administrativo/style.css" />
+        <link   type="text/css" rel="stylesheet" href="/SGAWEB/resources/css/font-awesome.css" />
+<title>
+Instituciones
+</title>
+<style>
+.bloquear{position: relative;}
+.bloquear:before{content: "";width: 100%;height: 100%;background: rgba(0,0,0,0.7);position: absolute;cursor: no-drop}   
+#institucion-logo{border: 1px solid silver}
+#institucion-logo img{display: block;width: 150px;height: 100px;}
+#institucion-logo a{display: block;text-align: center;border-top: 1px solid silver}
+#txtDescripcion,#txtTitulo,#txtSubTitulo{width: 400px}
+</style>
+<script>
+$(document).ready(function(){
+
+	
+	$("body").on("click","#institucion-logo a",function(e){
+		e.preventDefault();
+			
+		$("#btExaminar").click();
+		
+	});
+	
+	
+	   $("body").on("change","#btExaminar",function (){    
+		   $("#btinsertarImagen").click();
+		   console.log("termino seleccionar");
+	 }); 
+
+});
+
+</script>
+</h:head>
+<h:body >
+<h:form enctype="multipart/form-data" prependId="false" style="display: none;">
+<p:fileUpload id="btExaminar" value="#{institucionB.file}" mode="simple" allowTypes="/(\.|\/)(gif|jpe?g|png)$/"  />
+<h:commandLink  id="btinsertarImagen" styleClass="boton-verde" action="#{institucionB.insertarImagen}">
+			                ACEPTAR 
+</h:commandLink>
+</h:form>
+
+
+
+
+
+
+<h:form id="frmInstitucion" prependId="false"  >
+
+<h:panelGroup id="pnInstitucion" layout="block" rendered="#{institucionB.index eq 1}" >
+
+
+
+
+<div class="paneles" >
+<div class="column"  >
+<h:outputLabel  for="txtDescripcion" value="Descripcion" />
+<h:inputText id="txtDescripcion" value="#{institucionB.institucion.descripcion}" disabled="#{not institucionB.bandera}" required="true" style="#{ component.valid ? '' : 'border-color:red;'}"   /><br/>
+<h:outputLabel  for="txtAbreviatura" value="Abreviatura" />
+<h:inputText  id="txtAbreviatura" value="#{institucionB.institucion.abreviatura}" disabled="#{not institucionB.bandera}" required="true" style="#{ component.valid ? '' : 'border-color:red;'}" /><br/>
+<h:outputLabel for="txtTitulo"  value="Titulo" />
+<h:inputText  id="txtTitulo" value="#{institucionB.institucion.titulo}" disabled="#{not institucionB.bandera}" /><br/>
+<h:outputLabel  for="txtSubTitulo" value="Sub Titulo" />
+<h:inputText id="txtSubTitulo" value="#{institucionB.institucion.subTitulo}" disabled="#{not institucionB.bandera}" /><br/>
+<h:outputLabel for="cbEstado" value="Estado" />
+<h:selectOneMenu id="cbEstado" value="#{institucionB.institucion.estadoRegistro}" disabled="#{not institucionB.bandera}"  >
+<f:selectItem itemLabel="Habilitado" itemValue="1" />
+<f:selectItem itemLabel="Deshabilitado" itemValue="0" />
+</h:selectOneMenu>
+</div>
+	<div class="column" >
+	<div id="institucion-logo">
+		<h:graphicImage id="imgLogo" value="SimagenBD?opcion=6&amp;codigo=#{institucionB.institucion.institucion}"  />
+		<a>Subir</a>
+	</div>
+	
+	</div>
+</div>
+<div class="paneles" >
+<h:commandLink id="btNuevo" styleClass="boton-normal" disabled="#{institucionB.bandera}" >
+<i class="fa fa-file-o" />
+Nuevo
+<f:ajax execute="@this" render="txtDescripcion txtAbreviatura txtTitulo txtSubTitulo cbEstado tbInstitucion btNuevo btGuardar btCancelar btEditar" listener="#{institucionB.nuevo}"  />
+</h:commandLink>
+
+
+<h:commandLink id="btGuardar" styleClass="boton-normal" disabled="#{not institucionB.bandera}" >
+<i class="fa fa-floppy-o"  />
+Guardar
+<f:ajax execute="txtDescripcion txtAbreviatura txtTitulo txtSubTitulo cbEstado" render="txtDescripcion txtAbreviatura txtTitulo txtSubTitulo cbEstado tbInstitucion btNuevo btGuardar btCancelar btEditar tbInstitucion" listener="#{institucionB.guardar}" />
+</h:commandLink>
+
+
+<h:commandLink id="btCancelar" styleClass="boton-normal" disabled="#{not institucionB.bandera}" >
+<i class="fa fa-undo" />
+Cancelar
+<f:ajax execute="@this" render="txtDescripcion txtAbreviatura txtTitulo txtSubTitulo cbEstado tbInstitucion btNuevo btGuardar btCancelar btEditar" listener="#{institucionB.cancelar}" resetValues="true" />
+</h:commandLink>
+
+
+<h:commandLink id="btEditar" styleClass="boton-normal" disabled="#{institucionB.bandera}" >
+<i class="fa fa-pencil" />
+Editar
+<f:ajax execute="@this" render="txtDescripcion txtAbreviatura txtTitulo txtSubTitulo tbInstitucion btNuevo btGuardar btCancelar btEditar" listener="#{institucionB.editar}" 	 />
+</h:commandLink>
+
+<h:commandLink id="btimprimir" styleClass="boton-normal" disabled="true" >
+<i class="fa fa-print" />
+Imprimir
+<f:ajax execute="@this"  />
+</h:commandLink>
+
+</div>
+<div id="tabla-institucion">
+<p:dataTable id="tbInstitucion" value="#{institucionB.institucionL}"  var="itemInstitucion" selection="#{institucionB.institucion}" selectionMode="single" rowKey="#{itemInstitucion.institucion}"  >
+<p:ajax event="rowSelect"  update="txtDescripcion txtAbreviatura txtTitulo txtSubTitulo imgLogo" />
+<p:ajax event="rowDblselect" update="@form" listener="#{institucionB.mostrarInstitucionCarrera}"  />
+<p:column headerText="Codigo" width="50" >
+#{itemInstitucion.institucion}
+</p:column>
+<p:column headerText="Institucion" >
+#{itemInstitucion.descripcion}
+</p:column>
+
+<p:column headerText="Abreviatura" width="100" >
+#{itemInstitucion.abreviatura}
+</p:column>
+
+
+
+
+
+</p:dataTable>
+
+
+</div>
+</h:panelGroup>
+
+<h:panelGroup layout="block" id="pnInstitucionCarrera" rendered="#{institucionB.index eq 2}" >
+
+
+
+<div class="paneles" >
+<b style="font-size: 1.2em">
+<h:outputLabel  id="lblInstitucion" value="#{institucionB.institucion.descripcion}" />
+</b>
+
+<hr />
+<h:outputLabel for="cbCarreraIC" value="Carrera" />
+<h:selectOneMenu id="cbCarreraIC" value="#{institucionB.institucionCarrera.carrera}" disabled="#{not institucionB.banderaIC}" required="true" style="#{ component.valid ? '' : 'border-color:red;'}" >
+<f:selectItems value="#{institucionB.carreraL}" var="itemCarrera" itemLabel="#{itemCarrera.descripcion}" itemValue="#{itemCarrera.carrera}" />
+</h:selectOneMenu>
+<br />
+<h:outputLabel for="cbTipoCarreraIC" value="Tipo Carrera" />
+<h:selectOneMenu id="cbTipoCarreraIC" value="#{institucionB.institucionCarrera.tipoCarrera}" disabled="#{not institucionB.banderaIC}" required="true" style="#{ component.valid ? '' : 'border-color:red;'}" >
+<f:selectItems value="#{institucionB.tipoCarreraL}" var="itemTipoCarrera" itemLabel="#{itemTipoCarrera.descripcion}" itemValue="#{itemTipoCarrera.tipoCarrera}" />
+</h:selectOneMenu>
+<br />
+<h:outputLabel for="txtSiglaIC" value="Sigla" />
+<h:inputText id="txtSiglaIC" value="#{institucionB.institucionCarrera.siglas}" disabled="#{not institucionB.banderaIC}" />
+<br />
+<h:outputLabel for="cbEstadoIC" value="Estado" />
+<h:selectOneMenu id="cbEstadoIC" value="#{institucionB.institucionCarrera.estadoRegistro}" disabled="#{not institucionB.banderaIC}" >
+<f:selectItem itemLabel="Habilitado" itemValue="1" />
+<f:selectItem itemLabel="Deshabilitado" itemValue="0" />
+</h:selectOneMenu>
+
+</div>
+
+
+<div class="paneles" >
+
+<h:commandLink id="btNuevoIC" styleClass="boton-normal"  disabled="#{institucionB.banderaIC}" >
+<i class="fa fa-file-o" />
+Nuevo
+<f:ajax execute="@this" render="cbCarreraIC cbTipoCarreraIC txtSiglaIC cbEstadoIC btNuevoIC btGuardarIC btCancelarIC btregresarIC" listener="#{institucionB.nuevoInstitucionCarrera}"  />
+</h:commandLink>
+
+
+<h:commandLink id="btGuardarIC" styleClass="boton-normal"  disabled="#{not institucionB.banderaIC}" >
+<i class="fa fa-floppy-o"  />
+Guardar
+<f:ajax execute=" cbCarreraIC cbTipoCarreraIC txtSiglaIC cbEstadoIC" render="cbCarreraIC cbTipoCarreraIC txtSiglaIC cbEstadoIC tbInstitucionCarreraIC btNuevoIC btGuardarIC btCancelarIC  btregresarIC"  listener="#{institucionB.insertarInstitucionCarrera}" />
+</h:commandLink>
+
+
+<h:commandLink id="btCancelarIC" styleClass="boton-normal" disabled="#{not institucionB.banderaIC}" >
+<i class="fa fa-undo" />	
+Cancelar
+<f:ajax execute="@this" render="cbCarreraIC cbTipoCarreraIC txtSiglaIC cbEstadoIC btNuevoIC btGuardarIC  btCancelarIC  btregresarIC" listener="#{institucionB.cancelarInstitucionCarrera}"  resetValues="true" />
+</h:commandLink>
+
+
+<h:commandLink id="btregresarIC" styleClass="boton-normal" disabled="#{institucionB.banderaIC}" >
+<i class="fa fa-arrow-left" />
+Regresar
+<f:ajax execute="@this" render="@form"   listener="#{institucionB.regresarInstitucion}"	 />
+</h:commandLink>
+</div>
+
+
+<div id="tabla-institucion-carrera">
+
+
+<p:dataTable  id="tbInstitucionCarreraIC" value="#{institucionB.institucionCarreraCIL}"  var="itemInstitucionCarrera" >
+<p:column headerText="Tipo Carrera" width="100" >
+#{itemInstitucionCarrera.tipoCarrera.descripcion}
+</p:column>
+<p:column headerText="Carrera" >
+#{itemInstitucionCarrera.carrera.descripcion}
+</p:column>
+<p:column headerText="Sigla" width="50" >
+#{itemInstitucionCarrera.institucionCarrera.siglas}
+</p:column>
+<p:column headerText="Estado" width="50" >
+#{itemInstitucionCarrera.institucionCarrera.estadoRegistro}
+</p:column>
+<p:column width="20" >
+<h:commandLink title="Eliminar"  >
+<i class="fa fa-times"  style="color: red"/>
+<f:ajax execute="@this"  render="tbInstitucionCarreraIC" listener="#{institucionB.eliminarInstitucionCarrera(itemInstitucionCarrera.institucionCarrera)}" />
+</h:commandLink>
+</p:column>
+</p:dataTable>
+</div>
+
+</h:panelGroup>
+</h:form>
+
+
+
+</h:body>
+</html>

@@ -1,0 +1,207 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"     
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    
+
+<link type="text/css" rel="stylesheet" href="/SGAWEB/resources/css/font-awesome.css" />
+<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" />
+
+<title>
+   <ui:insert name="titulo">
+
+            </ui:insert> 
+
+
+</title>
+	<style>
+	*{padding: 0;margin: 0;list-style: none;text-decoration: none;}
+	*:focus {outline: none;}
+	html,body{display: block;width: 100%;height: 100%;background-color: #eeeeee;font-family: 'Roboto', sans-serif;}
+	.column{display: inline-block;vertical-align: top;}
+	.paneles{border: 1px solid silver;background-color: white; margin: 5px;}
+	.ficha-inico{width: 200px;height: 150px;text-align: center;}
+	.ficha-inico-cabecera{height: 20px;padding: 5px 0;color: white}
+	.ficha-inico:nth-child(2n+1) .ficha-inico-cabecera{background-color: orange;}
+	.ficha-inico:nth-child(2n) .ficha-inico-cabecera{background-color: rgb(74, 74, 74)}
+	.ficha-inico-cabecera p{text-transform: capitalize;font-weight: bold;}
+	.ficha-inico-cuerpo{height: 80%; padding: 5px 0px}
+	.ficha-inico-cuerpo img{width: 80%;height: 95%}
+	
+	
+	#principal{display: block;width: 100%;height: 100%}
+	#cabecera{display: block; width: 100%;background-color: white;padding: 2px 0px;    box-shadow: 0px 2px 2px rgba(0,0,0,0.2);}
+	#cabecera-logo{height: 100%;width: 60%}
+	#cabecera-logo img{width: 60px;height: 60px}
+	#cabecera-logo p{text-transform:capitalize; }
+	#cabecera-usuario{width: 39%;text-align: right;}
+	#cabecera-usuario-subMenu{border: 1px solid red;}
+	#cabecera-usuario-subMenu ul li{display: inline-block;vertical-align: top;border: 1px solid ;padding: 5px}
+	#cabecera-usuario-persona{position: relative;}
+	#cabecera-usuario-persona img{width: 50px;height: 50px;border-radius:50%;border: 1px solid silver}
+	#cabecera-usuario-persona p{text-transform:capitalize;max-width: 150px;text-align: left;font-weight: bold; color: rgb(2, 103, 191) }
+	#cabecera-usuario-persona-subMenu{border: 1px solid silver;border-radius:4px;position: absolute;right: 0;display: none;background-color: white;padding:8px;box-shadow: 0px 2px 2px rgba(0,0,0,0.2)}
+	#cabecera-usuario-persona-subMenu a{display: block;width: 100%;text-align: left;}
+	#cuerpo{display: block;width: 100%;height: 80%;margin: 5px 0px}
+	#cuerpo-menu{width: 20%;background-color:white;height: 100%}
+	#cuerpo-menu-item >ul >li{text-transform: capitalize;}
+	#cuerpo-menu-item >ul >li >a {border-left: 6px solid white;padding: 8px 5px ;;display: block;}
+	#cuerpo-menu-item >ul >li:hover a{border-color: red;} 
+	 
+	#cuerpo-menu-item >ul >li >ul{display: none;padding-left: 20px}
+	#cuerpo-menu-item >ul >li >ul >li{padding: 2px}
+	#cuerpo-menu-item >ul >li >ul >li a{display: block;}
+	#cuerpo-area{width: 78%;height: 100%;}
+	
+	</style>
+	<script>
+	 $(document).ready(function(){
+		 
+		 $("#cabecera-usuario-persona a").click(function(e){
+			 e.preventDefault();
+		
+			$("#cabecera-usuario-persona-subMenu").slideToggle("fast");
+		 });
+		 
+		 $("#cuerpo-menu-item >ul >li >a").click(function(e){
+			 e.preventDefault();
+			 $(this).parent().children("ul").slideToggle("fast");
+			 
+		 });
+		 
+		 
+	 });
+	</script>
+</h:head>
+<h:body>
+<div id="principal">
+	<div id="cabecera" >
+	
+		<div id="cabecera-logo" class="column" >
+	
+		
+		<a href="/SGAWEB/faces/Alumno/index.xhtml" >
+		<img src="/imagen/java/SGUWEB.jpg" alt="" class="column" />
+		</a>
+		<div class="column" >
+		   <h2 ><h:outputLabel id="lbTitulo" value="#{usuarioB.institucion.titulo}" />  </h2>
+           <h3 ><h:outputLabel id="lbSubTitulo" value="#{usuarioB.institucion.subTitulo}" /> </h3>
+		
+		</div>
+		
+		</div>
+		<div id="cabecera-usuario" class="column">
+			<div  id="cabecera-usuario-subMenu" class="column" >
+				<ul>
+					<li>
+						<i class="fa fa-bell-o" />
+					</li>
+					<li>
+						<i class="fa fa-comments-o" />
+					</li>
+				</ul>
+			</div>
+			<div id="cabecera-usuario-persona" class="column">
+				<img src="SVerImagenAlumno?alumno=#{usuarioB.persona.persona}" alt="" class="column" />
+				<p class="column">#{usuarioB.persona.paterno} #{usuarioB.persona.materno} #{usuarioB.persona.nombres}</p>
+				<a href=""><i class="fa fa-cogs" /></a>
+				<div id="cabecera-usuario-persona-subMenu" >
+				<h:form>
+				
+					<a href="#">
+					<i class="fa fa-user-circle-o" />
+					Mi perfil					
+					</a>
+					
+					<a href="#">
+					<i class="fa fa-key" />
+					Cambiar Contraseña
+					</a>
+										
+					
+		
+					<h:commandLink action="#{usuarioB.cerrarSesion}">
+					<i class="fa fa-sign-out" />
+					Cerrar Sesion					
+					</h:commandLink>
+				</h:form>
+				</div>
+			</div>
+		</div>
+	<div>
+	</div>
+	</div>
+	<div  id="cuerpo" >
+		
+	<div id="cuerpo-menu" class="column" >
+	<h:form prependId="false" >
+		
+		<h:outputLabel value="Semestre" />
+	
+		<h:selectOneMenu value="#{usuarioB.periodoS}" id="cmbPeriodo" >                                                          
+
+                                <f:selectItems value="#{usuarioB.periodoL}" var="periodo" itemValue="#{periodo.periodo}" itemLabel="#{periodo.desPeriodo}" />
+                                <p:ajax process="@this" update="@this :pnAreaTrabajo" listener="#{usuarioB.periodoSeccionado}" />
+                            </h:selectOneMenu>
+		<div id="cuerpo-menu-item">
+		<ul>
+		
+		<ui:repeat var="itemMenuPadre" value="#{usuarioB.menuL}"   >
+		<li>
+			
+			<a href="">
+			<i class="#{itemMenuPadre.classIcono}" />
+			#{itemMenuPadre.nombre.toLowerCase()}
+			</a>
+			<ul>
+			
+			<ui:repeat var="itemMenuHijo" value="#{itemMenuPadre.menuL}">
+			<li>
+			<a  href="/SGAWEB/faces/Alumno/#{itemMenuHijo.url}">
+			#{itemMenuHijo.nombre.toLowerCase()}
+			</a>
+			
+			
+			
+			</li>
+			
+			</ui:repeat>
+			</ul>
+		</li>
+		
+		</ui:repeat>
+		</ul>
+		
+		</div>
+	</h:form>
+	</div>
+		
+	<div id="cuerpo-area" class="column" >
+	 <h:panelGroup layout="block" id="pnAreaTrabajo" >
+		<ui:insert name="contenido">
+	                         
+	    </ui:insert> 
+	 </h:panelGroup>
+	  
+		
+		
+		
+		
+	</div>
+	
+	
+	
+	</div>
+</div>
+
+
+
+</h:body>
+
+</html>

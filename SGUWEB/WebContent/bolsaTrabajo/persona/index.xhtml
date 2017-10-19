@@ -1,0 +1,409 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:hp="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<h:head>
+<title>..: Bolsa de Trabajo - Persona :..</title>
+ <script src="//maps.googleapis.com/maps/api/js?key=AIzaSyCFJlMsrZAAi-ci-EQMdWQfkibceGpPQrI"  defer="defer" type="text/javascript" /> 
+ <script type="text/javascript" src="#{utilB.ruta}/SGAWEB/resources/js/jquery.geocomplete.js"/>   
+ <script src="#{utilB.ruta}/SGAWEB/resources/js/util.js" />
+ <link   type="text/css" rel="stylesheet" href="/SGAWEB/resources/css/bolsaTrabajo/style.css" />
+ <link   type="text/css" rel="stylesheet" href="/SGAWEB/resources/css/font-awesome.css" />   
+ <style>
+
+ .menu-nav{text-align: center;background-color:white; border:1px solid silver}
+ .menu-nav div{    border-right: solid 1px #d9d9d9;width: 12%}
+ .menu-nav div a{padding: 15px 0px;display: block;width: 100%;height: 100%;font-size: 1.2em;color:#808080;transition:all 0.5s}
+ .aviso-filtro-item{background-color: white;margin: 2px 0px;border: 1px solid silver}
+ .aviso-filtro-item table tbody tr td{border: none!important}
+ .aviso-filtro-item b{display: block;border: 1px solid ;background-color: #1e82c4;color: white;padding: 5px}
+
+ .menu-nav div:hover a{background-color: #1e82c4;color: white}
+ .ficha-aviso {border: 1px solid silver;margin: 0px 0px 10px 0px;border-radius:5px;position: relative;background-color: white;min-height: 110px}
+ .ficha-aviso a{display: block;width: 100%;height: 100%}
+ .ficha-aviso:HOVER{background-color: #f5f5f5}
+ .ficha-aviso label{position: absolute;top: 0;right: 0;background-color: red;color: white;display: block;padding: 4px 30px}
+ .ficha-aviso div{padding: 2px 4px}
+ .ficha-aviso-cabecera img{border: 1px solid silver;width: 60px;height: 50px}
+ .ficha-aviso-cabecera span{font-size: 1.8em}
+ #pnAvisoDetalle ul, #pnAvisoDetalle ol{list-style: inside; }
+ .caja-filtro{border: 1px solid silver;margin: 2px 0px;color: silver;padding: 0px 5px}
+.caja-filtro:BEFORE{content: "\f002";font-family: 'FontAwesome';}
+.caja-filtro input[type="text"] {;padding: 5px!important;width: 90%;border: none;}
+ .aviso-filtro input[type="radio"] {visibility: hidden;}
+ .aviso-filtro input[type="radio"]:checked + label:BEFORE{background-color: rgb(236, 196, 46)}
+ .aviso-filtro input[type="radio"] + label{cursor: pointer;}
+ .aviso-filtro input[type="radio"] + label:BEFORE {content: "";height: 12px;width: 12px;border: 2px solid  #1469aa;border-radius:50%;display: inline-block;background-color: white} 
+ 
+ </style>
+ <script>
+ 
+ $(document).ready(function(){
+	
+	 $("body").on("click","#btSubirCV",function(e){
+			e.preventDefault();
+				
+			$("#btExaminar").click();
+			
+		});
+	 
+	   $("body").on("change","#btExaminar",function (){    
+		   $("#btInsertarCV").click();
+		   
+		   notificacion('Se registro correctamente',500,5000,'correcto');
+		   
+	 }); 
+	   
+	   
+	   $("body").on("click","#imgLogo",function(e){
+			e.preventDefault();
+				
+			$("#btExaminarImagen").click();
+			
+		});
+	 
+	   $("body").on("change","#btExaminarImagen",function (){    
+		   $("#btinsertarImagen").click();
+		   
+		   
+		   
+	 }); 
+	   
+	 
+ });
+  </script>
+</h:head>
+<h:body>
+<f:event type="preRenderView" listener="#{usuarioTrabajoB.verificarSesion}" />
+<h:form id="frmCurriculum" enctype="multipart/form-data" prependId="false" style="display:none" >
+
+	<p:fileUpload id="btExaminar" value="#{bandejaPersonaB.file}" update="btInsertarCV"  allowTypes="/(\.|\/)(doc|docx|xls|xlsx|pdf)$/" mode="simple"  widgetVar="" />
+	<h:commandLink id="btInsertarCV" styleClass="boton-normal"   actionListener="#{bandejaPersonaB.insertarCurriculum}" >
+	Aceptar
+	</h:commandLink>
+</h:form>
+
+<h:form enctype="multipart/form-data" prependId="false"  style="display:none">
+<p:fileUpload id="btExaminarImagen" value="#{usuarioTrabajoB.file}" mode="simple" allowTypes="/(\.|\/)(gif|jpe?g|png)$/"  />
+<h:commandLink  id="btinsertarImagen" styleClass="boton-verde" action="#{usuarioTrabajoB.insertarImagenPersona}">
+ACEPTAR 
+</h:commandLink>
+</h:form>
+
+
+	<header >
+	<img src="/imagen/java/logoupsb.png" alt="" style="width: 60px; height: 60px"  />
+		<div class="column" >
+		<h1 >OPORTUNIDADES LABORALES UPSB</h1>
+		</div>
+	</header>
+
+<h:form id="frmBandejaAviso" prependId="false">
+	#{bandejaPersonaB.load(usuarioTrabajoB.persona)}
+
+<h:panelGroup id="pnUsuario" layout="block" >
+	<div class="menu-nav">
+		<div class="column" >
+			
+			<h:graphicImage id="imgLogo"    value="SimagenBD?opcion=2&amp;codigo=#{usuarioTrabajoB.persona.persona}" style="border: 1px solid silver;width: 60px;height: 60px"  />
+			
+			
+			
+			<b>#{usuarioTrabajoB.usuario}</b>
+			
+		
+		</div>
+		
+		<div class="column" >
+			<h:commandLink  onclick="dlgSeguridad.show()" >
+			<i class="fa fa-key" />
+			Cambiar Contraseña
+			<f:ajax execute="@this" />
+			</h:commandLink>
+		</div>
+	
+		
+		<div class="column" >
+			<h:commandLink id="btSubirCV"  >
+			<i class="fa fa-cloud-upload" />
+			Curriculum Vitae
+			<f:ajax execute="@this" listener="#{bandejaPersonaB.nuevoCurriculum}" />
+			</h:commandLink>
+		</div>
+		
+		
+		
+		<div class="column" >		
+			<a  href="http://localhost:8080/SGAWEB/faces/bolsaTrabajo/persona/SarchivoBD?opcion=2&amp;codigo=#{bandejaPersonaB.persona.persona}" target="_blank" >
+			<i class="fa fa-file-word-o" />
+			Ver Curriculum
+			</a>
+		</div>
+		
+		<div class="column" >
+			<h:commandLink>
+			<i class="fa fa-sign-out" />
+			Cerrar Sesion
+			<f:ajax execute="@this" render="pnUsuario" listener="#{usuarioTrabajoB.cerrarSesion}" />
+			</h:commandLink>
+		</div>
+		
+		
+		
+		
+	</div>
+	</h:panelGroup>	
+	
+<div >
+	<div class="column  aviso-filtro" style=" width: 20%;" >
+	<div class="aviso-filtro-item">
+	<b>AREAS</b>
+	<div>
+	<h:selectOneRadio id="rbArea" value="#{bandejaPersonaB.areaF}" layout="pageDirection" >
+	<f:selectItem  itemLabel="TODOS" itemValue="%" />
+	<f:selectItems value="#{bandejaPersonaB.areaL}" var="itemArea" itemLabel="#{itemArea.descripcion}" itemValue="#{itemArea.area}" />
+	<f:ajax execute="@this" render="pnBandeja" listener="#{bandejaPersonaB.mostrarAviso}"  />
+	</h:selectOneRadio>
+	
+	</div>
+	</div>
+	
+	<div class="aviso-filtro-item">
+	<b>SALARIO</b>
+	<div>
+	<h:selectOneRadio  value="#{bandejaPersonaB.salarioF}" layout="pageDirection" >
+	<f:selectItem  itemLabel="TODOS" itemValue="0" />
+	<f:selectItem  itemLabel="Mayor s/ 750" itemValue="750" />
+	<f:selectItem  itemLabel="Mayor s/ 900" itemValue="900" />
+	<f:selectItem  itemLabel="Mayor s/ 1200" itemValue="1200" />
+	<f:ajax execute="@this" render="pnBandeja" listener="#{bandejaPersonaB.mostrarAviso}"  />
+	</h:selectOneRadio>
+	
+	</div>
+	</div>
+	
+	</div>
+	
+	<div class="column " style=" width: 75%;">
+	<h:panelGroup layout="block" id="pnBandeja" >
+	
+	
+		<h:panelGroup id="pnAvisos" layout="block" rendered="#{bandejaPersonaB.index eq 1}" >
+		
+		<div class="paneles caja-filtro" >
+			
+			<h:inputText  id="txtBusqueda" value="#{bandejaPersonaB.cargoF}" hp:placeholder="Busqueda Aviso" >
+			<f:ajax event="change"  execute="@this"  render="pnAvisoItem pnAvisoPagina" listener="#{bandejaPersonaB.mostrarAviso}"  />
+			</h:inputText>
+		</div>
+		
+			<h:panelGroup layout="block" id="pnAvisoPagina" rendered="#{bandejaPersonaB.empresaAvisoPostulanteL.size() gt 10}"  >
+				<div class="paneles" >
+				<h:outputLabel value="NO HAY AVISOS" rendered="#{bandejaPersonaB.empresaAvisoPostulanteL.size() eq 0}" style="font-size: 4.0em;color:#e80000" />
+					<ui:repeat var="itemPaginar" value="#{bandejaPersonaB.empresaAvisoPostulanteL}" varStatus="index" step="10"  >
+					<h:commandLink style="color:#{index.index eq bandejaPersonaB.desdeP?'red':'black'}">			
+						<b style="margin: 0px 5px">#{index.index}</b>
+					<f:ajax execute="@this" render=":frmBandejaAviso:pnAvisos" listener="#{bandejaPersonaB.paginarVacante(index.index,index.index+10)}" />
+					</h:commandLink>
+					</ui:repeat>
+				</div>
+			</h:panelGroup>
+			
+			
+			<h:panelGroup layout="block" id="pnAvisoItem" >		
+				
+			
+				
+				<ui:repeat  var="itemEmpresaVacante" value="#{bandejaPersonaB.empresaAvisoPostulanteL}"  offset="#{bandejaPersonaB.desdeP}" size="#{bandejaPersonaB.hastaP}"  >
+				<div class="ficha-aviso " >
+				<h:outputLabel value="Postulante" rendered="#{not empty itemEmpresaVacante.personaPostulante.persona}" />			
+				<h:commandLink>
+				<div class="ficha-aviso-cabecera" >
+					<h:graphicImage id="imgLogo"  value="SimagenBD?opcion=7&amp;codigo=#{itemEmpresaVacante.empresaVacante.empresa}"  styleClass="column"   />
+					<div class="column">
+						#{itemEmpresaVacante.empresaTrab.descripcion}<br />
+						<span  >#{itemEmpresaVacante.empresaVacante.cargo}</span>
+					</div>
+					
+				</div>
+				
+				<div class="ficha-aviso-cuerpo" >
+					<p>#{itemEmpresaVacante.empresaVacante.descripcion}</p>
+				</div>
+				
+			
+				
+				<f:ajax execute="@this" render=":frmBandejaAviso:pnBandeja" listener="#{bandejaPersonaB.seleccionAviso(itemEmpresaVacante.empresaVacante,itemEmpresaVacante.empresaTrab)}" />
+				</h:commandLink>
+				</div>				
+				</ui:repeat>
+			</h:panelGroup>
+			
+			
+			
+		</h:panelGroup>
+	
+		<h:panelGroup id="pnAvisoDetalle" layout="block" rendered="#{bandejaPersonaB.index eq 2}" >
+		<div class="paneles" >
+		<div style="padding-bottom: 5px;border-bottom: 2px solid silver;height: 120px">
+			<div class="column" style="width: 18%;height:100%;border: 1px solid silver " >
+				<img   src="SimagenBD?opcion=7&amp;codigo=#{bandejaPersonaB.empresaTrab.empresa}"   style="width: 100%;height: 100%"  />
+			</div>
+			<div class="column" style="width: 80%;" >
+				<h2>#{bandejaPersonaB.empresaTrab.descripcion}</h2>	
+				<p>#{bandejaPersonaB.empresaVacante.descripcion}</p>
+			</div>
+			
+		</div>
+		
+
+	<div style="display: block;width: 100%" >
+	
+		
+	<span class="column" style="width: 80%;color:orange;font-weight: bold;" >SOBRE AVISO</span>
+		<span class="column" >Publicado: 
+		<h:outputLabel  value="#{bandejaPersonaB.empresaVacante.creacionFecha}"  />
+		</span>
+	</div>
+	
+	
+
+	<div style="padding: 15px 20px" >
+	
+	
+		
+		<div>
+			<b>Funciones</b><br />
+			<h:outputLabel value="#{bandejaPersonaB.empresaVacante.funciones}" escape="false"  />
+		
+		</div>
+		
+		<div>
+			<b>Requisitos</b><br />
+			<h:outputLabel value="#{bandejaPersonaB.empresaVacante.requisito}" escape="false"  />
+		</div>
+	 	
+	 	<div>
+			<b>horario</b><br />
+			<p>#{bandejaPersonaB.empresaVacante.horario}</p>
+			
+		</div>
+		
+		<div>
+			<b>Salario</b><br />
+			<p>#{bandejaPersonaB.empresaVacante.salario}</p>
+		
+		</div>
+		<div>
+			<b>Web</b><br />
+			<p><a href="http://#{bandejaPersonaB.empresaTrab.web}" target="_blank" > #{bandejaPersonaB.empresaTrab.web}</a></p>
+	
+		</div>
+		<div>
+			<b>Direccion</b><br />
+			<p>#{bandejaPersonaB.empresaVacante.direccion}</p>
+		</div>
+		
+	</div>
+	
+	<p:gmap  center="#{bandejaPersonaB.centerGeoMap}" zoom="12" type="ROADMAP"  model="#{bandejaPersonaB.draggableModel}" widgetVar="map"  style="width:600px;height:300px"  />
+	
+	
+		
+		
+		
+	
+		</div>
+		<div class="paneles" style="display: block;text-align: right;">
+		
+		<h:commandLink id="btAtras" styleClass="boton-normal" >
+			<i class="fa fa-arrow-left" />
+				Atras
+			<f:ajax execute="@this" render=":frmBandejaAviso:pnBandeja" listener="#{bandejaPersonaB.atras}"  />
+			</h:commandLink>
+		
+			<h:commandLink id="btPostular" styleClass="boton-normal" disabled="#{bandejaPersonaB.personaPostulante ne null}">
+			<i class="fa fa-envelope-open-o" />
+				Postular Trabajo
+				<f:ajax execute="@this" render="@this" listener="#{bandejaPersonaB.postularAviso}" />
+			</h:commandLink>
+			
+			
+		</div>
+			
+		</h:panelGroup>
+	</h:panelGroup>
+	</div>
+
+</div>
+
+	<p:dialog header="Acceso Usuario" widgetVar="dlgAcceso" modal="true" closeOnEscape="true" resizable="false" width="400"  >
+	<div style="display: block;">
+	<div  class="column" >
+		<h:outputLabel value="Usuario" />
+		<h:inputText id="txtUsuario" value="#{bandejaPersonaB.usuario}" required="true"  styleClass="#{not component.valid ?'valida-caja':''}" />
+		<br />
+		<h:outputLabel value="Clave" />
+		<h:inputSecret id="txtClave" value="#{bandejaPersonaB.clave}" required="true"  styleClass="#{not component.valid ?'valida-caja':''}" />
+	</div>
+	
+	</div>
+	
+	
+	<f:facet name="footer">
+	<div style="display: block;text-align: right;" >
+	
+	<h:commandLink styleClass="boton-normal">
+	Aceptar
+	<f:ajax execute="@this txtUsuario txtClave " render="txtUsuario txtClave btPostular pnUsuario pnAvisoItem pnAvisoPagina" listener="#{bandejaPersonaB.validaAcceso}" />
+	</h:commandLink>
+	
+	<h:commandLink styleClass="boton-normal" onclick="dlgAcceso.hide()" >
+	Cancelar
+	<f:ajax execute="@this" render="txtUsuario txtClave" resetValues="true" />
+	</h:commandLink>
+	
+	
+	</div>
+	</f:facet>
+	</p:dialog>
+	
+	<p:dialog widgetVar="dlgSeguridad" header="..: Cambiar Contraseña :.." modal="true" resizable="false" closeOnEscape="true" >
+		<h:outputLabel value=" Clave" />
+		<h:inputSecret  id="txtClaveA" value="#{bandejaPersonaB.claveA}" required="true" /><br />
+		<h:outputLabel value="Nueva Clave" />
+		<h:inputSecret  id="txtClaveN" value="#{bandejaPersonaB.claveN}" required="true" /><br />
+		<h:outputLabel value="Repetir Clave" />
+		<h:inputSecret id="txtClaveR" value="#{bandejaPersonaB.claveR}" required="true" />
+	<f:facet name="footer">
+	<div style="display: block;text-align: right;">
+	<h:commandLink styleClass="boton-normal"   >
+	Aceptar
+	<f:ajax execute="@this txtClaveA txtClaveN txtClaveR" render="txtClaveA txtClaveN txtClaveR" listener="#{bandejaPersonaB.cambiarClave}" />
+	</h:commandLink>
+	
+	</div>
+	
+	
+	</f:facet>
+	</p:dialog>
+	
+
+</h:form>
+
+
+
+
+
+
+
+
+
+</h:body>
+</html>

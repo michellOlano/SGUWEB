@@ -1,0 +1,433 @@
+ <ui:composition   xmlns:ui="http://java.sun.com/jsf/facelets"
+        				  xmlns="http://www.w3.org/1999/xhtml"
+					      xmlns:h="http://xmlns.jcp.org/jsf/html"					      					          
+					      xmlns:p="http://primefaces.org/ui"
+					      xmlns:f="http://xmlns.jcp.org/jsf/core"
+                		  template="/Administrativo/plantilla.xhtml">
+                		  
+                		  
+        <ui:define name="titulo">
+                
+                CONTROL DE ACCESOS
+                
+            </ui:define>  
+            <ui:define name="contenido">  
+            <style>
+            .select-institucion-usuario{border-color: red}
+            </style>
+            
+            
+            
+            <script>
+          //<![CDATA[
+            $(document).ready(function(){
+            	$("#txtClaveN").keyup(function(){
+            		clave=$(this).val();
+            		var seguridad = 0;
+            		   if (clave.length!=0){
+            		      if (tiene_numeros(clave) && tiene_letras(clave)){
+            		         seguridad += 30;
+            		      }
+            		      if (tiene_minusculas(clave) && tiene_mayusculas(clave)){
+            		         seguridad += 30;
+            		      }
+            		      if (clave.length >= 4 && clave.length <= 5){
+            		         seguridad += 10;
+            		      }else{
+            		         if (clave.length >= 6 && clave.length <= 8){
+            		            seguridad += 30;
+            		         }else{
+            		            if (clave.length > 8){
+            		               seguridad += 40;
+            		            }
+            		         }
+            		      }
+            		   }
+            		   
+            		   var color="#fb0b0b";
+            		   if(seguridad<39){
+            			   color="#fb0b0b"
+            		   }else if(seguridad >= 40 && seguridad <= 70){
+            			   color="#31a10d"
+            		   }else if(seguridad==100){
+            			   color="#0D47A1";
+            		   }
+            			   
+            		  
+            		  
+            		  $("#lbFotaleza b").css({"width":seguridad+"%","background-color":color});
+            		   
+            	});
+            	
+            });
+            
+            function tiene_numeros(texto){
+            	var numeros="0123456789";
+            	   for(i=0; i<texto.length; i++){
+            	      if (numeros.indexOf(texto.charAt(i),0)!=-1){
+            	         return 1;
+            	      }
+            	   }
+            	   return 0;
+            	}
+            
+            
+            function tiene_letras(texto){
+            	var letras="abcdefghyjklmnñopqrstuvwxyz";
+            	   texto = texto.toLowerCase();
+            	   for(i=0; i<texto.length; i++){
+            	      if (letras.indexOf(texto.charAt(i),0)!=-1){
+            	         return 1;
+            	      }
+            	   }
+            	   return 0;
+            	}
+            function tiene_mayusculas(texto){
+            	var letras_mayusculas="ABCDEFGHYJKLMNÑOPQRSTUVWXYZ";
+            	   for(i=0; i<texto.length; i++){
+            	      if (letras_mayusculas.indexOf(texto.charAt(i),0)!=-1){
+            	         return 1;
+            	      }
+            	   }
+            	   return 0;
+            	}
+            
+            function tiene_minusculas(texto){
+            	var letras="abcdefghyjklmnñopqrstuvwxyz";
+            	   for(i=0; i<texto.length; i++){
+            	      if (letras.indexOf(texto.charAt(i),0)!=-1){
+            	         return 1;
+            	      }
+            	   }
+            	   return 0;
+            	}
+            
+          //]]>
+            </script>
+            
+            
+            
+                <h:form id="frmMenu" prependId="false">  
+               
+                <div class="paneles ">
+                    <div class="column" >
+                        <h:graphicImage id="imgFoto" value="SVerImagenAlumno?alumno=#{controlAccesoB.usuario.persona}" title="FOTOGRAFIA" style="width: 100px;height: 100px"/>
+                    </div>
+                    <div class="column" >                        
+                        <h:outputLabel value="Nombre" />
+                        <h:inputText id="txtPersona" value="#{controlAccesoB.persona.nombreCompletos()}" style="width: 250px" disabled="true" />
+                        <br/>
+
+                        <h:outputLabel value="Usuario" />
+                        <h:selectOneMenu id="cbusuario" value="#{controlAccesoB.codUsuario}" style="width:150px" >
+                            <f:selectItems value="#{controlAccesoB.usuarioL}" var="itemUsuario" itemLabel="#{itemUsuario.usuario}" itemValue="#{itemUsuario.usuario}" />
+                            <f:ajax execute="@this" render="pnInstitucion" listener="#{controlAccesoB.mostrarInstitucionUsuario}" />
+                        </h:selectOneMenu>
+                        
+                        <h:commandLink    title="Nuevo Usuario" >
+		                <i class="fa fa-user-plus" />
+		                    <f:ajax  execute="@this" render="txtUsuario txtClaveN" listener="#{controlAccesoB.nuevoUsuario}"  />
+		                </h:commandLink>
+                        
+                         <br />
+                         <h:outputLabel  value="Clave" />
+                        <h:inputText id="txtClave" value="#{controlAccesoB.clave}" style="width:142px"  /> 
+
+                        <h:selectBooleanCheckbox value="#{controlAccesoB.verClave}" > 
+                            <f:ajax execute="@this txtClave" render="txtClave" listener="#{controlAccesoB.desencriptar()}" />
+                        </h:selectBooleanCheckbox>
+                        	VER CLAVE
+                         <br/>
+                        
+                    </div>
+                    
+                     </div>
+                      <div class="paneles">
+                 <h:commandLink  styleClass="boton-normal"   >
+                 <i class="fa fa-search" />
+                 	Buscar
+                 <f:ajax  execute="@this" render=" txtPaterno txtMaterno txtNombres" listener="#{controlAccesoB.buscar}" />
+                 </h:commandLink>
+                   
+                <h:commandLink    styleClass="boton-normal"   >
+                <i class="fa fa-pencil" />
+                    Editar                     
+                    <f:ajax  execute="@this" render="txtUsuario txtClaveN" listener="#{controlAccesoB.editarUsuario}"  />
+                </h:commandLink>
+                
+                
+                <h:commandLink    styleClass="boton-normal"   >
+                <i class="fa fa-id-card-o" />
+                    Historial
+                    
+                    <f:ajax  execute="@this" render="tbHistorial" listener="#{controlAccesoB.mostrarHistrorial}"  />
+                </h:commandLink>
+                
+                </div>
+                     <div  class="paneles" style="position: relative">
+                        <h:panelGroup layout="block" id="pnInstitucionUsuario" style="overflow: auto;width: 98%;">
+                            <ui:repeat  value="#{controlAccesoB.institucionL}" var="itemUsuarioInstitucion">
+                                <div class="column paneles"  style="text-align:center;border: 1px solid #{itemUsuarioInstitucion.institucion eq controlAccesoB.institucion.institucion ?'red':'silver'};min-width: 50px">
+                                <h:commandLink   style="display: block" title="#{itemUsuarioInstitucion.descripcion}">
+                                   
+                                        <span >#{itemUsuarioInstitucion.abreviatura}</span>
+                                            <h:commandLink title="Eliminar " onclick="return confirmacion(this,'¿ Esta seguro eliminar ?');" >
+                                                <i class="fa fa-times"  style="color: red" />
+                                                <f:ajax execute="@this" render=":frmMenu:pnInstitucionUsuario" listener="#{controlAccesoB.eliminarInstitucion(itemUsuarioInstitucion.institucion)}"/>
+                                            </h:commandLink>
+                                            
+                                            
+                                    <f:ajax execute="@this" render=":frmMenu:pnInstitucionUsuario :frmMenu:pnMenuPadre :frmMenu:pnMenuHijo" listener="#{controlAccesoB.mostrarInstitucionAcceso(itemUsuarioInstitucion)}"  />
+                                          
+                                    
+                                </h:commandLink>    
+                                     </div>
+                                    
+                            </ui:repeat>
+                           
+                            
+                        
+                            </h:panelGroup>
+                       
+                        <h:commandLink id="btIntitucion" disabled="#{empty controlAccesoB.usuario}"  title="Agregar Institucion" styleClass="boton-circulo" style="position:absolute;bottom:0;right:0"   >
+                            <i class="fa fa-plus" />
+                            <f:ajax execute="@this" render="pnInstitucion"  listener="#{controlAccesoB.mostrarInstitucion}" />
+                        </h:commandLink>
+                    </div>  
+                
+               
+    
+    <h:panelGroup layout="block" id="pnMenu" style="border: 1px solid silver;width: 100%;min-height: 200px;">
+        <h:panelGroup layout="block" id="pnMenuHijo" styleClass="column"  style="width: 77%;height: 100%;padding: 5PX">
+            
+            <span style="display: block ;text-align: center;padding: 5px;margin-bottom: 10px;border-bottom: 1px solid silver"> ..: SUB MENU :.. </span>
+        
+          
+            <ui:repeat value="#{controlAccesoB.usuarioMenuL}" var="itemUsuarioMenu">
+                
+             <div class="paneles column" style="min-width: 120px;opacity:#{itemUsuarioMenu.acceso eq null?'0.5':'1'}" >        
+                        <h:commandLink style="display: block;width: 100%;height: 80px;text-align:center ">
+                        <i class="#{itemUsuarioMenu.menu.icono}" style="font-size: 2.5em;display:block;" />
+                       		#{itemUsuarioMenu.menu.descripcion.toLowerCase()} 
+                        	
+	                        <f:ajax execute="@this" render=":frmMenu:pnMenuHijo" listener="#{controlAccesoB.insertarAcceso(itemUsuarioMenu)}"  />
+                		</h:commandLink>
+             		<p:rating value="#{itemUsuarioMenu.acceso.tipoSeguridad}" disabled="#{itemUsuarioMenu.acceso eq null}" stars="4" cancel="false"  >
+             		<p:ajax event="rate" process="@this" listener="#{controlAccesoB.nivelSeguridad(itemUsuarioMenu.acceso)}" />
+             		</p:rating>
+             </div>
+            </ui:repeat>
+           
+        </h:panelGroup>
+        
+        
+        <h:panelGroup id="pnMenuPadre" layout="block" styleClass="paneles column" style="width: 20%;height: 100%; ">
+                <span style="display: block ;text-align: center;padding: 5px;margin-bottom: 10px">MENU PRINCIPAL </span>
+                    <ui:repeat value="#{controlAccesoB.menuL}" var="subMenu">
+                            <h:commandLink styleClass="boton-normal" style="vertical-align: top;margin: 2px" >
+                            	<i class="#{subMenu.icono}"/>
+                            	#{subMenu.descripcion}
+                                <f:ajax execute="@this" render=":frmMenu:pnMenuHijo" listener="#{controlAccesoB.selectMenuPadre(subMenu)}"  />
+                            </h:commandLink>
+            		</ui:repeat>
+            
+        </h:panelGroup>
+          
+        
+       
+    </h:panelGroup>
+    
+    <p:dataTable id="tbHistorial" value="#{controlAccesoB.usuarioHistorialL}" var="itemHistorial" rowIndexVar="status" >
+                <p:column headerText="Nro." width="20">
+                    #{status+1}
+                </p:column>
+                <p:column headerText="Navegador">
+                    <i class="fa #{itemHistorial.navegador eq 'Chrome'?'fa-chrome':itemHistorial.navegador eq 'Firefox'?'fa-firefox':itemHistorial.navegador eq 'Internet Explorer'?'fa-internet-explorer':itemHistorial.navegador eq 'Opera'?'fa-opera':'fa-safari' } " />
+                  
+                    #{itemHistorial.navegador}
+                </p:column>
+                <p:column headerText="Direccion IP" width="100">
+                    #{itemHistorial.ip}
+                </p:column>
+                <p:column headerText="Pais" width="100" style="text-align: center">
+                    #{itemHistorial.pais}
+                </p:column>
+                <p:column headerText="Actividad más reciente" width="200">
+                    #{itemHistorial.fecha}
+                </p:column>
+                
+                <p:column width="50" >
+                    <h:commandLink  style="color:red"   >
+                    <i class="fa fa-map-marker" />
+                    	VER
+                    <f:ajax execute="@this" render=":frmMenu:gmap" listener="#{controlAccesoB.mostrarUbicacion(itemHistorial)}" />
+                    </h:commandLink>
+                </p:column>
+                
+            </p:dataTable>
+    
+    
+    
+    
+    
+    
+    
+	<p:dialog header="..:: Ubicacion Geografica :.." widgetVar="dlgMap"  modal="true"   resizable="false" closeOnEscape="true"  >
+		<p:gmap id="gmap" center="#{controlAccesoB.centerGeoMap}" zoom="12" type="ROADMAP"  model="#{controlAccesoB.draggableModel}" widgetVar="map"  style="width:550px;height:350px"  />
+		<f:facet name="footer">
+		<div style="display: block;text-align: right;">
+		<h:commandLink styleClass="boton-rojo" onclick="dlgMap.hide()" >
+		<i class="fa fa-sign-out" />
+		Salir
+		<f:ajax execute="@this" />
+		</h:commandLink>
+		
+		</div>
+		
+		</f:facet>
+	</p:dialog>
+    
+    
+    
+                  
+    		<p:dialog header="..: CREAR USUARIO :.."  widgetVar="dlgGenerar"   modal="true" resizable="false" closeOnEscape="true" >
+                   		<h:outputLabel for="txtUsuario" value="Usuario"  />
+                        <h:inputText id="txtUsuario" value="#{controlAccesoB.usuario.usuario}" required="true" readonly="#{not controlAccesoB.banderaUsuario}" >
+                        <f:ajax execute="@this"  render="@this"  listener="#{controlAccesoB.validarUsuario}" />
+                        </h:inputText>
+                        <br />
+                        <h:outputLabel for="txtClaveN" value="Clave" />
+						<div class="column" style="margin-left: -4px" >
+						<h:inputSecret id="txtClaveN" value="#{controlAccesoB.usuario.clave}" required="true" />
+                        <div id="lbFotaleza" style=";display: block;height:4px" >
+						<b style="display: block;height: 100%" />
+						
+						</div>
+						</div>
+                        
+                        <br />
+                        <h:outputLabel for="txtClaveR" value="Repita Clave" />
+                        <h:inputSecret id="txtClaveR" value="#{controlAccesoB.usuario.claveAnterior}" required="true" />
+                        <f:facet name="footer">
+                        <h:commandLink  styleClass="boton-normal" >
+                        	ACEPTAR                        
+                       		<f:ajax execute="@this txtUsuario txtClaveN txtClaveR" render="txtUsuario txtClaveN txtClaveR" listener="#{controlAccesoB.insertarUsuario}" />
+                        </h:commandLink>
+                       
+                        
+                        </f:facet>
+               
+                </p:dialog>
+    
+      <p:dialog  header="..: BUSQUEDA DE PERSONAL :.." id="frmBusqueda" widgetVar="dlgBusquedaPersona" modal="true" resizable="false" width="600px" closeOnEscape="true" >
+                
+                    
+                    <h:outputLabel value="A.PATERNO" />
+                        <h:inputText id="txtPaterno" value="#{controlAccesoB.paterno}" >
+                        <f:ajax execute="@this" render="dtBusqueda" listener="#{controlAccesoB.filtroPersona}" />
+                        
+                        </h:inputText>
+                        <br/>
+                        <h:outputLabel value="A.MATERNO" />
+                        <h:inputText id="txtMaterno" value="#{controlAccesoB.materno}" >
+                        <f:ajax execute="@this" render="dtBusqueda" listener="#{controlAccesoB.filtroPersona}" />
+                        
+                        </h:inputText>
+                        <br/>
+                        <h:outputLabel value="NOMBRE" />
+                        <h:inputText id="txtNombres" value="#{controlAccesoB.nombres}" >
+                        <f:ajax execute="@this" render="dtBusqueda" listener="#{controlAccesoB.filtroPersona}" />
+                        </h:inputText>
+                  
+                        
+                     
+                        
+                    <p:dataTable id="dtBusqueda" value="#{controlAccesoB.personaL}" var="persona" rowKey="#{persona.persona}" selection="#{controlAccesoB.persona}"  selectionMode="single" rowIndexVar="status"  scrollable="true" scrollHeight="300" >
+                              
+                            <p:ajax event="rowSelect"  />
+                            <p:ajax event="rowDblselect" update=" txtPersona cbusuario txtClave imgFoto pnInstitucionUsuario pnMenu btIntitucion" listener="#{controlAccesoB.selectPersona}"   /> 
+                            
+                            <p:column headerText="Nro." width="10">  
+                                  <h:outputText value="#{status+1}"/>  
+                                </p:column>
+                                
+                                <p:column headerText="DATOS" >  
+                                    <h:outputText value="#{persona.nombreCompletos()}"/>  
+                                </p:column>  
+                            
+                           
+                        </p:dataTable>
+                  
+                    
+                         <f:facet name="footer">
+                            
+                            <h:commandLink  styleClass="boton-normal" onclick="dlgBusquedaPersona.hide()" >
+                            Aceptar
+                            <f:ajax execute="@this" render="txtPersona cbusuario txtClave imgFoto pnInstitucion :frmMenu:btIntitucion"  listener="#{controlAccesoB.selectPersona}"  />
+                            </h:commandLink>
+                            
+                            
+                            
+                            </f:facet>
+                            
+                    
+                    
+             
+                  </p:dialog>
+                  
+                  
+                  
+                <p:dialog widgetVar="dlgInstitucion" header="..: Institucion Usuario :.." width="700"  modal="true" resizable="false" closeOnEscape="true"  >
+                <h:panelGroup  layout="block" id="pnInstitucion">
+                <ui:repeat var="itemInstitucion" value="#{controlAccesoB.institucionFL}">
+                
+                  
+                            <div   class="column paneles" style="width:150px;text-align: center">
+                               <h:commandLink onclick="$('#pnInstitucion div').removeClass('select-institucion-usuario');$(this).parent().addClass('select-institucion-usuario');"  >
+                            <img  src="SimagenBD?opcion=3&amp;codigo=#{itemInstitucion.institucion}" style="width: 50px;height: 50px" />
+                            <br />
+                                 
+                                    #{itemInstitucion.descripcion}
+                              <f:setPropertyActionListener value="#{itemInstitucion}" target="#{controlAccesoB.institucion}"/>
+                                <f:ajax execute="@this"   />
+                            </h:commandLink>       
+                            </div>
+                </ui:repeat>
+                </h:panelGroup>
+                         <f:facet name="footer">
+                            <div style="display: block;text-align: right">
+                        <h:commandLink  styleClass="boton-normal"   >
+                                     ACEPTAR
+                            <f:ajax execute="@this" render=":frmMenu:pnInstitucionUsuario"  listener="#{controlAccesoB.insertarInstitucion}"/>
+                        </h:commandLink>
+                       
+                            </div>
+                            </f:facet>
+                   
+                        
+                    
+                    
+                </p:dialog>
+                  
+   
+ 
+  
+</h:form>
+               
+                
+
+              
+                  
+                  
+                  
+                  
+             
+              
+               
+                
+           
+            </ui:define>
+                
+        </ui:composition>
+
+

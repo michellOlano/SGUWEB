@@ -1,0 +1,349 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:hp="http://xmlns.jcp.org/jsf/passthrough"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>  	
+        <h:outputScript library="primefaces" name="jquery/jquery.js" /><!--jquery de PF-->
+        <script type="text/javascript" src="#{utilB.ruta}/SGUWEB/resources/js/modal.js"></script>
+        <script type="text/javascript" src="#{utilB.ruta}/SGUWEB/resources/js/maskedinput-1.1.2.pack.js"></script>     
+        <script src="//maps.googleapis.com/maps/api/js?key=AIzaSyCFJlMsrZAAi-ci-EQMdWQfkibceGpPQrI"  defer="defer" type="text/javascript" /> 
+        <link   type="text/css" rel="stylesheet" href="/SGUWEB/resources/css/administrativo/style2.css" />
+        <link   type="text/css" rel="stylesheet" href="/SGUWEB/resources/css/font-awesome.css" />
+        <script type="text/javascript" src="https://cdn.rawgit.com/aterrien/jQuery-Knob/master/dist/jquery.knob.min.js" />   
+        <script type="text/javascript" src="#{utilB.ruta}/SGUWEB/resources/js/jquery.PrintArea.js" /> 
+        
+          <script src="#{utilB.ruta}/SGUWEB/resources/js/filesaver.js" type="text/javascript"></script>
+    <script src="#{utilB.ruta}/SGUWEB/resources/js/html2canvas.js" type="text/javascript"></script>   
+
+        <script>
+
+    	
+        
+            $(document).ready(function() {
+            	$("body").on("click","#btMenu",function(){
+            		
+            		$("#pnNavegacion").toggleClass("mostra-menu");
+            	});
+            	
+            	
+            	$("#txtBusquedaMenu").keyup(function(e){
+            		$("ul.menuHijo").css("display","block");
+            			
+            		if($( this ).val()!=""){
+            			$("ul.menuHijo li a span").css("display", "none");		
+            			$("ul.menuHijo li a span:contains('"+ $( this ).val() +"')").css("display", "block");
+            		}	
+            	});
+              
+               
+               var pathArray=window.location.pathname.split('/');               
+               
+               $( "ul.menuHijo li a" ).each(function() {
+            	   
+            	   var pathLocalArray=$(this).attr("href").split('/');
+
+            	   if(pathArray[pathArray.length-1]==pathLocalArray[pathLocalArray.length-1]){
+						$(this).css({"color":"red","opacity":"1","font-weight": "bold"});						
+						
+						$(this).parent().parent().parent().addClass("select-menu");
+						
+						$(this).parent().parent().prev().children(".fa-sort-desc").css( "transform","rotate(0deg)");
+            	   }
+            	 });
+               $("body").on("click",".itemPadre",function(e){
+               	e.preventDefault();
+               	
+               	$(this).next().slideToggle("fast");
+               	$(this).toggleClass("select-menu");
+               	if($(this).hasClass("select-menu")){
+               		
+               		$(this).children(".fa-sort-desc").css( "transform","rotate(0deg)" );	
+               	}else{
+               		$(this).children(".fa-sort-desc").css( "transform","rotate(90deg)" );
+               	}
+               	
+               });
+            	 
+                
+                $("body").on("click","#icon-config",function(e) {
+                	e.preventDefault();
+                    $("#conf-persona-ventana").slideToggle("fast");
+                });
+               
+                
+                $("#txtBusqueda").change(function(){
+                   console.log($(this).val());
+                   $("body:contains('"+$(this).val()+"')").css("font-weight", "bold");
+                    
+                });
+                
+              
+                
+                
+                $(window).scroll(function() {          
+                	if($(window).scrollTop()>=100){
+                //		$("header.header-d").addClass("header-fijo");
+               // 		$(".column-nav").addClass("menu-fijo");
+                		//$("header.header-d").css({"height":"50px","position":"fixed"});	
+                	}
+                	else{
+              //  		$("header.header-d").removeClass("header-fijo");
+                //		$(".column-nav").removeClass("menu-fijo");
+                		//$("header.header-d").css({"height":"115px","position":"relative"});
+                	}
+                   
+                    
+                });
+                
+                banderaChat=true;
+                $("#pnChat-cabecera").click(function(e){
+                    e.preventDefault();
+                    if(banderaChat){
+                        $("#pnChat").animate({height:"600px"},400,"swing");
+                    }else{
+                        $("#pnChat").animate({height:"35px"},400,"swing");
+                    }
+                    banderaChat=!banderaChat;
+                });
+                
+            });
+            
+            
+            function loaded() {
+                document.getElementById('tope').style.display = 'none';
+            }
+            
+            
+            function notificacion(msg,speed,fadeSpeed,type){
+                $('.notify').remove();
+
+			      if (typeof fade != "undefined"){
+			      clearTimeout(fade);
+			      }
+			      
+			      $('body').append('<div class="notify '+type+'" style="display:none;position:fixed;right:10px;Z-INDEX:999999999999"><p>'+msg+'</p></div>');
+			
+			      notifyHeight = $('.notify').outerHeight();
+			
+			      $('.notify').css('top',-notifyHeight).animate({top:10,opacity:'toggle'},speed);
+			
+			      fade = setTimeout(function(){
+			
+			      $('.notify').animate({top:notifyHeight+10,opacity:'toggle'}, speed);
+			
+			      }, fadeSpeed);
+			}
+            
+            var bandera=false;
+            var idGeneral;
+         
+            function confirmacion(obj,cadena){
+                idGeneral=obj;
+                if(bandera){
+                    $(".modal-fondo").remove();
+                    $(".modal").remove();
+                    bandera=false;
+                    return true;
+                }else{
+                   if(! $('.modal-fondo').hasClass("modal-fondo")){
+                       $('body').append('<div class="modal-fondo"  /> ');
+                        $('body').append('<div class="modal" ><div class="modal-titulo" > INTRANET  </div><div class="modal-cuerpo"> <div class="column modal-icono"><i class="fa fa-exclamation "  /></div><div class="column modal-texto"><span>' +cadena+'</span></div></div><hr/><div class="modal-botonera"><a  class="positivo"  onclick="valida(true)" >Si</a> <a class="negativo" onclick="valida(false)" > No</a></div>  </div>');
+                        }else{
+                        $(".modal-fondo").remove();
+                        $(".modal").remove();
+                   }                    
+                    
+                    return false;
+                }
+                
+            }
+            
+            function valida(estado){
+                bandera=estado;           
+                $(idGeneral).click();            
+            }
+          
+        </script>
+        <style>
+   
+            .accesoRapido{display: inline-block;vertical-align: top;width: 200px;text-align: right}
+            .accesoRapido li{cursor: pointer;display: inline-block;vertical-align: top;width: 25px;padding: 2px 4px;height: 20px;background-image: url('../../resources/imagenes/AccesoRapido.png')}
+            #pnChat{border: 1px solid ;width: 250px;height: 35px;position: fixed;right: 10px ;bottom: 0px}
+            #pnChat-cabecera{background-color: #0069b3;padding: 10px;color: white;cursor: pointer;font-size: 1.3em;font-weight: bold}
+            #pnChat-cuerpo{height: 90%;overflow-y: scroll;background-color: white}
+            #pnChat-oficina >li{border-bottom:  2px solid #0073AA;padding: 3px 2px}
+        </style>
+        <title>
+            <ui:insert name="titulo">
+            </ui:insert>    
+        </title>
+        <f:event type="preRenderView" listener="#{usuarioB.verificarSesion}" />
+    </h:head>
+
+    <h:body onload="loaded()">
+      
+        <div id="tope" style="z-index: 10000">
+            <div id="cargando"/>
+         
+        </div>
+     
+        <div id="wrapper" > 
+     
+            <ui:insert name="cabecera">
+                <h:panelGroup layout="block" id="cabecera"  >
+                    <header  style=";border-bottom:5px solid #{usuarioB.institucionAcceso.colorLinea};background-color: #{usuarioB.institucionAcceso.colorCabecera}" >
+                        <div id="header-hgroup" class="column"  >
+                        <div id="header-hgroup-img" class="column" >
+                        <a href="/SGUWEB/faces/Administrativo/index.xhtml">
+                         <h:graphicImage   value="SimagenBD?opcion=6&amp;codigo=#{usuarioB.institucionS}"   />
+                        </a>
+                        
+                        </div>
+                       
+                            
+                            <div id="header-hgroup-lema" class=" column " >
+                                <h1 >#{usuarioB.institucion.titulo}</h1>
+                                <h3 >#{usuarioB.institucion.subTitulo}</h3>
+                            </div>
+                            
+                        </div>
+                        <div id="header-person" class="column">
+                            <div id="header-person-det" class="column"  >
+                                
+                                <span id="nomPerson">#{usuarioB.persona.nombreCompletos()}</span>
+                                <span id="userPerson">#{usuarioB.usuario.usuario} </span>     
+                                <div id="header-person-subMenu" >
+	                                <a id="icon-config" href="#"  title="Opciones" >
+	                                <i class="fa fa-cog" />
+	                                </a>
+                                </div>                           
+                                
+                                
+                                
+                                
+                                    <div id="conf-persona-ventana"   >
+                                      <h:form prependId="false">                            
+                                        <img src="SVerImagenAlumno?alumno=#{usuarioB.persona.persona}" class="column" />
+                                        <div id="conf-persona-ventana-item" class="column">
+                                            <a href="/SGUWEB/faces/Administrativo/misDatos.xhtml"><i class="fa fa-user-circle-o" /> Mi Perfi </a>
+                                            <a href="/SGUWEB/faces/Administrativo/cambioClave.xhtml"><i class="fa fa-key" />Cambiar Clave</a>                                            
+                                           <h:commandLink  action="#{usuarioB.cerrarSesion}" >
+                                           <i class="fa fa-sign-out" />
+                                           Cerrar Sesion
+                                       
+                                           </h:commandLink>
+                                      
+                                        </div>
+                                        
+                                         </h:form>    
+                                    </div>
+                               
+                            </div>
+                            <div id="header-person-img" class="column">
+                                <img src="SVerImagenAlumno?alumno=#{usuarioB.persona.persona}"  />
+                            </div>
+                            
+                        </div>
+                    </header> 
+                
+                </h:panelGroup>
+            </ui:insert>
+            
+            
+            
+          
+            <div  id="wrapper-nav-section" >
+                <div id="column-nav" class="column" >
+                <h:form id="frmNavegacion" prependId="false" >
+                <h:panelGroup layout="block" id="column-nav-cabecera"  style="background-color: #{usuarioB.institucionAcceso.colorMenu};" >
+                
+	               
+                
+	              
+	                 <a id="btMenu"   >
+	                                <i class="fa fa-bars" style="color: white;" />
+	                
+	                   </a>
+	                
+	                
+	                			<h:outputLabel value="Institución" />                 
+	                            <h:selectOneMenu value="#{usuarioB.institucionS}" id="cmbInstitucion" >                           
+	                                <f:selectItems value="#{usuarioB.institucionL}" var="institucion" itemValue="#{institucion.institucion}" itemLabel="#{institucion.descripcion} "  />                               
+	                                <p:ajax process="@this cmbPeriodo" update="@this cmbPeriodo wrapper-nav-section-menu column-nav-cabecera wrapper-section-area cabecera" listener="#{usuarioB.mostrarInstitucionAcceso}" />
+	                            </h:selectOneMenu>                            
+	               				<h:outputLabel value="Periodo" />
+	                            <h:selectOneMenu value="#{usuarioB.periodoS}" id="cmbPeriodo" >                           
+	                                <f:selectItems value="#{usuarioB.periodoL}" var="lista" itemValue="#{lista.periodo}" itemLabel="#{lista.desPeriodo}"/>
+	                                <p:ajax process="@this cmbInstitucion" update="wrapper-section-area" />
+	                            </h:selectOneMenu>	                
+	               
+                    </h:panelGroup>
+                    
+                    
+                    
+                    
+                    
+                    <h:panelGroup layout="block" id="wrapper-nav-section-menu"  style="background-color: #{usuarioB.institucionAcceso.colorMenu}" rendered="true">
+                            <div class="busqueda-menu paneles "  >
+                             <i class="fa fa-search" />
+                            <h:inputText id="txtBusquedaMenu" hp:placeholder="Buscar ..." style="width: 80%;border:none" />
+                           
+                            </div>
+                         
+                         
+                           <ul id="main-lista" >
+                            
+                            <ui:repeat value="#{usuarioB.menuL}" var="item" > 
+                                <li>
+                                    <a class="#{item.ruta ne '#'?'':'itemPadre'}" href="#{item.ruta}"  style="color:#{usuarioB.institucionAcceso.colorLetraMenu};"   >
+                                       <i class="#{item.icono}" />
+                                        <span>#{item.descripcion.trim().toLowerCase()} </span>
+                                    	<i class="fa fa-sort-desc"  style="display: #{item.ruta ne '#'?'none':'block'}" />    
+                                    </a>
+                                    
+                                    <ul class="menuHijo">
+                                        <ui:repeat value="#{item.menuL}" var="hijo">
+                                            <li>
+                                             
+                                             
+                                                <a href="#{hijo.ruta}"    style="color:#{usuarioB.institucionAcceso.colorLetraMenu}" >
+                                                    
+                                                    <span >#{hijo.descripcion.trim().toLowerCase()}</span>
+                                                </a>
+                                                
+                                            </li>
+                                        </ui:repeat>
+                                    </ul>
+                                </li>
+                            </ui:repeat>
+                        </ul>
+                            </h:panelGroup>   
+                              </h:form>
+                </div>
+                    
+                
+              
+                <section  id="wrapper-section" class="column" >
+                   
+                        <h:panelGroup layout="block" id="wrapper-section-area">
+                            <ui:insert name="contenido">
+                                
+                            </ui:insert>
+                        </h:panelGroup>
+                
+                </section>
+            </div>
+            
+            
+            
+            
+            
+        </div>
+    </h:body>
+</html>

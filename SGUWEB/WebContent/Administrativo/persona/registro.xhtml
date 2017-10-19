@@ -1,0 +1,2330 @@
+<ui:composition  template="/Administrativo/plantilla.xhtml" 
+				      xmlns="http://www.w3.org/1999/xhtml"
+				      xmlns:h="http://xmlns.jcp.org/jsf/html"
+				      xmlns:f="http://xmlns.jcp.org/jsf/core"
+				      xmlns:p="http://primefaces.org/ui"
+				      xmlns:hp="http://xmlns.jcp.org/jsf/passthrough"
+				       xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+				      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+				      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+      
+      		<ui:define name="titulo">
+                ..: CONTRATO PERSONA :..
+            </ui:define>
+            <ui:define name="contenido">
+            
+         
+        <script>
+        $("document").ready(function(){
+        
+        
+        	
+   
+          
+        });
+        
+        $("body").on("change","#btExaminarImagenPersona",function (){    
+	 		   $("#btinsertarImagen").click();
+	 		   console.log("termino seleccionar");
+	 	 }); 
+        
+        
+            
+            $("body").on("click",".fila-filtro",function(){
+               $(this).parent().fadeOut();
+                
+            });
+            
+            
+            $("body").on("change","#btCurrriculum",function() {
+
+                var val = $(this).val();
+
+                switch(val.substring(val.lastIndexOf('.') + 1).toLowerCase()){
+                    case 'pdf': case 'PDF':
+                    	  
+                    	  $("#btInsertarCV").removeAttr("disabled");    
+                    	  //  $('#lblPesoARCH').text(this.files[0].size );          
+                           
+                            $('.fa-file-pdf-o').css("color","red");
+                        break;
+                    default:
+                        $(this).val('');
+                        // error message here
+                        alert("Selecione Archivo PDF");
+                        $("#btInsertarCV").attr("disabled","disabled");
+                        break;
+                }
+            });
+            
+            function habilitarPestana( indice){
+            	
+            	
+            	if(indice==-1){
+            		
+            		 $(".tabContrato" ).each(function() {
+            				$(this).removeClass("ui-state-disabled");
+            			 if($(this).attr("aria-label")=="true"){
+            				 $(this ).addClass("ui-state-disabled ")
+            			 }
+            		 });
+            	}else{
+            		
+            		 $(".tabContrato" ).each(function() {
+               		  if($(this).attr("aria-selected")=="false")
+               			  {
+               					
+               					$(this ).addClass("ui-state-disabled ");
+               			 }
+                   	});
+            		
+            	}
+            	 
+            }
+            
+            
+            var bandera=false;
+            var idGeneral;
+         
+            function confirmacion(obj,cadena){
+                idGeneral=obj;
+                if(bandera){
+                    $(".modal-fondo").remove();
+                    $(".modal").remove();
+                    bandera=false;
+                    return true;
+                }else{
+                   if(! $('.modal-fondo').hasClass("modal-fondo")){
+                       $('body').append('<div class="modal-fondo"  /> ');
+                        $('body').append('<div class="modal" ><div class="modal-titulo" > INTRANET  </div><div class="modal-cuerpo"> <div class="column modal-icono"><i class="fa fa-exclamation "  /></div><div class="column modal-texto"><span>' +cadena+'</span></div></div><hr/><div class="modal-botonera"><a  class="positivo"  onclick="valida(true)" >Si</a> <a class="negativo" onclick="valida(false)" > No</a></div>  </div>');
+                        }else{
+                        $(".modal-fondo").remove();
+                        $(".modal").remove();
+                   }                    
+                    
+                    return false;
+                }
+                
+            }
+            
+            function valida(estado){
+                bandera=estado;           
+                $(idGeneral).click();            
+            }
+            
+            function notificacion(msg,speed,fadeSpeed,type){
+                $('.notify').remove();
+
+			      if (typeof fade != "undefined"){
+			      clearTimeout(fade);
+			      }
+			      $('body').append('<div class="notify '+type+'" style="display:none;position:fixed;right:10px;Z-INDEX:999999999999"><p>'+msg+'</p></div>');
+			
+			      notifyHeight = $('.notify').outerHeight();
+			
+			      $('.notify').css('top',-notifyHeight).animate({top:10,opacity:'toggle'},speed);
+			
+			      fade = setTimeout(function(){
+			
+			      $('.notify').animate({top:notifyHeight+10,opacity:'toggle'}, speed);
+			
+			      }, fadeSpeed);
+			}
+            
+        </script>
+        <style>
+        
+           
+            .bloquear-select:before{content: "";width: 100%;height: 100%;background: rgba(0,0,0,0.7);position: absolute;cursor: no-drop;z-index: 100;top: 0;left: 0}  
+            .tabPrincipal{border: 1px solid silver;min-height: 400px;background-color: #E9EAED}
+            .tabPrincipal .tabContrato{background-color: white;border-radius: 0px;margin: 0px!important;}
+            .tabPrincipal .tabContrato a{padding: 6px 8px!important;text-transform: capitalize}            
+            .tabPrincipal .ui-tabs-selected{border-bottom: 3px solid red!important}
+            .tabPrincipal .ui-tabs-selected a{color:#0073AA!important;}
+    
+           .ui-tabs .ui-tabs-panel{padding: 0px!important}
+           #btInsertarCV{cursor:pointer;    border: none;    padding: 5px;    border-radius: 3px;    background-color: green;    color: white;    font-family: "majalla"!important;}
+           #btInsertarCV:disabled{opacity:0.5}
+           #pnVistaCurriculum{overflow: hidden;}
+           #pnDetalleCurriculum{position: absolute;top:50px;left:-150px;padding:5px 10px;background-color: rgba(0,0,0,0.7);color: white;border-radius:0px 15px 15px 0px;transition:all 0.5s}
+           #pnVistaCurriculum:HOVER #pnDetalleCurriculum{left: 2px}
+        </style>
+        
+        
+        <h:form enctype="multipart/form-data" prependId="false"  style="display:none" >
+		<p:fileUpload id="btExaminarImagenPersona" value="#{contratoB.file}" mode="simple" allowTypes="/(\.|\/)(gif|jpe?g|png)$/"  />
+		<h:commandLink  id="btinsertarImagen" styleClass="boton-verde" action="#{contratoB.insertarImagenPersona}">
+					                ACEPTAR 
+		</h:commandLink>
+		
+		</h:form>
+        
+        <h:form id="frmContrato" prependId="false">
+        
+        
+            
+	<div class="paneles">
+	 <div class="column" style="height: 100px;width:100px;border: 1px solid silver;" >
+	 <h:commandLink id="imgPersona" disabled="#{empty contratoB.persona.persona }"  onclick="$('#btExaminarImagenPersona').click();" >
+		 <h:graphicImage  title="Fotografia" value="SVerImagenAlumno?alumno=#{contratoB.persona.persona}"  style="height: 100%;width: 100%" />
+		 <f:ajax  execute="@this" />
+	 </h:commandLink>
+                  
+    </div>
+            <div class="column" >
+             <h:outputLabel for="cbDocumento" value="Documento" />
+                    <h:selectOneMenu id="cbDocumento" value="#{contratoB.persona.tipodocumento}" disabled="#{not contratoB.bandera}" style="width:60px" >
+                        <f:selectItem itemLabel="--Seleccionar --" />
+                        <f:selectItems value="#{tipoDocumentoB.mostrarTipoDocumentos(true)}" var="documento" itemValue="#{documento.tipoDocumento}" itemLabel="#{documento.descripcion}" />
+                    </h:selectOneMenu>
+                   
+                   
+                    <h:inputText id="txtNumero" value="#{contratoB.persona.numero_documento}" hp:placeholder="Numero"  disabled="#{not contratoB.bandera}" required="true" maxlength="8" size="5" style="color: #1565C0;font-weight: bold;#{ component.valid ? '' : 'border-color:red;'};" onkeypress="return soloNumerosExecpcion(event,13)"  >
+                    <f:ajax event="change" execute="@this" render="@this" listener="#{contratoB.validarNumero}" />
+                    </h:inputText>
+                    <br/>
+                     <h:outputLabel  for="txtPaterno" value="Paterno" />
+                    <h:inputText id="txtPaterno" class="focus" value="#{contratoB.persona.paterno}" disabled="#{not contratoB.bandera}" size="15" required="true" style="#{ component.valid ? '' : 'border-color:red;'}" />
+             	
+                    <h:outputLabel for="txtMaterno"  value="Materno" />
+                    <h:inputText id="txtMaterno" value="#{contratoB.persona.materno}" disabled="#{not contratoB.bandera}" required="true" size="15" style="#{ component.valid ? '' : 'border-color:red;'}" />    
+              		<br />
+               
+                    <h:outputLabel for="txtNombres" value="Nombres"   />
+                    <h:inputText id="txtNombres"  value="#{contratoB.persona.nombres}" size="50" disabled="#{not contratoB.bandera}" required="true" />    
+                </div>
+	
+	</div>
+            
+            <div class="paneles">
+       
+            
+            
+                <h:commandLink title="Nuevo" id="btNuevoP" styleClass="boton-normal" disabled="#{not contratoB.banderaNuevo}" >
+                    <i class="fa fa-file-o" />
+                    Nuevo
+                    <f:ajax disabled="#{contratoB.pestanaActiva ne 'tabDatos'}"  execute="@this" render=":frmContrato:tabPrincipal:pnTabDatos :frmContrato:tabPrincipal:pnTabDatosLaborales :frmContrato:tabPrincipal:pnTabFomacionAcademica :frmContrato:tabPrincipal:pnTabPersonalDocente :frmContrato:tabPrincipal:pnTabHorario :frmContrato:imgPersona  :frmContrato:cbDocumento :frmContrato:txtNumero :frmContrato:txtPaterno :frmContrato:txtMaterno  :frmContrato:txtNombres btNuevoP btGuardarP btCancelarP btEditarP  btBuscarP " listener="#{contratoB.nuevoPersona}" />
+                    <f:ajax disabled="#{contratoB.pestanaActiva ne 'tabDatosLaborales'}"  execute="@this" render=":frmContrato:tabPrincipal:pnTabDatosLaborales   btNuevoP btGuardarP btCancelarP btEditarP  btBuscarP" listener="#{contratoB.nuevoPersonal}" />
+                    <f:ajax disabled="#{contratoB.pestanaActiva ne 'tabExperienciaLaboral'}" execute="@this" render=":frmContrato:tabPrincipal:pnTabExperienciaLaboral btNuevoP btGuardarP btCancelarP btEditarP  btBuscarP" listener="#{contratoB.nuevoExperienciaLAboral}" />
+                    <f:ajax disabled="#{contratoB.pestanaActiva ne 'tabContrato'}" render=" :frmContrato:tabPrincipal:pnTabContrato btNuevoP btGuardarP btCancelarP btEditarP  btBuscarP btEliminarP btImprimirP" listener="#{contratoB.nuevoContrato}" />
+                    <f:ajax disabled="#{contratoB.pestanaActiva ne 'tabPersonalDocente'}" render=":frmContrato:tabPrincipal:pnTabPersonalDocente btNuevoP btGuardarP btCancelarP btEditarP  btBuscarP" listener="#{contratoB.nuevoPersonalDocente}" />
+                    <f:ajax disabled="#{contratoB.pestanaActiva ne 'tabCurriculum'}" render=" btNuevoP btGuardarP btCancelarP btEditarP  btBuscarP" listener="#{contratoB.nuevoCurriculumVitae}" />
+                    <f:ajax disabled="#{contratoB.pestanaActiva ne 'tabHorario'}" render="cbCalendarioH txtFechaInicioH txtFechaFinalH txtObservacionH" listener="#{contratoB.nuevoCalendarioPersonal}" resetValues="true" />
+                    <f:ajax disabled="#{contratoB.pestanaActiva ne 'tabCertificado'}" render=":frmCertificadoTrabajo:txtFechaInicioPCT :frmCertificadoTrabajo:txtFechaFinalPCT" listener="#{contratoB.nuevoPersonalCertificadoTrabajo}" />
+                </h:commandLink>
+                 
+                <h:commandLink title="Guardar" id="btGuardarP" styleClass="boton-normal" disabled="#{not contratoB.banderaGuardar}">
+                    <i class="fa fa-floppy-o" />
+                    Guardar
+                    <f:ajax disabled="#{contratoB.pestanaActiva ne 'tabDatos'}" execute=":frmContrato:tabPrincipal:pnTabDatos :frmContrato:cbDocumento :frmContrato:txtNumero :frmContrato:txtPaterno :frmContrato:txtMaterno  :frmContrato:txtNombres"  render=":frmContrato:tabPrincipal:pnTabDatos :frmContrato:tabPrincipal:pnTabDatosLaborales  :frmContrato:cbDocumento :frmContrato:txtNumero :frmContrato:txtPaterno :frmContrato:txtMaterno  :frmContrato:txtNombres     btNuevoP btGuardarP btCancelarP btEditarP  btBuscarP" listener="#{contratoB.guardarPersona}" />
+                    <f:ajax disabled="#{contratoB.pestanaActiva ne 'tabDatosLaborales'}" execute=":frmContrato:tabPrincipal:pnTabDatosLaborales "  render=":frmContrato:tabPrincipal:pnTabDatosLaborales   btNuevoP btGuardarP btCancelarP btEditarP  btBuscarP" listener="#{contratoB.insertarPersonal}" />
+                    <f:ajax disabled="#{contratoB.pestanaActiva ne 'tabExperienciaLaboral'}" execute=":frmContrato:tabPrincipal:pnTabExperienciaLaboral" render=":frmContrato:tabPrincipal:pnTabExperienciaLaboral   btNuevoP btGuardarP btCancelarP btEditarP  btBuscarP" listener="#{contratoB.insertarExperienciaLaboral}" />
+                    <f:ajax disabled="#{contratoB.pestanaActiva ne 'tabContrato'}" execute=":frmContrato:tabPrincipal:cbInstitucionCP :frmContrato:tabPrincipal:cbPeriodoCP :frmContrato:tabPrincipal:cbTipoPersonalCP :frmContrato:tabPrincipal:cboTipoContratoCP :frmContrato:tabPrincipal:cboPeriocidadCP :frmContrato:tabPrincipal:dpFechaInicioCP :frmContrato:tabPrincipal:dpFechaFinalCP :frmContrato:tabPrincipal:txtBasicoCP :frmContrato:tabPrincipal:txtMobilidadCP :frmContrato:tabPrincipal:txtBonificacionCP :frmContrato:tabPrincipal:txtObjetivoCP"  render=":frmContrato:tabPrincipal:pnTabContrato  btNuevoP btGuardarP btCancelarP btEditarP  btBuscarP" listener="#{contratoB.insertarContrato}" />
+                    <f:ajax disabled="#{contratoB.pestanaActiva ne 'tabPersonalDocente'}" execute=":frmContrato:tabPrincipal:txtCPersonalPD  :frmContrato:tabPrincipal:cboPeriodoPD :frmContrato:tabPrincipal:cboModalidadPD :frmContrato:tabPrincipal:txtIngresoPD :frmContrato:tabPrincipal:cboCategoriaPD :frmContrato:tabPrincipal:cbInstitucionPD :frmContrato:tabPrincipal:cboRegimenPD :frmContrato:tabPrincipal:cboVigenciaPD :frmContrato:tabPrincipal:cboDinaPD" render=":frmContrato:tabPrincipal:pnTabPersonalDocente  btNuevoP btGuardarP btCancelarP btEditarP  btBuscarP" listener="#{contratoB.insertarPersonalDocente}"  />
+                    <f:ajax disabled="#{contratoB.pestanaActiva ne 'tabCurriculum'}" execute=":frmContrato:tabPrincipal:pnTabCurriculum " render=":frmContrato:tabPrincipal:pnTabCurriculum  btNuevoP btGuardarP btCancelarP btEditarP  btEliminarP btBuscarP" listener="#{contratoB.insertaCurriculum}"  />
+                </h:commandLink>
+                
+                <h:commandLink id="btCancelarP" title="Cancelar" styleClass="boton-normal" disabled="#{not contratoB.banderaCancelar}">
+                    
+                    <i class="fa fa-reply" />
+                    Cancelar
+                    <f:ajax disabled="#{contratoB.pestanaActiva ne 'tabDatos'}"  execute="@this" render=":frmContrato:tabPrincipal:pnTabDatos  :frmContrato:imgPersona  :frmContrato:cbDocumento :frmContrato:txtNumero :frmContrato:txtPaterno :frmContrato:txtMaterno  :frmContrato:txtNombres   :frmContrato:tabPrincipal:pnTabDatosLaborales :frmContrato:tabPrincipal:pnTabFomacionAcademica :frmContrato:tabPrincipal:pnTabPersonalDocente   btNuevoP btGuardarP btCancelarP btEditarP  btBuscarP" resetValues="true" listener="#{contratoB.cancelarPersona}" />
+                    <f:ajax disabled="#{contratoB.pestanaActiva ne 'tabDatosLaborales'}"  execute="@this" render=":frmContrato:tabPrincipal:pnTabDatosLaborales   btNuevoP btGuardarP btCancelarP btEditarP  btBuscarP" resetValues="true" listener="#{contratoB.cancelarDatoLaboral}" />
+                    <f:ajax disabled="#{contratoB.pestanaActiva ne 'tabExperienciaLaboral'}"  execute="@this" render=":frmContrato:tabPrincipal:pnTabExperienciaLaboral :frmContrato:tabPrincipal:txtExperienciaCargo :frmContrato:tabPrincipal:dpExperienciaFInicio :frmContrato:tabPrincipal:dpExperienciaFFin :frmContrato:tabPrincipal:txtEmpresa btNuevoP btGuardarP btCancelarP btEditarP  btBuscarP" resetValues="true" listener="#{contratoB.cancelarExperienciaLaboral}" />
+                    <f:ajax disabled="#{contratoB.pestanaActiva ne 'tabContrato'}"  execute="@this " render=":frmContrato:tabPrincipal:pnTabContrato :frmContrato:tabPrincipal:cbInstitucionCP :frmContrato:tabPrincipal:cbPeriodoCP :frmContrato:tabPrincipal:cbTipoPersonalCP :frmContrato:tabPrincipal:cboTipoContratoCP :frmContrato:tabPrincipal:cboPeriocidadCP :frmContrato:tabPrincipal:dpFechaInicioCP :frmContrato:tabPrincipal:dpFechaFinalCP :frmContrato:tabPrincipal:txtBasicoCP :frmContrato:tabPrincipal:txtMobilidadCP :frmContrato:tabPrincipal:txtBonificacionCP :frmContrato:tabPrincipal:txtObjetivoCP btNuevoP btGuardarP btCancelarP btEditarP  btBuscarP btImprimirP" resetValues="true" listener="#{contratoB.cancelarContrato}" />
+                    <f:ajax disabled="#{contratoB.pestanaActiva ne 'tabPersonalDocente'}"  execute="@this" render=":frmContrato:tabPrincipal:pnTabPersonalDocente  :frmContrato:tabPrincipal:txtCPersonalPD  :frmContrato:tabPrincipal:cboPeriodoPD :frmContrato:tabPrincipal:cboModalidadPD :frmContrato:tabPrincipal:txtIngresoPD :frmContrato:tabPrincipal:cboCategoriaPD :frmContrato:tabPrincipal:cbInstitucionPD :frmContrato:tabPrincipal:cboRegimenPD :frmContrato:tabPrincipal:cboVigenciaPD :frmContrato:tabPrincipal:cboDinaPD  btNuevoP btGuardarP btCancelarP btEditarP  btBuscarP" resetValues="true" listener="#{contratoB.cancelarPersonalDocente}" />
+                    <f:ajax disabled="#{contratoB.pestanaActiva ne 'tabCurriculum'}"  execute="@this" render=":frmContrato:tabPrincipal:pnTabCurriculum btNuevoP btGuardarP btCancelarP btEditarP  btBuscarP" resetValues="true" listener="#{contratoB.cancelarCurriculumVitae}" />
+                    
+                </h:commandLink>
+                
+                <h:commandLink id="btEditarP" title="Editar" styleClass="boton-normal" disabled="#{not contratoB.banderaEditar  }">
+                    <i class="fa fa-pencil" />
+                    Editar
+                    <f:ajax disabled="#{contratoB.pestanaActiva ne 'tabDatos'}" execute="@this" render=":frmContrato:tabPrincipal:pnTabDatos :frmContrato:cbDocumento :frmContrato:txtNumero :frmContrato:txtPaterno :frmContrato:txtMaterno  :frmContrato:txtNombres   btNuevoP btGuardarP btCancelarP btEditarP  btBuscarP" listener="#{contratoB.editarPersona}"/>
+                    <f:ajax disabled="#{contratoB.pestanaActiva ne 'tabDatosLaborales'}" execute="@this" render=":frmContrato:tabPrincipal:pnTabDatosLaborales    btNuevoP btGuardarP btCancelarP btEditarP  btBuscarP" listener="#{contratoB.editarPersonal}"/>
+                    <f:ajax disabled="#{contratoB.pestanaActiva ne 'tabContrato'}" execute="@this" render=":frmContrato:tabPrincipal:pnTabContrato    btNuevoP btGuardarP btCancelarP btEditarP  btBuscarP btImprimirP" listener="#{contratoB.editarContrato}" />
+                    <f:ajax disabled="#{contratoB.pestanaActiva ne 'tabPersonalDocente'}" execute="@this" render=":frmContrato:tabPrincipal:pnTabPersonalDocente    btNuevoP btGuardarP btCancelarP btEditarP  btBuscarP" listener="#{contratoB.editarPersonalDocente}"/>
+                    <f:ajax disabled="#{contratoB.pestanaActiva ne 'tabCurriculum'}" execute="@this" render=":frmContrato:tabPrincipal:pnTabCurriculum btNuevoP btGuardarP btCancelarP btEditarP  btEliminarP btBuscarP " listener="#{contratoB.editarCurriculumVitae}"/>
+                </h:commandLink>   
+                
+                
+                
+                 <h:commandLink id="btEliminarP" title="Actualizar" styleClass="boton-normal" disabled="#{not contratoB.banderaEliminar}" onclick="return confirmacion(this,'¿ Esta seguro eliminar ');">
+
+                    <i class="fa fa-times" />
+                    Eliminar
+                    <f:ajax disabled="#{contratoB.pestanaActiva ne 'tabContrato'}"  execute="@this" render=":frmContrato:tabPrincipal:pnTabContrato btNuevoP btGuardarP btCancelarP btEditarP btEliminarP  btBuscarP"  listener="#{contratoB.eliminarContrato}" />
+                    <f:ajax disabled="#{contratoB.pestanaActiva ne 'tabCurriculum'}"  execute="@this" render=":frmContrato:tabPrincipal:pnTabCurriculum btNuevoP btGuardarP btCancelarP btEditarP btEliminarP  btBuscarP"  listener="#{contratoB.eliminarCurriculumVitae}" />
+                </h:commandLink>
+                
+                <h:commandLink id="btBuscarP" styleClass="boton-normal" title="Buscar" disabled="#{not contratoB.banderaBuscar}"   >
+                    <i class="fa fa-search" />
+                    Buscar
+                    <f:ajax execute="@this" render=":frmContrato:txtbusPaterno :frmContrato:txtbusMaterno :frmContrato:txtbusNombres" listener="#{contratoB.buscarPersona}" />
+                </h:commandLink>
+                
+                <ui:param name="param" value="PERSONAL,#{contratoB.personal.personal},CONTRATO,#{contratoB.personalContrato.contrato}" />
+                 <h:commandLink id="btImprimirP" disabled="#{not contratoB.banderaImprimir}" immediate="true" styleClass="boton-normal" title="Imprimir" target="_blank" actionListener="#{utilB.imprimirIreports('administrativo/contrato/plantillaContrato', 1, fn:split(param,','))}"   >
+                    <i class="fa fa-print" />
+                    Imprimir                   
+                </h:commandLink>
+            </div>
+           
+            <p:tabView id="tabPrincipal"  styleClass="tabPrincipal"  activeIndex="0"  scrollable="true" prependId="false" >
+                <p:ajax event="tabChange" update="btNuevoP btGuardarP btCancelarP btEditarP  btEliminarP btBuscarP  btImprimirP" listener="#{contratoB.onTabChange}" />
+                <p:tab id="tabDatos"    ariaLabel="false" titleStyleClass="tabContrato"   >
+                <f:facet name="title">
+                <i class="fa fa-male" />
+                <div class="column" >
+                	datos  <br /> generales
+                </div>
+                
+                </f:facet>
+                   <h:panelGroup layout="block"  id="pnTabDatos" >
+                    <span class="subTituloPanel">ubigeo nacimiento</span>        
+                    <div class="paneles" >                      
+                    <h:outputLabel for="cbSexo" value="Género" />
+                    <h:selectOneMenu id="cbSexo" value="#{contratoB.persona.sexo}"  style="width:142px" disabled="#{not contratoB.bandera}">
+                        <f:selectItem itemLabel="--Seleccionar --" />
+                        <f:selectItem itemLabel="MASCULINO" itemValue="1" />
+                        <f:selectItem itemLabel="FEMENINO"  itemValue="2" />                       
+                    </h:selectOneMenu>
+                    
+                    <h:outputLabel for="cbEstadoCivil" value="Estado Civil" />
+                    <h:selectOneMenu id="cbEstadoCivil" value="#{contratoB.persona.estado_civil}" style="width:142px" disabled="#{not contratoB.bandera}" >
+                        <f:selectItem itemLabel="--Seleccionar --" />
+                        <f:selectItems value="#{estadoCivilB.mostrarEstadoCivil()}" var="civil" itemValue="#{civil.estadoCivil}" itemLabel="#{civil.descripcion}" />
+                    </h:selectOneMenu>
+                        <br/>
+                    
+                    <h:outputLabel for="txtCelular" value="Celular" />
+                    <h:inputText id="txtCelular" value="#{contratoB.persona.celular}" size="15" maxlength="9"  disabled="#{not contratoB.bandera}"  onkeypress="return soloNumeros(event)" />
+                    
+                   
+                    
+                    <h:outputLabel for="txtTelefono" value="Teléfono" />
+                    <h:inputText id="txtTelefono" value="#{contratoB.persona.telefono}" size="15" maxlength="7" disabled="#{not contratoB.bandera}" onkeypress="return soloNumeros(event)" /><br/>
+                    
+                    <h:outputLabel for="txtEmailP" value="E-mail" />
+                    <h:inputText id="txtEmailP" value="#{contratoB.persona.emailP}" size="50"  style="#{ component.valid ? '' : 'border-color:red;'}"   disabled="#{not contratoB.bandera}" >
+                    	<f:validator validatorId="validarCorreo"  />  
+                    </h:inputText>
+                    <br/>
+                    
+                    <h:outputLabel for="txtEmailS" value="E-mail 2" />
+                    <h:inputText id="txtEmailS" value="#{contratoB.persona.emailS}" size="50" style="#{ component.valid ? '' : 'border-color:red;'}" disabled="#{not contratoB.bandera}" >
+                    	<f:validator validatorId="validarCorreo"  />  
+                    </h:inputText>
+                    </div>
+                    <span class="subTituloPanel">direccion ubigeo</span>
+                    <div  class="paneles">
+                   
+                     <h:outputLabel for="cbPais" value="País" />
+                    <h:selectOneMenu id="cbPais" value="#{contratoB.persona.pais}" disabled="#{not contratoB.bandera}" >
+                        <f:selectItem itemLabel="--Seleccionar --" />
+                        <f:selectItems value="#{contratoB.paisL}" var="itemPais" itemValue="#{itemPais.pais}" itemLabel="#{itemPais.descripcion}" />
+                    </h:selectOneMenu>
+                    <br/>
+                    <h:outputLabel for="cbDepartamento" value="Departamento"  />
+                    <h:selectOneMenu id="cbDepartamento" value="#{contratoB.departamento}" disabled="#{not contratoB.bandera}" >
+                        <f:selectItem itemLabel="--Seleccionar --" />
+                        <f:selectItems value="#{contratoB.departamentoL}" var="departamento" itemValue="#{departamento.departamento}" itemLabel="#{departamento.descripcion}" />
+                        <f:ajax execute="@this" render="cboProvincia" />
+                    </h:selectOneMenu>
+                    
+                    <h:outputLabel for="cboProvincia" value="Provincia" />
+                    <h:selectOneMenu id="cboProvincia" value="#{contratoB.provincia}" disabled="#{not contratoB.bandera}" >
+                        <f:selectItem itemLabel="--Seleccionar --" />
+                        <f:selectItems value="#{ubigeoProvinciaB.mostrarProvincia(contratoB.departamento)}" var="provincia" itemValue="#{provincia.provincia}" itemLabel="#{provincia.descripcion}" />
+                        <f:ajax execute="@this" render="cboDistrito" />
+                    </h:selectOneMenu>
+                    
+                    <h:outputLabel  for="cboDistrito" value="Distrito" />
+                    <h:selectOneMenu id="cboDistrito" value="#{contratoB.distrito}" disabled="#{not contratoB.bandera}">
+                        <f:selectItem itemLabel="--Seleccionar --" />
+                        <f:selectItems value="#{ubigeoDistritoB.mostrarDistrito(contratoB.departamento, contratoB.provincia)}" var="distrito" itemValue="#{distrito.distrito}" itemLabel="#{distrito.descripcion}" />
+                    </h:selectOneMenu>
+                    
+                    <h:commandLink  title="Ubigeo" >
+					         <i class="fa fa-street-view" />
+					          <f:ajax execute="@this" render=":frmContrato:gmap" listener="#{contratoB.nuevoMap(2)}"  />
+         			</h:commandLink>
+                    
+                    <br/>
+                    
+                   <h:outputLabel for="txtDireccionLe" value="Domicilio Legal" /><br />
+                    <h:inputTextarea id="txtDireccionLe" value="#{contratoB.persona.direccion_recidencial}" disabled="#{not contratoB.bandera}" style="height: 50px" />
+                    <h:outputLabel value="Domicilio Referencia." /><br />
+                    <h:inputTextarea  id="txtDireccionRe" value="#{contratoB.persona.direccion_referencial}" disabled="#{not contratoB.bandera}" style="height: 50px"/>
+                  
+                    </div>
+                    
+                    
+                    
+                    <span class="subTituloPanel">nacimiento ubigeo</span>
+                    <div class="paneles">
+                       
+                                      
+                    
+                    <h:outputLabel for="txtFechaNacimiento" value="Fec. Nacimiento" />                    
+                    <p:calendar id="txtFechaNacimiento" value="#{contratoB.persona.fecha_nacimiento}"  pattern="dd-MM-yyyy" disabled="#{not contratoB.bandera}" maxdate="#{utilB.fechaHoy()}"  size="10" navigator="true" mask="true" /><br />
+                    
+                    <h:outputLabel for="cbDepartamentoNaci" value="Departamento"  />
+                    <h:selectOneMenu id="cbDepartamentoNaci" value="#{contratoB.departamentoNaci}" disabled="#{not contratoB.bandera}" >
+                        <f:selectItem itemLabel="--Seleccionar --" />
+                        <f:selectItems value="#{contratoB.departamentoL}" var="departamentoNaci" itemValue="#{departamentoNaci.departamento}" itemLabel="#{departamentoNaci.descripcion}" />
+                        <f:ajax execute="@this" render="cboProvinciaNaci" />
+                    </h:selectOneMenu>
+                  
+                    <h:outputLabel for="cboProvinciaNaci" value="Provincia" />
+                    <h:selectOneMenu id="cboProvinciaNaci" value="#{contratoB.provinciaNaci}" disabled="#{not contratoB.bandera}" >
+                        <f:selectItem itemLabel="--Seleccionar --" />
+                        <f:selectItems value="#{ubigeoProvinciaB.mostrarProvincia(contratoB.departamentoNaci)}" var="provinciaNaci" itemValue="#{provinciaNaci.provincia}" itemLabel="#{provinciaNaci.descripcion}" />
+                        <f:ajax execute="@this" render="cboDistritoNaci" />
+                    </h:selectOneMenu>
+                    
+                    <h:outputLabel for="cboDistritoNaci"  value="Distrito" />
+                    <h:selectOneMenu id="cboDistritoNaci" value="#{contratoB.distritoNaci}" disabled="#{not contratoB.bandera}">
+                        <f:selectItem itemLabel="--Seleccionar --" />
+                        <f:selectItems value="#{ubigeoDistritoB.mostrarDistrito(contratoB.departamentoNaci, contratoB.provinciaNaci)}" var="distritoNaci" itemValue="#{distritoNaci.distrito}" itemLabel="#{distritoNaci.descripcion}" />
+                    </h:selectOneMenu>
+                    
+                    <h:commandLink >
+					         <i class="fa fa-street-view" />
+					          <f:ajax execute="@this" render=":frmContrato:gmap" listener="#{contratoB.nuevoMap(1)}"  />
+         			</h:commandLink>
+         			
+                    </div>
+                    
+                       <div class="paneles" >
+                                        
+                         <h:commandLink  styleClass="boton-normal"  disabled="true" >
+                            Nuevo 
+                            <f:ajax execute="@this"  render=":frmParentesco:txtPersona :frmParentesco:cbParentesco :frmParentesco:ckViveUsted :frmParentesco:ckDependeUsted :frmParentesco:txtObservacion" listener="#{contratoB.nuevoParentesco}" />
+                        </h:commandLink>
+                        <p:dataTable id="tbPersonaPerentesco" value="#{contratoB.personaFamiliaL}" var="itemPersonaParentesco">
+                            <p:column headerText="PERSONA"> 
+                                #{itemPersonaParentesco.personaF.persona} 
+                            </p:column>
+                            <p:column headerText="DATOS"> 
+                                #{itemPersonaParentesco.personaF.paterno} #{itemPersonaParentesco.personaF.materno} #{itemPersonaParentesco.personaF.nombres}
+                            </p:column>
+                            <p:column headerText="PARENTESCO"> 
+                                #{itemPersonaParentesco.parentesco.descripcion}
+                            </p:column>
+                            <p:column width="50">
+                                
+                                <h:commandLink id="btEliminar"  title="Eliminar"  onclick="return confirmacion(this,'¿ Esta seguro eliminar Parentesco');" >
+                                    <i class="fa fa-times" style="color:red" />
+                                    <f:ajax execute="@this"  render="tbPersonaPerentesco"    listener="#{contratoB.eliminarPersonaParentesco(itemPersonaParentesco.personaParentesco)}" />
+                                </h:commandLink>
+                                
+                                <h:commandLink title="Editar">
+                                    <i class="fa fa-pencil" />
+                                    <f:ajax execute="@this"   />
+                                </h:commandLink>
+                            </p:column>
+                        </p:dataTable>
+                       </div>
+                    </h:panelGroup>
+                    
+                </p:tab>
+                <p:tab id="tabDatosLaborales"      ariaLabel="false"  titleStyleClass="tabContrato" >
+                 <f:facet name="title">
+                 <i class="fa fa-id-card-o" />
+                 <div class="column" >
+                	datos  <br /> laborales 
+                 </div>
+                
+                </f:facet>
+                
+                    <h:panelGroup  layout="block" id="pnTabDatosLaborales" >
+                    <div class="paneles" style="text-align: right">
+                        <div style="display: inline-block;vertical-align: top;text-align: center">
+                            <h:outputLabel value="Situación Trabajador" />
+                            <br/>
+                           <h:selectOneMenu value="#{contratoB.personal.situacion}" disabled="#{not contratoB.bandera}" >
+                               <f:selectItem itemLabel="--Seleccionar --" />
+                               <f:selectItems value="#{personalSituacionB.mostrarPersonalSituacion()}" var="situacion" itemValue="#{situacion.situacion}" itemLabel="#{situacion.descripcion}" />
+                           </h:selectOneMenu>
+                        </div>
+                        <div style="display: inline-block;vertical-align: top;text-align: center">
+                            <h:outputLabel value="ingreso empresa" />
+                            <br/>
+                            <p:calendar  value="#{contratoB.personal.fechaIngreso}"  pattern="dd-MM-yyyy" mask="true" navigator="true"  disabled="#{not contratoB.bandera}" size="10" />
+                        </div>
+                    </div>
+                    <div class="paneles">
+                        <h:outputLabel for="txtPersonal" value="Personal" />
+                        <h:inputText id="txtPersonal"  value="#{contratoB.personal.personal}" disabled="true" />
+                                                   
+                    </div>
+                    
+                    <div class="paneles" >
+                          
+                            <h:outputLabel for="cbSede" value="Sede" />
+                    
+                            <h:selectOneMenu id="cbSede" value="#{contratoB.personal.sede}" disabled="#{contratoB.personal.tipoPersonal eq 4?true: not contratoB.bandera}" >
+                                <f:selectItem itemLabel="--Seleccionar --" />
+                                <f:selectItems value="#{contratoB.localL}" var="itemLocal" itemValue="#{itemLocal.local}" itemLabel="#{itemLocal.descripcion}" />
+                            </h:selectOneMenu>
+                            
+                            
+                            <h:commandLink  rendered="#{contratoB.bandera}" >		                    
+		                    <i class="fa fa-window-restore" />
+		                    <f:ajax execute="@this" render=":frmContrato:txtDescripcionL :frmContrato:txtAbreviaturaL :frmContrato:cbEstadoL :frmContrato:btNuevoL :frmContrato:btInsertarL" listener="#{contratoB.mostrarLocal}"  resetValues="true" />
+		                 </h:commandLink>
+                            
+                            
+                            <br/>
+                        
+                        
+                        
+                        <h:outputLabel for="cbCentroCosto" value="Centro Costo" />
+                    <h:selectOneMenu id="cbCentroCosto" value="#{contratoB.personal.centroCosto}" class="columna2" disabled="#{not contratoB.bandera}" >
+                        <f:selectItem itemLabel="--Seleccionar --" />
+                        <f:selectItem itemLabel="SERVICIO" itemValue="1" />
+                        <f:selectItem itemLabel="PRODUCCION" itemValue="2" />
+                    </h:selectOneMenu>
+                        <br/>
+                        
+                        
+                          <h:outputLabel for="cbOficina" value="Oficina" />
+		                    <h:selectOneMenu id="cbOficina" value="#{contratoB.personal.oficina}" class="columna2" disabled="#{contratoB.personal.tipoPersonal eq 4?true:not contratoB.bandera}" >
+		                        <f:selectItem itemLabel="--Seleccionar --" />
+		                        <f:selectItems value="#{contratoB.oficinaL}" var="oficina" itemValue="#{oficina.oficina}" itemLabel="#{oficina.descripcion}" />
+		                    </h:selectOneMenu>
+		                    
+		                    <h:commandLink rendered="#{contratoB.bandera}"  >		                    
+		                    <i class="fa fa-window-restore" />
+		                    <f:ajax execute="@this" render=":frmContrato:txtDescripcionOF :frmContrato:txtAbreviaturaOF :frmContrato:txtAnexoOF :frmContrato:cbEstadoOF :frmContrato:btNuevoOF :frmContrato:btInsertarOF" listener="#{contratoB.mostrarOficina}" resetValues="true" />
+		                    </h:commandLink>
+		                    
+                          <br/>
+                        
+                        
+                        <h:outputLabel for="cboCargo" value="Cargo"   />                        
+                        <h:selectOneMenu id="cboCargo" value="#{contratoB.personal.cargo}" disabled="#{contratoB.personal.tipoPersonal eq 4?true:not contratoB.bandera}" style="width: 210px" >
+                            <f:selectItem itemLabel="--Seleccionar --" />
+                            <f:selectItems value="#{contratoB.cargoL}" var="cargo" itemValue="#{cargo.cargo}" itemLabel="#{cargo.descripcion}" />
+                        </h:selectOneMenu>
+                         <h:commandLink rendered="#{contratoB.bandera}"  >		                    
+		                    <i class="fa fa-window-restore" />
+		                    <f:ajax execute="@this" render=":frmContrato:txtDescripcionCA :frmContrato:txtAbreviaturaCA :frmContrato:cbEstadoCA :frmContrato:btNuevoCA :frmContrato:btInsertarCA" listener="#{contratoB.mostrarCargo}"  resetValues="true" />
+		                 </h:commandLink>
+                        
+                        
+                        <br/>
+                        <h:outputLabel for="cboOcupacion" value="Ocupación"   />
+                        
+                    
+                            <h:selectOneMenu  id="cboOcupacion" value="#{contratoB.personal.ocupacion}" class="columna2" style="width: 210px" disabled="#{not contratoB.bandera}" >
+                                <f:selectItem itemLabel="--Seleccionar --" />
+                                <f:selectItems value="#{contratoB.ocupacionL}" var="ocupacion" itemValue="#{ocupacion.ocupacion}" itemLabel="#{ocupacion.descripcion}" />
+                            </h:selectOneMenu>
+                        <h:commandLink rendered="#{contratoB.bandera}"  >		                    
+		                    <i class="fa fa-window-restore" />
+		                    <f:ajax execute="@this" render=":frmContrato:txtDescripcionOC :frmContrato:txtAbreviaturaOC :frmContrato:cbEstadoOC :frmContrato:btNuevoOC :frmContrato:btInsertarOC" listener="#{contratoB.mostrarOcupacion}"  resetValues="true" />
+		                 </h:commandLink>
+                        </div>          
+                    <span class="subTituloPanel">seguro de salud</span>     
+                    <div class="paneles">
+                        <h:outputLabel for="txtcuspp" value="CUSPP" title="El Código Único de Identificación del Sistema Privado de Pensiones (CUSPP) es un carácter alfanumérico que distingue al trabajador dentro del Sistema Privado de Pensiones, y que se mantendrá inalterable, aunque el trabajador cambie de AFP" />
+                        <h:inputText id="txtcuspp" value="#{contratoB.personal.cuspp}"  disabled="#{not contratoB.bandera}" />
+                        <br />
+                        
+                        <h:outputLabel for="txtEssalud" value="Número"  />
+                        <h:inputText id="txtEssalud" value="#{contratoB.personal.esSalud}" disabled="#{not contratoB.bandera}" onkeypress="return soloNumeros(event)" />
+                        
+                        <br/>
+						<h:outputLabel value="E.P.S " title="Las Entidades Prestadoras de Salud (EPS) son empresas e instituciones públicas o privadas, distintas a EsSalud, cuyo único fin es prestar servicios de atención de salud, con infraestructura propia y/o de terceros, sujetándose a los controles de la Superintendencia de Entidades Prestadoras de Salud (SEPS)." />
+                             <h:selectOneMenu id="cbEntidadPrestadoraSalud" value="#{contratoB.personal.eps}"  disabled="#{not contratoB.bandera}" >
+                                <f:selectItem itemLabel="--Seleccionar --" />
+                                <f:selectItems value="#{contratoB.entidadPrestadoraSaludL}" var="eps" itemValue="#{eps.eps}" itemLabel="#{eps.descripcion}" />
+                            </h:selectOneMenu>
+                            
+                             <h:commandLink rendered="#{contratoB.bandera}"  >		                    
+			                    <i class="fa fa-window-restore" />
+			                    <f:ajax execute="@this" render=":frmContrato:txtDescripcionEPS :frmContrato:txtAbreviaturaEPS :frmContrato:cbEstadoEPS :frmContrato:btNuevoEPS :frmContrato:btInsertarEPS"  listener="#{contratoB.mostrarEntidadPrestadoraSalud}" resetValues="true" />
+			                 </h:commandLink>
+                            
+                        </div>
+                        
+                    <span class="subTituloPanel">pensiones</span>     
+                    <div class="paneles">
+                     
+                        <h:outputLabel for="cbRegimenPension" value="Régimen" />
+                        <h:selectOneMenu id="cbRegimenPension" value="#{contratoB.personal.regimenPension}" disabled="#{not contratoB.bandera}" >
+                            <f:selectItem itemLabel="--Seleccionar --" />
+                            <f:selectItems value="#{contratoB.regimenPensionL}" var="regimePension" itemValue="#{regimePension.regimenPension}" itemLabel="#{regimePension.descripcion}" />
+                        </h:selectOneMenu>
+                        
+                         <h:commandLink rendered="#{contratoB.bandera}"  >		                    
+		                    <i class="fa fa-window-restore" />
+		                    <f:ajax execute="@this" render=":frmContrato:txtDescripcionRP :frmContrato:txtAbreviaturaRP :frmContrato:cbEstadoRP :frmContrato:btNuevoRP :frmContrato:btInsertarRP" listener="#{contratoB.mostrarRegimen}"  resetValues="true" />
+		                 </h:commandLink>
+                        
+                        
+                        
+                        <br/>
+                        
+                         
+                    <h:outputLabel for="cbTipoRegimen" value="Tipo Régimen" />
+                    <h:selectOneMenu id="cbTipoRegimen" value="#{contratoB.personal.tipoRegimen}" class="columna2" disabled="#{not contratoB.bandera}" >
+                        <f:selectItem itemLabel="--Seleccionar --" />
+                        <f:selectItems value="#{contratoB.modalidadPensionL}" var="modalidad" itemValue="#{modalidad.modalida}" itemLabel="#{modalidad.descripcion}" />
+                    </h:selectOneMenu>
+                    <br/>
+                    <h:outputLabel for="txtFechaInicioReg" value="Inicio Régimen" />
+                    <p:calendar id="txtFechaInicioReg"  value="#{contratoB.personal.fechaRegimen}"  pattern="dd-MM-yyyy" mask="true" navigator="true" size="10" disabled="#{not contratoB.bandera}" />
+                    </div>
+                    
+                    <span class="subTituloPanel">cuentas bancarias haberes</span> 
+                    <div class="paneles">
+                       
+                     <h:outputLabel for="cbFormaPago" value="Forma de Pago" />
+                     <h:selectOneMenu id="cbFormaPago" value="#{contratoB.personal.formaPago}" class="columna2" disabled="#{not contratoB.bandera}" >
+                        <f:selectItem itemLabel="--Seleccionar --" />
+                        <f:selectItems value="#{contratoB.formaPagoL}" var="formaPago" itemValue="#{formaPago.formaPago}" itemLabel="#{formaPago.descripcion}" />
+                    </h:selectOneMenu>
+                        
+                        
+                         <h:outputLabel value="Banco" />
+                    <h:selectOneMenu id="cbBancoCBH" value="#{contratoB.personal.bancoRemuneracion}" disabled="#{not contratoB.bandera}" >
+                        <f:selectItem itemLabel="--Seleccionar --" />
+                        <f:selectItems value="#{contratoB.bancoL}" var="banco" itemValue="#{banco.banco}" itemLabel="#{banco.descripcion}" />
+                    </h:selectOneMenu> 
+                    
+                    <h:commandLink rendered="#{contratoB.bandera}"  >
+                    <i class="fa fa-building" />
+                    <f:ajax execute="@this" render=":frmContrato:txtDescripcionBA :frmContrato:txtAbreviaturaBA :frmContrato:cbEstadoBA :frmContrato:btNuevoBA :frmContrato:btInsertarBA" listener="#{contratoB.mostrarBanco}"  />
+                    </h:commandLink>
+                    
+                    <br/>     
+                     <h:outputLabel value="Nro. Cuenta" />
+                    <h:inputText value="#{contratoB.personal.numeroCuenta}" disabled="#{not contratoB.bandera}" onkeypress="return soloNumeros(event)" />
+                    <br/>
+                    
+                    <h:outputLabel for="cbTipoMoneda" value="Tipo Moneda" />
+                    <h:selectOneMenu id="cbTipoMoneda" value="#{contratoB.personal.tipoMoneda}" class="columna2" disabled="#{not contratoB.bandera}" >
+                        <f:selectItem itemLabel="--Seleccionar --" />
+                        <f:selectItems value="#{contratoB.tipoMonedaL}" var="moneda" itemValue="#{moneda.tipoMoneda}" itemLabel="#{moneda.descripcion}" />
+                    </h:selectOneMenu>     
+                         
+                         
+                    </div>
+                  
+                    <span class="subTituloPanel">cuentas bancarias deposito CTS</span>
+                    <div class="paneles">
+                        
+                        <h:outputLabel value="Banco" />
+	                    <h:selectOneMenu id="cbBancoCTS" value="#{contratoB.personal.bancoCTS}" disabled="#{not contratoB.bandera}" >
+	                        <f:selectItem itemLabel="--Seleccionar --" />
+	                        <f:selectItems value="#{contratoB.bancoL}" var="banco" itemValue="#{banco.banco}" itemLabel="#{banco.descripcion}" />
+	                    </h:selectOneMenu>
+	                     <h:commandLink rendered="#{contratoB.bandera}"   >
+	                    <i class="fa fa-building" />
+	                    <f:ajax execute="@this" render=":frmContrato:txtDescripcionBA :frmContrato:txtAbreviaturaBA :frmContrato:cbEstadoBA :frmContrato:btNuevoBA :frmContrato:btInsertarBA" listener="#{contratoB.mostrarBanco}"  />
+	                    </h:commandLink>
+                    
+                    <br/>
+                    <h:outputLabel value="Número" />
+                    <h:inputText value="#{contratoB.personal.numeroCTS}" class="columna2" disabled="#{not contratoB.bandera}" onkeypress="return soloNumeros(event)" />
+                    </div>                   
+                    
+                   </h:panelGroup>
+                    
+                </p:tab>
+               
+                <p:tab id="tabFomacionAcademica"    ariaLabel="false"  titleStyleClass="tabContrato" >
+                <f:facet name="title">
+                <i class="fa fa-graduation-cap" />
+                <div class="column" >
+                formacion <br /> academica
+                </div>
+                
+                </f:facet>
+                
+                    <h:panelGroup layout="block" id="pnTabFomacionAcademica" >
+                    <span class="subTituloPanel">grado academico</span>
+                    <div  class="paneles" >
+                       
+              
+                      
+                       <div class="paneles">
+                             <h:commandLink styleClass="boton-normal" title="Nuevo" disabled="#{contratoB.persona.persona eq null}" >
+                               <i class="fa fa-file-text-o" />
+                                   Nuevo
+                                   <f:ajax  execute="@this"  render=":frmContrato:cboGrado :frmContrato:txtGradoDenominacion :frmContrato:cboGradoInstitucion :frmContrato:dpGradoFecha" resetValues="true" listener="#{contratoB.nuevoGrado}" />
+                            </h:commandLink>
+                           
+                           
+                            
+                       </div>
+                       
+                       <p:dataTable id="tbGradoAcademico" value="#{contratoB.personaGradoAcademicoL}"  var="itemGradoAcademico"  rowIndexVar="status" scrollable="true" scrollHeight="100"  emptyMessage=""  >
+                           <p:column headerText="N." width="10">
+                              #{status +1}
+                          </p:column>
+                           <p:column headerText="GRADO" width="100">
+                              
+                              #{itemGradoAcademico.itemGradoInstruccion.descripcion}
+                              
+                          </p:column>
+                          <p:column headerText="DENOMINACION" width="200">
+                              #{itemGradoAcademico.denominacion}
+                          </p:column>
+                          <p:column headerText="CENTRO EDUCATIVO">
+                              
+                              #{itemGradoAcademico.itemCentroEducativo.descripcion}
+                          </p:column>
+                           <p:column headerText="FECHA" width="70">
+                              #{itemGradoAcademico.fecha}
+                              
+                          </p:column>
+                          <p:column  width="10" >
+                                <h:commandLink title="Editar">
+                              <i class="fa fa-pencil" style="color:green;" />
+                              <f:ajax execute="@this" render=":frmContrato:cboGrado :frmContrato:txtGradoDenominacion  :frmContrato:cboGradoInstitucion :frmContrato:dpGradoFecha  " listener="#{contratoB.editarGrado(itemGradoAcademico)}" />
+                              </h:commandLink>
+                          
+                          </p:column>
+                           <p:column  width="10">
+                               <h:commandLink title="Eliminar" onclick="return confirmacion(this,'¿ Esta seguro de Eliminar ?');">
+                                   <i class="fa fa-trash" style="color:red" />
+                           
+                                   <f:ajax execute="@this" render="tbGradoAcademico" listener="#{contratoB.eliminarGrado(itemGradoAcademico)}"  />
+                               </h:commandLink>
+                          </p:column>
+                      </p:dataTable>
+                    </div>
+                      
+                       <span class="subTituloPanel">titulo profesional</span>
+                    <div class="paneles">
+                        
+                       <div class="paneles">
+                            <h:commandLink styleClass="boton-normal" title="Nuevo" disabled="#{contratoB.persona.persona eq null}" >
+                                 <i class="fa fa-file-text-o" />
+                                 Nuevo
+                                 <f:ajax execute="@this"  render=":frmContrato:txtTituloTitulo :frmContrato:cboTituloTipoInstitucion :frmContrato:cboTituloInstitucion :frmContrato:txtTituloFecha" resetValues="true" listener="#{contratoB.nuevoTitulo}"  />
+                            </h:commandLink> 
+                           
+                       </div>
+                       
+                        
+                       <p:dataTable id="tbTitulo" value="#{contratoB.personaTituloL}" var="itemPersonaTitulo" rowIndexVar="status" scrollable="true" scrollHeight="100" emptyMessage="" >
+                            <p:column headerText="N." width="20">
+                              #{status +1}
+                          </p:column>
+                          <p:column headerText="TITULO"  >
+                              #{itemPersonaTitulo.titulo}
+                          </p:column>                      
+                          <p:column headerText="CENTRO EDUCATIVO">
+                              
+                              #{itemPersonaTitulo.itemCentroEducativo.descripcion}
+                          </p:column>
+                          <p:column headerText="FECHA" width="80">
+                              #{itemPersonaTitulo.fecha}
+                              
+                          </p:column>
+                          <p:column width="20">
+                           <h:commandLink title="Editar">
+                              <i class="fa fa-pencil" style="color:green;" />
+                              <f:ajax execute="@this" render=":frmContrato:txtTituloTitulo :frmContrato:cboTituloTipoInstitucion :frmContrato:cboTituloInstitucion :frmContrato:txtTituloFecha " listener="#{contratoB.editarTitulo(itemPersonaTitulo)}"  />
+                              </h:commandLink>
+                          
+                          </p:column>
+                          <p:column width="20">                              
+                              <h:commandLink title="Eliminar" onclick="return confirmacion(this,'¿ Esta seguro de Eliminar ?');">
+                                <i class="fa fa-trash" style="color:red" />
+                                  <f:ajax execute="@this" render="tbTitulo" listener="#{contratoB.eliminarTitulo(itemPersonaTitulo)}"  />
+                              </h:commandLink>                              
+                          </p:column>
+                      </p:dataTable>
+                        
+                    </div>
+                      
+                     <span class="subTituloPanel">actualizaciones - capacitaciones</span>  
+                    <div class="paneles">                        
+                      <div class="paneles">
+                          <h:commandLink styleClass="boton-normal" title="Nuevo"  disabled="#{contratoB.persona.persona eq null}" >                              
+                           <i class="fa fa-file-text-o" />
+                           Nuevo
+                          <f:ajax  execute="@this" render=":frmContrato:cboActualizacionTipo  :frmContrato:txtActualizacionDenominacion :frmContrato:cboActualizacionInstitucion :frmContrato:dpActualizacionFecha" resetValues="true" listener="#{contratoB.nuevoCapacitacion}" />
+                       </h:commandLink>   
+                       </div>
+                      
+                    
+                      <p:dataTable id="tbActualizacion" value="#{contratoB.personaCapacitacionL}" var="itemPersonaActualizacion"  rowIndexVar="status" scrollable="true" scrollHeight="100" emptyMessage="" >
+                          <p:column headerText="N." width="10">
+                              #{status +1}
+                          </p:column>
+                          <p:column headerText="TIPO" width="150">
+                              #{itemPersonaActualizacion.tipo eq 1?'FORMACION CONTINUA':'DIPLOMADO'}
+                          </p:column>
+                          <p:column headerText="DENOMINACION">
+                              #{itemPersonaActualizacion.denominacion}
+                          </p:column>
+                          <p:column headerText="CENTRO EDUCATIVO">
+                              #{itemPersonaActualizacion.itemCentroEducativo.descripcion}
+                              
+                          </p:column>
+                          <p:column headerText="FECHA" width="80">
+                              #{itemPersonaActualizacion.fecha}
+                              
+                          </p:column>
+                          <p:column  width="10">
+                          	  <h:commandLink title="Editar" >
+	                              <i class="fa fa-pencil" style="color:green;" />
+	                              <f:ajax execute="@this" render=":frmContrato:cboActualizacionTipo :frmContrato:txtActualizacionDenominacion :frmContrato:cboActualizacionInstitucion :frmContrato:dpActualizacionFecha " listener="#{contratoB.editarCapacitacion(itemPersonaActualizacion)}" />
+                              </h:commandLink>
+                          </p:column>
+                          <p:column width="10">                           
+                          
+                          
+                              <h:commandLink title="Eliminar" onclick="return confirmacion(this,'¿ Esta seguro de Eliminar ?');" >
+                                 <i class="fa fa-trash" style="color:red" />
+                                  
+                                  <f:ajax execute="@this" render="tbActualizacion" listener="#{contratoB.eliminarCapacitacion(itemPersonaActualizacion)}" />
+                              </h:commandLink>
+                              
+                          </p:column>
+                      </p:dataTable>
+                        
+                        
+                    </div>
+                      
+                       <span class="subTituloPanel">conocimiento de idioma</span>
+                    <div class="paneles" >
+                         
+                      
+                     
+                      <div class="paneles">
+                            <h:commandLink styleClass="boton-normal" title="Nuevo" disabled="#{contratoB.persona.persona eq null}" >
+                               <i class="fa fa-file-text-o" />
+                                 Nuevo
+                                 <f:ajax execute="@this" render=":frmContrato:cboIdiomaNivel :frmContrato:cboIdiomaIdioma"  resetValues="true"  listener="#{contratoB.nuevoIdioma}" />
+                          </h:commandLink>
+                          
+                          
+                          
+                      </div>
+                      
+                      <p:dataTable id="tbIdioma" value="#{contratoB.personaIdiomaL}" var="itemPersonaIdioma"  rowIndexVar="status" scrollable="true" scrollHeight="100" emptyMessage="" styleClass="tablaContrato">
+                          <p:column headerText="N." width="20">
+                              #{status +1}
+                          </p:column>
+                          <p:column headerText="Nivel">
+                              
+                              #{itemPersonaIdioma.nivel eq 1?'Basico':itemPersonaIdioma.nivel eq 2?'Intermedio':'Avanzado'}
+                          </p:column>
+                          <p:column headerText="Idioma">
+                              
+                              #{itemPersonaIdioma.itemIdioma.descripcion}
+                              
+                          </p:column>
+                          <p:column width="10" >
+                          	  <h:commandLink title="Editar">
+	                              <i class="fa fa-pencil" style="color:green;" />
+	                              <f:ajax execute="@this" render=":frmContrato:cboIdiomaNivel :frmContrato:cboIdiomaIdioma"  listener="#{contratoB.editarIdioma(itemPersonaIdioma)}" />
+                              </h:commandLink>
+	                       </p:column>
+                          <p:column width="10" >
+                          	  <h:commandLink title="Eliminar"  onclick="return confirmacion(this,'¿ Esta seguro de Eliminar ?');" >
+                                  <i class="fa fa-trash" style="color:red" />
+                                  <f:ajax execute="@this" render="tbIdioma" listener="#{contratoB.eliminarIdiomas(itemPersonaIdioma)}" />
+                              </h:commandLink>
+                          </p:column>
+                      </p:dataTable>
+                      
+                        
+                        
+                    </div>
+                     <span class="subTituloPanel">trabajo de investigacion</span>
+                    <div class="paneles"  >
+                      
+                      
+                      <div class="paneles" >
+                      
+                      	<h:commandLink styleClass="boton-normal" title="Nuevo" disabled="#{contratoB.persona.persona eq null}">
+                               <i class="fa fa-plus" />
+                                 Nuevo
+                                <f:ajax execute="@this" render=":frmContrato:txtTrabajoTema :frmContrato:txtTrabajoAnio"  resetValues="true" listener="#{contratoB.nuevoTrabajoInvestigacion}" />
+                          </h:commandLink>
+                          
+                         
+                      </div>
+                      
+                     
+                      <p:dataTable id="tbTrabajo" value="#{contratoB.personaTrabajoInvestigacionL}" var="itemTrabajoInvestigacion"  rowIndexVar="status" emptyMessage=""  >
+                            <p:column headerText="N."  width="10" >
+                              #{status +1}
+                          </p:column>
+                          <p:column headerText="Tema">
+                              #{itemTrabajoInvestigacion.tema}
+                          </p:column>
+                          <p:column headerText="Año" width="50">
+                              #{itemTrabajoInvestigacion.año}
+                          </p:column>
+                          <p:column width="10" >
+	                              <h:commandLink title="Editar" >
+		                              <i class="fa fa-pencil" style="color:green;" />
+		                              <f:ajax execute="@this" render=" :frmContrato:txtTrabajoTema :frmContrato:txtTrabajoAnio" listener="#{contratoB.editarTrabajoInvestigacion(itemTrabajoInvestigacion)}" />
+	                              </h:commandLink>
+                          </p:column>
+                          <p:column width="10">
+                         		<h:commandLink  title="Eliminar"  onclick="return confirmacion(this,'¿ Esta seguro de Eliminar ?');" >
+                                	<i class="fa fa-trash" style="color:red" />
+                                    <f:ajax execute="@this" render="tbTrabajo" listener="#{contratoB.eliminarTrabajoInvestigacion(itemTrabajoInvestigacion)}" />
+                                </h:commandLink>
+                          </p:column>
+                      </p:dataTable>
+                        
+                        
+                        
+                    </div>
+                      </h:panelGroup>
+                </p:tab>
+                
+                
+                <p:tab id="tabExperienciaLaboral"   ariaLabel="false"  titleStyleClass="tabContrato">
+                <f:facet name="title">
+                <i class="fa fa-briefcase" />
+                <div class="column" >
+                experiencia <br /> laboral
+                </div>
+                
+                </f:facet>
+                
+                <h:panelGroup layout="block" id="pnTabExperienciaLaboral" >
+                    <div class="paneles" >
+                        <h:outputLabel  value="Empresa" />
+                        <h:inputText id="txtEmpresa" value="#{contratoB.personalExperienciaLaboral.empresa}" required="true" size="50" disabled="#{not contratoB.banderaExperienciaLaboral}" style="#{ component.valid ? '' : 'border-color:red;'}" /><br/>
+                     
+                        <h:outputLabel  value="Cargo" />
+                        <h:inputText id="txtExperienciaCargo" value="#{contratoB.personalExperienciaLaboral.cargo}" required="true" size="50" disabled="#{not contratoB.banderaExperienciaLaboral}" style="#{ component.valid ? '' : 'border-color:red;'}"  /><br/>
+                        <h:outputLabel  value="Fecha Inicio" />                    
+                        <p:calendar  id="dpExperienciaFInicio" value="#{contratoB.personalExperienciaLaboral.fechaInicio}"  pattern="dd-MM-yyyy" maxdate="#{utilB.fechaHoy()}"  required="true" mask="true" navigator="true" size="10" disabled="#{not contratoB.banderaExperienciaLaboral}" >
+                            <p:ajax event="dateSelect" process="@this"  update="dpExperienciaFFin" />
+                        </p:calendar><br />
+                        <h:outputLabel  value="Fecha Fin" />                    
+                        <p:calendar id="dpExperienciaFFin" value="#{contratoB.personalExperienciaLaboral.fechaFinal}"  pattern="dd-MM-yyyy"   mindate="#{contratoB.personalExperienciaLaboral.fechaInicio}" required="true" mask="true" navigator="true" size="10" disabled="#{not contratoB.banderaExperienciaLaboral}"   />
+                                         
+                    </div>
+                     
+                    <p:dataTable id="tbExperiencia" value="#{contratoB.personalExperienciaLaboralL}" var="experienciaLabora" rowIndexVar="status" emptyMessage=""   styleClass="tablaContrato" >
+                        <p:column headerText="N." width="20">
+                             #{status + 1}
+                        </p:column>
+                        <p:column headerText="Empresa">
+                             #{experienciaLabora.empresa}
+                        </p:column>
+                        <p:column headerText="Cargo">
+                            #{experienciaLabora.cargo}
+                        </p:column>
+                        <p:column headerText="Fecha Inicio" width="80">
+                            #{experienciaLabora.fechaInicio}
+                            
+                        </p:column>
+                        <p:column headerText="Fecha Final" width="80">
+                            #{experienciaLabora.fechaFinal}
+                            
+                        </p:column>
+                        
+                        <p:column width="20" style="text-align: center" >
+                            <h:commandLink title="Eliminar" onclick="return confirmacion(this,'¿ Esta seguro de Eliminar ?');" >
+                                <i class="fa fa-trash" style="color:red" />
+                                <f:ajax execute="@this" render="tbExperiencia" listener="#{contratoB.eliminarExperiencia(experienciaLabora)}" />
+                            </h:commandLink>
+                            
+                        </p:column>
+                    </p:dataTable>
+                    </h:panelGroup>
+                </p:tab>
+                
+                
+                
+                
+                <p:tab id="tabContrato"  disabled="true"   ariaLabel="true" titleStyleClass="tabContrato">
+                
+                 <f:facet name="title">
+                 <i class="fa fa-gavel" />
+                 <div class="column" >
+                 contrato <br /> <br />
+                 </div>
+                 
+                </f:facet>
+                
+                    <h:panelGroup layout="block" id="pnTabContrato" >
+                    
+                   <div class="paneles">                   
+                
+                         <h:outputLabel for="cbInstitucionCP" value="Institucion" />
+                        <h:selectOneMenu id="cbInstitucionCP" value="#{contratoB.personalContrato.institucion}" disabled="#{not contratoB.banderaContrato}" >
+                        <f:selectItem  itemLabel="--Seleccion--" />
+                        <f:selectItems  value="#{contratoB.institucionL}" var="itemInstitucion" itemLabel="#{itemInstitucion.descripcion}" itemValue="#{itemInstitucion.institucion}" />
+                        <f:ajax execute="@this" render="cbPeriodoCP" listener="#{contratoB.mostrarPeriodo}" />
+                        </h:selectOneMenu>
+                        <br />
+                        <h:outputLabel for="cbPeriodoCP" value="Periodo" />
+                        <h:selectOneMenu  id="cbPeriodoCP" value="#{contratoB.personalContrato.periodo}" disabled="#{not contratoB.banderaContrato}" >
+                        <f:selectItem  itemLabel="--Seleccion--" />
+                        <f:selectItems value="#{contratoB.periodoL}" var="itemPeriodoContrato" itemLabel="#{itemPeriodoContrato.desPeriodo}" itemValue="#{itemPeriodoContrato.periodo}" />
+                        <f:ajax execute="@this" render="dpFechaInicioCP dpFechaFinalCP" listener="#{contratoB.mostrarFechaPeriodo}"  /> 
+                        </h:selectOneMenu>
+                        <br />
+                      
+                         <h:outputLabel for="cbTipoPersonalCP" value="Tipo Personal" />
+                         <h:selectOneMenu id="cbTipoPersonalCP"  value="#{contratoB.personalContrato.tipoPersonal}"  disabled="#{not contratoB.banderaContrato}" >
+                        <f:selectItem  itemLabel="--Seleccion--" />
+                        <f:selectItem  itemLabel="Docente" itemValue="4" />
+                        <f:selectItem  itemLabel="Administrativo" itemValue="3" />
+                        <f:ajax execute="@this" render="cboTipoContratoCP" listener="#{contratoB.mostrarTipoContrato}" />
+                        </h:selectOneMenu>                         
+                         <br />
+                        <h:outputLabel for="cboTipoContratoCP" value="Tipo " />
+                    <h:selectOneMenu id="cboTipoContratoCP" value="#{contratoB.personalContrato.tipoContrato}" disabled="#{not contratoB.banderaContrato}" style="#{ component.valid ? '' : 'border-color:red;'}"  required="true" >
+                        <f:selectItem itemLabel="--Seleccionar --" />                        
+                        <f:selectItems value="#{contratoB.tipoContratoL}" var="contrato" itemValue="#{contrato.tipoContrato}" itemLabel="#{contrato.descripcion}"  itemDisabled="#{false}" />
+                        <f:ajax execute="@this" render="cboPeriocidadCP txtBasicoCP"   />
+                    </h:selectOneMenu>
+                    <br/>                   
+                    
+                    <h:outputLabel for="cboPeriocidadCP" value="Periocidad" />
+                    <h:selectOneMenu id="cboPeriocidadCP" value="#{contratoB.personalContrato.periocidad}" disabled="#{not contratoB.banderaContrato}" style="#{ component.valid ? '' : 'border-color:red;'}"  required="true" >
+                        <f:selectItem itemLabel="--Seleccionar --" />
+                        <f:selectItems value="#{contratoB.periocidadL}" var="periocidad" itemValue="#{periocidad.periocidad}" itemLabel="#{periocidad.descripcion}" />
+                    </h:selectOneMenu>
+                    <br/>
+                    
+                    <h:outputLabel for="dpFechaInicioCP" value="Inicio " />
+                    
+                    <p:calendar id="dpFechaInicioCP"  value="#{contratoB.personalContrato.fechaInicio}"  pattern="dd-MM-yyyy" required="true" disabled="#{not contratoB.banderaContrato}"  >
+                        <p:ajax event="dateSelect" update="dpFechaFinalCP"  />
+                    </p:calendar>  
+                    
+                    <h:outputLabel for="dpFechaFinalCP" value="Final  " />
+                    
+                    <p:calendar id="dpFechaFinalCP" value="#{contratoB.personalContrato.fechaFin}"  pattern="dd-MM-yyyy" required="true" mindate="#{contratoB.personalContrato.fechaInicio}" disabled="#{not contratoB.banderaContrato}" />
+                    <br />
+                     <h:outputLabel for="txtBasicoCP" >
+	                    <h:commandLink>
+	                    Monto Básico
+	                    <f:ajax execute="@this" render="txtBasicoCP" listener="#{contratoB.mostrarMonto}" />
+	                    </h:commandLink>
+                    </h:outputLabel>
+                    
+                   
+                    <h:inputText id="txtBasicoCP" value="#{contratoB.personalContrato.basico}" size="5" maxlength="10" disabled="#{not contratoB.banderaContrato}" />
+                    
+                    <h:outputLabel for="txtMobilidadCP" value="Movilidad" />
+                    <h:inputText id="txtMobilidadCP" value="#{contratoB.personalContrato.movilida}" size="5" maxlength="10" disabled="#{not contratoB.banderaContrato}" />
+                   
+                    <h:outputLabel for="txtBonificacionCP" value="Bonificación" />
+                    <h:inputText id="txtBonificacionCP" value="#{contratoB.personalContrato.bonificacion}" size="5" maxlength="10" disabled="#{not contratoB.banderaContrato}" />
+                    
+                    <br/>
+                    <h:outputLabel for="txtObjetivoCP" value="Objetivo"  /><br />
+                    <h:inputTextarea id="txtObjetivoCP" value="#{contratoB.personalContrato.objetivo}" style="height: 50px" disabled="#{not contratoB.banderaContrato }" />
+                    
+              
+                    </div>
+                    
+              
+                        <p:dataTable id="tbDetalleContrato" value="#{contratoB.personalContratoL}" var="itemPersonalContrato" selectionMode="single" rowKey="#{itemPersonalContrato.contrato}"  selection="#{contratoB.personalContrato}" rowIndexVar="status" emptyMessage=""   >
+                       
+                        <p:ajax event="rowSelect"  update=":frmContrato:tabPrincipal:cbInstitucionCP :frmContrato:tabPrincipal:cbPeriodoCP :frmContrato:tabPrincipal:cbTipoPersonalCP  :frmContrato:tabPrincipal:cboTipoContratoCP :frmContrato:tabPrincipal:cboPeriocidadCP :frmContrato:tabPrincipal:dpFechaInicioCP :frmContrato:tabPrincipal:dpFechaFinalCP :frmContrato:tabPrincipal:txtBasicoCP :frmContrato:tabPrincipal:txtMobilidadCP :frmContrato:tabPrincipal:txtBonificacionCP :frmContrato:tabPrincipal:txtObjetivoCP :frmContrato:btNuevoP :frmContrato:btGuardarP :frmContrato:btCancelarP :frmContrato:btEditarP  :frmContrato:btEliminarP  :frmContrato:btImprimirP pnCursoContrato" listener="#{contratoB.seleccionarContrato}"   />
+                       
+                        <p:column headerText="Nro" width="20">
+                            #{status+1}        
+                        </p:column>                   
+                        
+                        <p:column headerText="Periodo" width="120">
+                            #{itemPersonalContrato.periodo}
+                        </p:column>
+                        
+                        <p:column headerText="Contrato">
+                                               
+                        </p:column>                        
+                        <p:column headerText="Fecha Inicio" width="80">
+                            #{itemPersonalContrato.fechaInicio}   
+                        </p:column>
+                        <p:column headerText="Fecha Final" width="80">                            
+                         	#{itemPersonalContrato.fechaFin}
+                        </p:column>
+                       
+                           <p:column headerText="Básico" width="50">
+                    		#{itemPersonalContrato.basico}
+                        </p:column>       
+                    </p:dataTable>                    
+                    
+                    
+                    
+                    
+                    <h:panelGroup  layout="block" id="pnCursoContrato" styleClass="paneles" >
+                    
+                    <p:dataTable  id="tbPersonalCurso" value="#{contratoB.contratoCursoPersonalL}" var="itemCursoSeccionDocente"  rowIndexVar="status" rendered="#{contratoB.personalContrato.tipoPersonal eq 4}" emptyMessage="" >
+                    <p:column headerText="Nr." width="10">
+                    	#{status +1 }
+                    </p:column>
+                          <p:column headerText="Carrera" width="250">
+                    	#{itemCursoSeccionDocente.carrera.descripcion}                    
+                    </p:column>
+                 
+                    <p:column headerText="Curso">
+                    	#{itemCursoSeccionDocente.curso.curso} - #{itemCursoSeccionDocente.curso.descripcion}                    
+                    </p:column>
+                       <p:column headerText="Seccion" width="80">
+                    	#{itemCursoSeccionDocente.seccion.descripcion}                    
+                    </p:column>
+                    <p:column headerText="Teoria" width="50" style="text-align:center">
+                    	#{itemCursoSeccionDocente.cursoSeccionDocente.hora_teoria}                    
+                    </p:column>
+                    <p:column headerText="Practica" width="50" style="text-align:center">
+                    	#{itemCursoSeccionDocente.cursoSeccionDocente.hora_practica}                    
+                    </p:column>
+                    
+                    <p:column  width="30">                 
+                    <h:commandLink title="Agregar" rendered="#{itemCursoSeccionDocente.cursoSeccionDocente.estadoRegistro ne 1}" >
+                    <i class="fa fa-check" style="color: green" />
+                    <f:ajax execute="@this" render="tbPersonalCurso" listener="#{contratoB.insertarContratoCursoPersonal(itemCursoSeccionDocente)}" />
+                    </h:commandLink>                    
+                    <h:commandLink title="Eliminar" rendered="#{itemCursoSeccionDocente.cursoSeccionDocente.estadoRegistro eq 1}" onclick="return confirmacion(this,'¿ Esta seguro eliminar ');">
+                  <i class="fa fa-times"  style="color: red" />
+                    <f:ajax execute="@this" render="tbPersonalCurso" listener="#{contratoB.eliminarContratoCursoPersonal(itemCursoSeccionDocente)}" />
+                    </h:commandLink>                                        
+                    </p:column>                    
+                    </p:dataTable>
+                    
+                    </h:panelGroup>
+                    
+                    
+                    
+            
+        </h:panelGroup>
+                    
+                </p:tab>
+                 
+                <p:tab id="tabAmonestacion"  disabled="true" ariaLabel="true"  titleStyleClass="tabContrato"  >
+                  <f:facet name="title">
+                desempeño <br /> laboral<br /> 
+                </f:facet>
+                
+                
+                    <h:outputLabel  value="Fecha:" />                    
+                    <p:calendar id="dpFechaAmonestacion" value="#{contratoB.personalAmonestacion.fecha}"  pattern="dd-MM-yyyy"  disabled="#{not contratoB.bandera}" /><br />
+                    <h:outputLabel  value="Tipo:" />
+                    <h:selectOneMenu id="cboTipoAmonestacion" value="#{contratoB.personalAmonestacion.tipo}" disabled="#{not contratoB.bandera}" >
+                        <f:selectItem itemLabel="--SELECCIONAR--" />
+                        <f:selectItems value="#{tipoAmonestacionB.mostrarTipoAmonestacion()}" var="tipoAmonestacion" itemValue="#{tipoAmonestacion.tipoAmonestacion}" itemLabel="#{tipoAmonestacion.descripcion}" />
+                    </h:selectOneMenu><br />
+                    <h:outputLabel value="Motivo:" style="display: inline-block;vertical-align: top;" />
+                    <h:inputTextarea id="txtMotivoAmonestacion" value="#{contratoB.personalAmonestacion.motivo}" style="width: 400px;height: 90px"  disabled="#{not contratoB.bandera}" /><br />
+                                    
+                    
+                    
+                     <h:panelGroup id="subBotoneraAmonestacion" layout="block" >
+                    <h:commandLink styleClass="subBoton" value="NUEVO"  disabled="#{not contratoB.bandera}">
+                        <f:ajax execute=":frmContrato:tabPrincipal:tabAmonestacion" render=" tbAmonestacion cboTipoAmonestacion txtMotivoAmonestacion dpFechaAmonestacion " listener="#{contratoB.agregarAmonestacion()}" />
+                        
+                    </h:commandLink>
+                    <h:commandLink styleClass="subBoton" value="AGREGAR"  disabled="#{not contratoB.bandera}">
+                        <f:ajax execute=":frmContrato:tabPrincipal:tabAmonestacion" render=" tbAmonestacion cboTipoAmonestacion txtMotivoAmonestacion dpFechaAmonestacion " listener="#{contratoB.agregarAmonestacion()}" />
+                        
+                    </h:commandLink>         
+                    </h:panelGroup>
+                    
+                    
+                    <p:dataTable id="tbAmonestacion" value="#{contratoB.personalAmonestacionL}" var="personalAmonestacion" rowIndexVar="statusAmonestacion" emptyMessage=""  styleClass="tablaContrato"   >
+                        <p:column headerText="Item">
+                            #{statusAmonestacion+1}
+                        </p:column>
+                       
+                        <p:column headerText="Tipo">
+                            #{tipoAmonestacionB.mostrarTipoAmonestacion(personalAmonestacion.tipo).descripcion}
+                            
+                        </p:column>                        
+                        <p:column headerText="Motivo">
+                            #{personalAmonestacion.motivo}
+                        </p:column>
+                        <p:column headerText="Fecha">
+                            
+                             #{utilB.convertDate(personalAmonestacion.fecha,"dd-MM-yyyy")}
+                        </p:column>
+                        <p:column headerText="">
+                            <h:commandLink value="Eliminar" disabled="#{not contratoB.bandera}">
+                                <f:ajax execute="@this"  render="tbAmonestacion" listener="#{contratoB.eliminarAmonestacion(statusAmonestacion)}"  />
+                            </h:commandLink>
+                        </p:column>
+                    </p:dataTable>
+                                     
+                </p:tab>
+                
+                
+                <p:tab id="tabHorario" disabled="false" ariaLabel="false"  titleStyleClass="tabContrato" >
+                    <f:facet name="title">
+                    <i class="fa fa-calendar" />
+                    <div class="column" >
+                    horario <br /><br />
+                    </div>
+                    
+                    </f:facet>
+				          <h:panelGroup id="pnTabHorario" layout="block" >
+				          <p:dataTable id="tbCalendarioPersonal" value="#{contratoB.calendarioPersonalL}" var="itemCalendarioPersonal"  rowIndexVar="status" emptyMessage="" >
+				<p:column  headerText="N" width="10" >
+					#{status+1}
+				</p:column>
+				<p:column  headerText="Calendario" >
+					#{itemCalendarioPersonal.calendario} - #{itemCalendarioPersonal.itemCalendario.descripcion}
+				</p:column>
+				<p:column  headerText="Fecha Inicio" width="80" >
+					#{itemCalendarioPersonal.fechaDesde}
+				</p:column>
+				<p:column  headerText="Fecha Final" width="80" >
+					#{itemCalendarioPersonal.fechaHasta}
+				</p:column>
+				
+				<p:column  width="10" >
+					<h:commandLink id="btEditar" title="Editar" >
+					<i class="fa fa-pencil" />
+					<f:ajax execute="@this" render=":frmContrato:cbCalendarioH :frmContrato:txtFechaInicioH :frmContrato:txtFechaFinalH :frmContrato:txtObservacionH"  listener="#{contratoB.editarCalendarioPersonal(itemCalendarioPersonal)}" />
+					</h:commandLink >
+					
+					
+				</p:column>
+				<p:column width="10" >
+				
+				<h:commandLink id="btEliminar" title="Eliminar" >
+					<i class="fa fa-times" />
+					<f:ajax execute="@this"  render=":frmContrato:tabPrincipal:tbCalendarioPersonal" listener="#{contratoB.eliminarCalendarioPersonal(itemCalendarioPersonal)}" />
+					</h:commandLink >
+				</p:column>
+				  </p:dataTable>
+				          </h:panelGroup>          
+				
+
+                     
+                    
+                    
+                    
+                                    
+                </p:tab>
+               
+                <p:tab id="tabAsignacion"  disabled="true" ariaLabel="true"  titleStyleClass="tabContrato" >
+                <f:facet name="title">
+                <i class="fa fa-users" />
+                <div class="column" >
+                asignacion <br /> personal
+                </div>
+                
+                </f:facet>
+                    <ui:repeat var="itemComision" value="#{contratoB.asignacionPersonalL}">
+                    <div class="paneles">
+                    #{itemComision.comision.descripcion}<br />
+	                    <ui:repeat var="itemAsignacion" value="#{itemComision.asignacionL}">
+	                    <div class="paneles column" style="width: 200px;height: 150px">	                    
+	                    <h:commandLink disabled="true">
+	                    #{itemAsignacion.descripcion}
+	                    <f:ajax execute="@this" listener="#{contratoB.insertarPersonalComision(itemComision.comision.comision,itemAsignacion.asignacion)}" />
+	                    </h:commandLink>	                    
+	                    </div>
+	                    </ui:repeat>
+	                </div>    
+                    </ui:repeat>                   
+                    
+                </p:tab>
+                
+                <p:tab id="tabPersonalDocente"    ariaLabel="false"  titleStyleClass="tabContrato"  >
+                <f:facet name="title">
+                <i class="fa fa-user-circle-o" />
+                <div class="column" >
+                personal  <br />Docente
+                </div>
+                
+                </f:facet>
+                <h:panelGroup layout="block" id="pnTabPersonalDocente" >
+                 <span class="subTituloPanel">primera seccion</span>
+                    <div class="paneles" >     
+                      
+                        <h:outputLabel value="DOCENTE" /><br />
+                        <h:inputText id="txtCPersonalPD" value="#{contratoB.personalDocente.cpersonal}" disabled="true" />   
+                    
+                    <br/>
+                    
+                      <h:outputLabel value="PEDIODO" />
+                    <br/>
+                    <h:selectOneMenu id="cboPeriodoPD" value="#{contratoB.personalDocente.periodo}" disabled="#{contratoB.personalDocente.cpersonal != null?true:not contratoB.banderaPersonalDocente}" required="true" style="#{ component.valid ? '' : 'border-color:red;'}"  >
+                    <f:selectItem  itemLabel="--Seleccionar --" />
+                    <f:selectItems value="#{usuarioB.periodoL}"  var="itemPeriodo"  itemLabel="#{itemPeriodo.desPeriodo}" itemValue="#{itemPeriodo.periodo}" />
+                        
+                    </h:selectOneMenu>
+                    <br />
+                    
+                      <h:outputLabel value="MODALIDAD" />
+                    <br/>
+                    <h:selectOneMenu id="cboModalidadPD" value="#{contratoB.personalDocente.modalidad}" disabled="#{contratoB.personalDocente.cpersonal != null?true:not contratoB.banderaPersonalDocente}" required="true" style="#{ component.valid ? '' : 'border-color:red;'}">
+                    <f:selectItem  itemLabel="--Seleccionar --" />
+                    <f:selectItem itemLabel="CONTRATADO" itemValue="1" />
+                    <f:selectItem itemLabel="INVITADO" itemValue="2" />
+                    </h:selectOneMenu>
+                    </div>
+                    
+                    <span class="subTituloPanel">segunda seccion</span>
+                    <div class="paneles" >
+                    
+                    <h:outputLabel value="FECHA DE INGRESO " /><br/>
+                    <p:calendar id="txtIngresoPD" value="#{contratoB.personalDocente.ingreso}" size="10" pattern="dd-MM-yyyy" required="true" disabled="#{not contratoB.banderaPersonalDocente}"  navigator="true" mask="true" /><br/>
+                  
+                     
+                     <h:outputLabel  value="UNIVERSIDAD INGRESO" />
+                     
+                       <br/>
+                      <h:selectOneMenu id="cbInstitucionPD" value="#{contratoB.personalDocente.institucion}" required="true" disabled="#{not contratoB.banderaPersonalDocente}" >
+                              <f:selectItem itemLabel="--Selecciona--" />
+                              <f:selectItems value="#{contratoB.centroEducativoUniversidadL}" var="itemUniversidad" itemLabel="#{itemUniversidad.descripcion}" itemValue="#{itemUniversidad.centroEducativo}" />                              
+                      </h:selectOneMenu>
+                         <h:commandLink   >
+                      		<i class="fa fa-university" />
+                        	<f:ajax execute="@this" render=":frmContrato:txtDescripcionCE :frmContrato:txtAbreviaturaCE :frmContrato:btNuevoCE :frmContrato:btGuardarCE" listener="#{contratoB.mostrarCentroEducativo}" resetValues="true" />
+                       </h:commandLink>
+                      
+                      
+                    <br/>
+                     <h:outputLabel value="CATEGORIA" /><br/>
+                     <h:selectOneMenu id="cboCategoriaPD" value="#{contratoB.personalDocente.categoria}" disabled="#{not contratoB.banderaPersonalDocente}" >
+                      <f:selectItem  itemLabel="--Seleccionar --" />
+                      
+                      <f:selectItems value="#{contratoB.personalDocenteCategoriaL}" var="itemPersonalDocenteCategoria"  itemValue="#{itemPersonalDocenteCategoria.categoria}"  itemLabel="#{itemPersonalDocenteCategoria.descripcion}" />
+                    
+                     </h:selectOneMenu><br/>
+                     
+                     
+                     <h:outputLabel value="REGIMEN" /><br/>
+                     
+                     <h:selectOneMenu id="cboRegimenPD" value="#{contratoB.personalDocente.regimen}" disabled="#{not contratoB.banderaPersonalDocente}">
+                      <f:selectItem  itemLabel="--Seleccionar --" />
+                     <f:selectItems value="#{contratoB.personalDocenteRegimenL}" var="itemPersonalDocenteRegimen" itemValue="#{itemPersonalDocenteRegimen.regimen}" itemLabel="#{itemPersonalDocenteRegimen.descripcion}" />
+                     </h:selectOneMenu>
+                           
+                    </div>
+                    <span class="subTituloPanel">tercera seccion</span>
+                     <div class="paneles">
+                     <h:outputLabel value="¿ERA DOCENTE UNIVERSITARIO A LA ENTRADA EN VIGENCIA DE LA  LEY 30220, LU?" /><br/>                    
+                    <h:selectOneRadio id="cboVigenciaPD" value="#{contratoB.personalDocente.vigencia}" disabled="#{not contratoB.banderaPersonalDocente}" >
+                        <f:selectItem itemLabel="SI" itemValue="true" />
+                        <f:selectItem itemLabel="NO" itemValue="false" />
+                    </h:selectOneRadio><br />
+                      <h:outputLabel value="¿DOCENTE INVESTIGADOR  ?" /><br/>
+                      <h:selectOneRadio id="cboInvestigadorPD" value="#{contratoB.personalDocente.investiga}" disabled="#{not contratoB.banderaPersonalDocente}" >
+                        <f:selectItem itemLabel="SI" itemValue="true" />
+                        <f:selectItem itemLabel="NO" itemValue="false" />
+                    </h:selectOneRadio><br />
+               
+                    
+                     <h:outputLabel value="¿DOCENTE REGISTRADO EN DINA  ?" /><br/>
+                     <h:selectOneRadio id="cboDinaPD" value="#{contratoB.personalDocente.dina}" disabled="#{not contratoB.banderaPersonalDocente}" >
+                        <f:selectItem itemLabel="SI" itemValue="true" />
+                        <f:selectItem itemLabel="NO" itemValue="false" />
+                    </h:selectOneRadio><br />
+                     </div> 
+                     
+                     </h:panelGroup>    
+                </p:tab>
+                
+          
+                <p:tab id="tabCurriculum"   ariaLabel="false"  titleStyleClass="tabContrato" >
+                <f:facet name="title">
+                curriculum <br /> vitae
+                
+                </f:facet>
+                <h:panelGroup layout="block" id="pnTabCurriculum" >
+                
+	               
+	                <h:panelGroup id="pnVistaCurriculum" layout="block" rendered="#{contratoB.curriculumVitae ne null}" style="position: relative;" >
+	                <div id="pnDetalleCurriculum" >
+	                <b style="display: block;">FOLIO GRADO</b>
+	                	Desde: #{contratoB.curriculumVitae.folioDesde}	al #{contratoB.curriculumVitae.folioHasta}
+	                </div>
+	                <iframe src="SarchivoBD?opcion=1&amp;codigo=#{contratoB.curriculumVitae.personal}" style=";width: 100%;height: 700px;border: 1px solid;" />
+	                </h:panelGroup>              
+                
+                </h:panelGroup>
+	            
+                </p:tab>
+                
+                
+                <p:tab id="tabCertificado"    disabled="true"  ariaLabel="true"  titleStyleClass="tabContrato" >
+                <f:facet name="title">
+                Certificado <br />Trabajo
+                </f:facet>
+                <h:panelGroup layout="block" id="pnTabCertificado" >
+                <ui:repeat var="itemCertificadoTrabajo" value="#{contratoB.personalCertificadoTrabajoL}">
+                <div class="paneles column"  style="width: 220px">
+                <i class="fa fa-address-card-o column"  style="font-size: 3.0em"  />
+                <div class="column">
+                <h:outputLabel  value="Tipo" />#{itemCertificadoTrabajo.tipo eq 1?'Certificado':'Constancia'}<br />
+                <h:outputLabel  value="Fecha Inicio " />#{itemCertificadoTrabajo.fechaInicio}<br />
+                <h:outputLabel  value="Fecha Final " />#{itemCertificadoTrabajo.fechaFinal}
+                </div>
+                <div  style="display: block;border-top: 1px solid silver; padding: 2px 0px;text-align: right;">
+                
+                
+                
+                <h:commandLink title="editar">
+                 <i class="fa fa-pencil" />
+                <f:ajax execute="@this"  render="@this  :frmCertificadoTrabajo:cbTipoPCT :frmCertificadoTrabajo:txtFechaInicioPCT :frmCertificadoTrabajo:txtFechaFinalPCT" listener="#{contratoB.editarPersonalCertificadoTrabajo(itemCertificadoTrabajo)}" />
+                </h:commandLink>
+                
+                  <h:commandLink title="eliminar" onclick="return confirmacion(this,'¿ Esta seguro eliminar ');">
+                 <i class="fa fa-times" style="color: red" />
+                <f:ajax execute="@this"  render=":frmContrato:tabPrincipal:pnTabCertificado" listener="#{contratoB.eliminarPersonalCertificadoTrabajo(itemCertificadoTrabajo)}" />
+                </h:commandLink>
+                
+                <ui:param name="paramC" value="PERSONAL,#{contratoB.personal.personal},CERTIFICADO,#{itemCertificadoTrabajo.certificado}" />
+         
+                 <h:commandLink  rendered="#{itemCertificadoTrabajo.tipo eq 1?itemCertificadoTrabajo.tipoPersonal eq 4:false}"   immediate="true"  title="Imprimir Certificado" target="_blank" actionListener="#{utilB.imprimirIreports('administrativo/contrato/certificadoTrabajo', 1, fn:split(paramC,','))}"   >
+                 
+                  <i class="fa fa-print" />
+               
+                </h:commandLink>
+                
+                 <h:commandLink  rendered="#{itemCertificadoTrabajo.tipo ne 1}"  immediate="true"  title="Imprimir Constancia" target="_blank" actionListener="#{utilB.imprimirIreports('administrativo/contrato/constanciaTrabajo', 1, fn:split(paramC,','))}"   >
+                 
+                  <i class="fa fa-print" />
+               
+                </h:commandLink>
+                </div>
+                
+                </div>
+                
+                
+                </ui:repeat>
+                
+                </h:panelGroup>
+                </p:tab>
+            </p:tabView>
+            
+            
+            
+            
+<p:dialog header="..: Calendario Personal :.." modal="true" resizable="false" closeOnEscape="true" widgetVar="dlCalendarioPersonal"  >
+<h:outputLabel for="cbCalendarioH" value="Calendario" />
+<h:selectOneMenu id="cbCalendarioH" value="#{contratoB.calendarioPersonal.calendario}" required="true" style="width:400px" >
+<f:selectItems value="#{contratoB.calendarioL}" var="itemCalendario" itemValue="#{itemCalendario.calendario}" itemLabel="#{itemCalendario.descripcion}" />
+</h:selectOneMenu>
+<br />
+<h:outputLabel for="txtFechaInicioH" value="Fecha Inicio" />
+<p:calendar id="txtFechaInicioH" value="#{contratoB.calendarioPersonal.fechaDesde}" pattern="dd-MM-yyyy" required="true" mask="true" size="10"  >
+<p:ajax event="dateSelect"  update="txtFechaFinalH" process="@this" />
+</p:calendar>
+<br />
+<h:outputLabel for="txtFechaFinalH" value="Fecha Final" /> 
+<p:calendar id="txtFechaFinalH" value="#{contratoB.calendarioPersonal.fechaHasta}" pattern="dd-MM-yyyy" required="true"  mask="true" size="10" mindate="#{contratoB.calendarioPersonal.fechaDesde}" />
+<br />
+<h:outputLabel for="txtObservacionH" value="Observacion" />
+<br />
+<h:inputTextarea id="txtObservacionH" />
+<f:facet name="footer">
+<div style="display: block;text-align: right;">
+<h:commandLink styleClass="boton-normal" >
+Aceptar
+<f:ajax execute="@this cbCalendarioH txtFechaInicioH txtFechaFinalH txtObservacionH" render="cbCalendarioH txtFechaInicioH txtFechaFinalH :frmContrato:tabPrincipal:tbCalendarioPersonal"  listener="#{contratoB.insertarCalendarioPersonal}"  />
+</h:commandLink>
+
+</div>
+
+</f:facet>
+</p:dialog>
+            
+            
+            
+            
+            
+            
+             <p:dialog header="..:: Ubicacion Geografica ::.." widgetVar="dlgMap"  modal="true" height="350" width="600" resizable="false" closeOnEscape="true"  >							
+				
+					<p:gmap id="gmap" center="#{contratoB.centerGeoMap}" zoom="12" type="ROADMAP"  model="#{contratoB.draggableModel}" widgetVar="map"  onPointClick="handlePointClick(event);"    style="width:100%;height:100%"  >
+						<p:ajax event="markerDrag" listener="#{contratoB.onMarkerDrag}"  />
+					</p:gmap>
+				
+				<f:facet name="footer">
+				
+				<h:commandLink styleClass="boton-rojo" onclick="dlgMap.hide()" >
+					<i class="fa fa-sign-out" />
+					Salir
+					<f:ajax execute="@this"  />
+				</h:commandLink>				
+				</f:facet>
+		</p:dialog>
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            <p:dialog header="..: Grado Academico :.."  widgetVar="dlGradoAcademico" modal="true" resizable="false" closeOnEscape="true" >
+            
+                     <h:outputLabel value="Grado" />
+                       <h:selectOneMenu id="cboGrado" value="#{contratoB.personalGradoAcademico.grado}" required="true"  style="#{ component.valid ? '' : 'border-color:red;'}">
+                        <f:selectItem itemLabel="--Seleccionar --" />
+                        <f:selectItems value="#{contratoB.gradoInstruccionL}" var="grado" itemValue="#{grado.gradoInstruccion}" itemLabel="#{grado.descripcion}" />
+                        </h:selectOneMenu>
+                       <br/>
+                       <h:outputLabel value="Denominación" />
+                       <h:inputText id="txtGradoDenominacion" value="#{contratoB.personalGradoAcademico.denominacion}" required="true" style="#{ component.valid ? '' : 'border-color:red;'}"  />
+                       <br/>
+                       <h:outputLabel value="Centro Educativo" />
+                      <h:selectOneMenu id="cboGradoInstitucion" value="#{contratoB.personalGradoAcademico.centroEducativo}" required="true"  style="#{ component.valid ? '' : 'border-color:red;'}" >
+                              <f:selectItem itemLabel="--Selecciona--" />
+                              <f:selectItems value="#{contratoB.centroEducativoUniversidadL}" var="institucionGrado" itemLabel="#{institucionGrado.descripcion}" itemValue="#{institucionGrado.centroEducativo}" />                              
+                      </h:selectOneMenu>
+                      
+                       <h:commandLink   >
+                      		<i class="fa fa-university" aria-hidden="true"></i>
+                        	<f:ajax execute="@this" render=":frmContrato:txtDescripcionCE :frmContrato:txtAbreviaturaCE :frmContrato:tbCentroEducativo :frmContrato:btNuevoCE :frmContrato:btGuardarCE" listener="#{contratoB.mostrarCentroEducativo}" resetValues="true" />
+                       </h:commandLink>
+                        <br/>
+                       
+                       <h:outputLabel value="Fecha" />
+                       
+                       <p:calendar id="dpGradoFecha" value="#{contratoB.personalGradoAcademico.fecha}"  pattern="dd-MM-yyyy" mask="true" navigator="true" size="10" maxdate="#{utilB.fechaHoy()}"  required="true"  /> 
+			            <f:facet name="footer">
+	            				<h:commandLink id="btAgregarGA" styleClass="boton-normal" title="Agregar"  >
+	                               <i class="fa fa-plus" />
+	                                   Agregar
+	                                <f:ajax execute="cboGrado txtGradoDenominacion cboGradoInstitucion dpGradoFecha "  render="cboGrado txtGradoDenominacion  cboGradoInstitucion dpGradoFecha :frmContrato:tabPrincipal:tbGradoAcademico" listener="#{contratoB.agregarGrado}" />
+	                            </h:commandLink>                            
+	                            
+			            </f:facet>
+            </p:dialog>
+            
+            <p:dialog  header="..: Titulo Profesion :.." widgetVar="dlTituloProfesional" modal="true" resizable="false" closeOnEscape="true"  >
+            		   
+                       <h:outputLabel value="Tipo Centro" />
+                       <h:selectOneMenu id="cboTituloTipoInstitucion" value="#{contratoB.tituloTipoInstitucion}"  required="true"  >
+                           <f:selectItem itemLabel="--Selecciona--" />
+                           <f:selectItems value="#{contratoB.tipoCentroEducativoL}" var="tipo" itemLabel="#{tipo.descripcion}" itemValue="#{tipo.tipoCentroEducativo}" />
+                           <f:ajax execute="@this" render="cboTituloInstitucion" listener="#{contratoB.mostrarTipoCentroEducativo}" />
+                       </h:selectOneMenu>
+                       <br/>
+                       
+                         <h:outputLabel value="Centro Educativo" />
+                       
+                      <h:selectOneMenu id="cboTituloInstitucion" value="#{contratoB.personaTitulo.centroEducativo}"  required="true" style="width: 300px;#{ component.valid ? '' : 'border-color:red;'}" >
+                          <f:selectItem itemLabel="--Selecciona--" />
+                          <f:selectItems value="#{contratoB.centroEducativoTituloL}" var="institucionTitulo" itemLabel="#{institucionTitulo.descripcion}" itemValue="#{institucionTitulo.centroEducativo}" />
+                         
+                      </h:selectOneMenu>
+                      
+                       <h:commandLink   >
+                      		<i class="fa fa-university" />
+                        	<f:ajax execute="@this" render=":frmContrato:txtDescripcionCE :frmContrato:txtAbreviaturaCE :frmContrato:btNuevoCE :frmContrato:btGuardarCE" listener="#{contratoB.mostrarCentroEducativo}" resetValues="true" />
+                       </h:commandLink>
+                      
+                       <br/>
+                       <h:outputLabel value="Titulo" />
+                       <h:inputText id="txtTituloTitulo" value="#{contratoB.personaTitulo.titulo}" style="#{ component.valid ? '' : 'border-color:red;'}"  required="true" />
+                       <br/>
+                       <h:outputLabel value="Fecha" />
+                       <p:calendar id="txtTituloFecha" value="#{contratoB.personaTitulo.fecha}" pattern="dd-MM-yyyy" maxdate="#{utilB.fechaHoy()}"  mask="true" navigator="true" size="10"  required="true" />
+                       <f:facet name="footer">
+                       
+                       <h:commandLink styleClass="boton-normal" title="Agregar"  >
+                                 <i class="fa fa-plus" />
+                                 Agregar
+                                <f:ajax execute="txtTituloTitulo cboTituloTipoInstitucion cboTituloInstitucion txtTituloFecha " render=" txtTituloTitulo cboTituloTipoInstitucion cboTituloInstitucion txtTituloFecha :frmContrato:tabPrincipal:tbTitulo" listener="#{contratoB.agregarTitulo}" />
+                            </h:commandLink>
+                            
+                            
+                            
+                       </f:facet>
+            </p:dialog>
+            
+            
+            <p:dialog header="..: Actualizacion Capacitaciones :.." widgetVar="dlActualizacionCapacitacion" modal="true" closeOnEscape="true" resizable="false" >
+            <h:outputLabel value="Tipo" />
+                       <h:selectOneMenu id="cboActualizacionTipo" value="#{contratoB.personaCapacitacion.tipo}"  required="#{true}"  >
+                          <f:selectItem itemLabel="--Seleccionar --" />
+                          <f:selectItem itemLabel="Formacion Continua" itemValue="1"/>
+                          <f:selectItem itemLabel="Diplomado" itemValue="2"/>                          
+                      </h:selectOneMenu>
+                       <br/>
+                       
+                      <h:outputLabel value="Denominación" />
+                      <h:inputText id="txtActualizacionDenominacion" value="#{contratoB.personaCapacitacion.denominacion}" required="true" style="#{ component.valid ? '' : 'border-color:red;'}" />
+                      <br/>
+                      <h:outputLabel value="Institución" />
+                    
+                      <h:selectOneMenu id="cboActualizacionInstitucion" value="#{contratoB.personaCapacitacion.centroEducativo}" required="true" >
+                          <f:selectItem itemLabel="--Selecciona--" />
+                          <f:selectItems value="#{contratoB.centroEducativoACL}" var="itemCentroEducativoAC" itemLabel="#{itemCentroEducativoAC.descripcion}" itemValue="#{itemCentroEducativoAC.centroEducativo}" />
+                          
+                      </h:selectOneMenu>
+                      
+                      <h:commandLink   >
+                      		<i class="fa fa-university" aria-hidden="true"></i>
+                        	<f:ajax execute="@this" render=":frmContrato:txtDescripcionCE :frmContrato:txtAbreviaturaCE :frmContrato:btNuevoCE :frmContrato:btGuardarCE" listener="#{contratoB.mostrarCentroEducativo}" />
+                       </h:commandLink>
+                        
+                      <br/>
+                      <h:outputLabel value="Fecha" />
+                      <p:calendar id="dpActualizacionFecha" value="#{contratoB.personaCapacitacion.fecha}" pattern="dd-MM-yyyy" required="true"  mask="true" navigator="true" size="10" maxdate="#{utilB.fechaHoy()}" />
+                      
+	            <f:facet name="footer">
+	            		  <h:commandLink styleClass="boton-normal" title="Agregar"  >
+	                           <i class="fa fa-plus" />
+	                           Agregar
+	                          <f:ajax execute="cboActualizacionTipo txtActualizacionDenominacion cboActualizacionInstitucion dpActualizacionFecha" render="cboActualizacionTipo txtActualizacionDenominacion cboActualizacionInstitucion dpActualizacionFecha :frmContrato:tabPrincipal:tbActualizacion" listener="#{contratoB.agregarCapacitacion}" />
+	                       </h:commandLink>
+	                       
+	                       
+	            
+	            </f:facet>
+            </p:dialog>
+                
+            <p:dialog  header="Conocimiento de Idioma" widgetVar="dlIdioma" modal="true" resizable="false" closeOnEscape="true" >
+            		<h:outputLabel value="Nivel" />
+                      <h:selectOneMenu id="cboIdiomaNivel" value="#{contratoB.personaIdioma.nivel}" required="true"  style="#{ component.valid ? '' : 'border-color:red;'}">
+                          <f:selectItem itemLabel="--Seleccionar --" />
+                          <f:selectItem itemLabel="Basico" itemValue="1"/>
+                          <f:selectItem itemLabel="Intermedio" itemValue="2"/>
+                          <f:selectItem itemLabel="Avanzado" itemValue="3"/>
+                      </h:selectOneMenu>
+                      
+                      <br/>
+                      <h:outputLabel  value="Idioma" />
+                      <h:selectOneMenu id="cboIdiomaIdioma" value="#{contratoB.personaIdioma.idioma}" required="true"  style="#{ component.valid ? '' : 'border-color:red;'}" >
+                          <f:selectItem itemLabel="--Seleccionar --" />
+                          <f:selectItems value="#{contratoB.idiomaL}" var="idioma" itemLabel="#{idioma.descripcion}" itemValue="#{idioma.idioma}" />
+                      </h:selectOneMenu>
+            		<f:facet name="footer">
+            			<h:commandLink styleClass="boton-normal" title="Agrerar"  >
+                               <i class="fa fa-plus" />
+                                 Agregar
+                                <f:ajax  execute="cboIdiomaNivel cboIdiomaIdioma" render="cboIdiomaNivel cboIdiomaIdioma :frmContrato:tabPrincipal:tbIdioma" listener="#{contratoB.agregarIdioma}" />
+                          </h:commandLink>
+                          
+                           
+            
+	            	</f:facet>
+	            </p:dialog>
+            
+            
+            <p:dialog  header="trabajo de Investigacion" widgetVar="dlTrabajoInvestigacion" modal="true" closeOnEscape="true" resizable="false" >
+            			<h:outputLabel  value="Tema" />
+                      <h:inputText id="txtTrabajoTema" value="#{contratoB.personaTrabajoInvestigacion.tema}"   required="true"  style="#{ component.valid ? '' : 'border-color:red;'}"  />
+                      <br/>
+                      <h:outputLabel value="Año" />
+                      <h:inputText id="txtTrabajoAnio" value="#{contratoB.personaTrabajoInvestigacion.año}"   required="true"  maxlength="4" size="5" style="#{ component.valid ? '' : 'border-color:red;'}" />
+                     
+		            <f:facet name="footer">
+             			<h:commandLink styleClass="boton-normal" title="Agregar"  >                              
+                               <i class="fa fa-plus" />
+                                 Agregar
+                                <f:ajax execute="txtTrabajoTema txtTrabajoAnio" render="txtTrabajoTema txtTrabajoAnio :frmContrato:tabPrincipal:tbTrabajo"  listener="#{contratoB.agregarTrabajoInvestigacion}" />
+                          </h:commandLink>
+                          
+                          
+		            </f:facet>
+            </p:dialog>    
+                
+          <p:dialog widgetVar="dlgBusquedaPersona" width="650px"     header="..: BUSQUEDA DE PERSONA :.." modal="true" resizable="false" closeOnEscape="true">
+              
+               
+                <h:outputLabel for="txtbusPaterno" value="PATERNO" />               
+                
+                    
+                <h:inputText id="txtbusPaterno" value="#{contratoB.busPaterno}" >
+                    <f:ajax execute="@this" render="tbBusqueda" listener="#{contratoB.filtroPersona}" />
+                </h:inputText><br/>
+                <h:outputLabel for="txtbusMaterno" value="MATERNO" />
+                
+                <h:inputText id="txtbusMaterno" value="#{contratoB.busMaterno}" >
+                    <f:ajax execute="@this" render="tbBusqueda"  listener="#{contratoB.filtroPersona}"/>
+                </h:inputText><br/>
+                <h:outputLabel for="txtbusNombres" value="NOMBRES" />
+                
+                <h:inputText id="txtbusNombres" value="#{contratoB.busNombres}" >
+                    <f:ajax execute="@this" render="tbBusqueda " listener="#{contratoB.filtroPersona}" />
+                </h:inputText>
+            
+                
+               
+                
+                <p:dataTable id="tbBusqueda" value="#{contratoB.personaL}" var="detalle" selection="#{contratoB.persona}" selectionMode="single" rowKey="#{detalle.persona}" emptyMessage="" scrollable="true" scrollHeight="350" rowIndexVar="status" >                    
+                    <p:ajax event="rowSelect"   />
+                    <p:ajax event="rowDblselect"  update=":frmContrato:imgPersona  :frmContrato:cbDocumento :frmContrato:txtNumero :frmContrato:txtPaterno :frmContrato:txtMaterno  :frmContrato:txtNombres  :frmContrato:tabPrincipal btNuevoP btGuardarP btCancelarP btEditarP btEliminarP  btBuscarP"  listener="#{contratoB.selectPersona}"      /> 
+                    <p:column headerText="NR." width="20" >
+                        #{status+1}
+                    </p:column>
+                    <p:column headerText="PERSONAL" >
+                        #{detalle.nombreCompletos()}
+                    </p:column>                    
+                </p:dataTable>                    
+            
+            <f:facet name="footer">
+                            <div style="display: block;text-align: right">
+                            
+                            <h:commandLink  styleClass="boton-normal" >
+                            	Aceptar
+                            <f:ajax  execute="@this" render=":frmContrato:imgPersona  :frmContrato:cbDocumento :frmContrato:txtNumero :frmContrato:txtPaterno :frmContrato:txtMaterno  :frmContrato:txtNombres  :frmContrato:tabPrincipal btNuevoP btGuardarP btCancelarP btEditarP btEliminarP  btBuscarP" listener="#{contratoB.selectPersona}" />
+                            </h:commandLink>
+                            
+                            <h:commandLink styleClass="boton-rojo"  onclick="dlgBusquedaPersona.hide()" >			                       
+			                       Cancelar
+			                       <f:ajax execute="@this"   />
+			               </h:commandLink>
+                            </div>
+                 </f:facet>
+            
+            </p:dialog>
+            
+            
+            
+            
+             <p:dialog header="Fecha de Impresion" widgetVar="dlgImprimir" maximizable="false" resizable="false">
+            
+            <h:panelGroup layout="block">
+                  <h:outputLabel value="Fecha de Impresion" />
+                    
+                  <p:calendar  value="#{contratoB.fechaImpresion}"  pattern="dd-MM-yyyy"  />
+                    <br/>
+                    <div style="display: block;text-align: center">
+                        <ui:param name="param2" value="PERSONAL,#{contratoB.personal.personal},ITEM,#{contratoB.detalleContratoS.contrato},TIPO_CONTRATO,#{contratoB.detalleContratoS.tipoContrato},SITUACION,#{contratoB.detalleContratoS.situacion},FECHA_IMPRESION,#{utilB.convertDate(contratoB.fechaImpresion, 'dd-MM-yyyy')}" />
+                    <h:commandLink   value="IMPRESION"  target="_blank" actionListener="#{utilB.imprimirIreports('formatoContrato', 1, fn:split(param2,','))}" onclick="dlgImprimir.show()" />
+                    </div>
+                    
+                    
+            </h:panelGroup>
+          
+            
+        </p:dialog>
+        
+        
+        <p:dialog header="Bancos" widgetVar="dlBanco" modal="true" resizable="false" closeOnEscape="true" width="500" >
+        <div class="paneles" >
+        <h:outputLabel for="txtDescripcionBA" value="Decripcion" />
+        <h:inputText id="txtDescripcionBA" value="#{contratoB.banco.descripcion}" required="true" disabled="#{not contratoB.banderaBanco}"  />
+        <br />
+        <h:outputLabel for="txtAbreviaturaBA" value="Abreviatura" />
+        <h:inputText id="txtAbreviaturaBA" value="#{contratoB.banco.abreviatura}" disabled="#{not contratoB.banderaBanco}"  maxlength="5" />
+        <br />
+        <h:outputLabel for="cbEstadoBA" value="Estado" />
+        <h:selectOneMenu id="cbEstadoBA" value="#{contratoB.banco.estadoRegistro}"  disabled="#{not contratoB.banderaBanco}"  >
+        <f:selectItem itemLabel="Habilitado" itemValue="1" />
+        <f:selectItem itemLabel="DesHabilitado" itemValue="0" />
+        </h:selectOneMenu>
+        </div>
+        
+        
+        <p:dataTable id="tbBanco" value="#{contratoB.bancoL}" var="itemBanco" selectionMode="single" selection="#{contratoB.banco}"  rowKey="#{itemBanco.banco}" rowIndexVar="status" scrollable="true" scrollHeight="300" >
+        <p:ajax event="rowSelect"  update="txtDescripcionBA txtAbreviaturaBA cbEstadoBA"  />
+        <p:column headerText="Nr." width="5" >
+        	#{status+1}
+        </p:column>
+        <p:column headerText="Banco" >
+        	#{itemBanco.descripcion}
+        </p:column>
+        
+        
+        </p:dataTable>
+        
+        <f:facet name="footer">
+        <h:commandLink id="btNuevoBA" styleClass="boton-normal" disabled="#{contratoB.banderaBanco}" >
+        	Nuevo
+        	<f:ajax execute="@this" render="txtDescripcionBA txtAbreviaturaBA cbEstadoBA btNuevoBA btInsertarBA" listener="#{contratoB.nuevoBanco}" />        
+        </h:commandLink>
+        
+        <h:commandLink id="btInsertarBA" styleClass="boton-normal" disabled="#{not contratoB.banderaBanco}" >
+        	Guardar
+	        <f:ajax execute="@this txtDescripcionBA txtAbreviaturaBA" render="txtDescripcionBA txtAbreviaturaBA cbEstadoBA btNuevoBA btInsertarBA tbBanco :frmContrato:tabPrincipal:cbBancoCBH :frmContrato:tabPrincipal:cbBancoCTS" listener="#{contratoB.insertarBanco}" />
+	        
+        </h:commandLink>
+        
+      
+        
+        
+        
+        </f:facet>
+        </p:dialog>
+        
+        <p:dialog header="Cargo" widgetVar="dlCargo"  modal="true" closeOnEscape="true" resizable="false" width="600" >
+        <div class="paneles" >
+        <h:outputLabel for="txtDescripcionCA" value="Cargo" />
+        <h:inputText id="txtDescripcionCA" value="#{contratoB.cargo.descripcion}" required="true" disabled="#{not contratoB.banderaCargo}" />
+        <br />
+        <h:outputLabel for="txtAbreviaturaCA" value="Abreviatura" />
+        <h:inputText id="txtAbreviaturaCA" value="#{contratoB.cargo.abreviatura}" disabled="#{not contratoB.banderaCargo}" />
+        <br />
+        <h:outputLabel value="estado" />
+         <h:selectOneMenu id="cbEstadoCA" value="#{contratoB.cargo.estadoRegistro}"  disabled="#{not contratoB.banderaCargo}"  >
+        <f:selectItem itemLabel="Habilitado" itemValue="1" />
+        <f:selectItem itemLabel="DesHabilitado" itemValue="0" />
+        </h:selectOneMenu>
+        <br />
+        </div>
+        
+        
+        <p:dataTable id="tbCargo"  value="#{contratoB.cargoL}" var="itemCargo" rowIndexVar="status" scrollable="true" scrollHeight="300" selectionMode="single" rowKey="#{itemCargo.cargo}" selection="#{contratoB.cargo}" >
+        <p:ajax event="rowSelect"  update="txtDescripcionCA txtAbreviaturaCA cbEstadoCA"  />
+        <p:column  headerText="Nr." width="5" >
+        #{status+1}
+        </p:column>
+        <p:column headerText="Cargo" >
+        #{itemCargo.descripcion}
+        </p:column>
+        
+        </p:dataTable>
+        
+         <f:facet name="footer">
+        <h:commandLink id="btNuevoCA" styleClass="boton-normal" disabled="#{contratoB.banderaCargo}" >
+        	Nuevo
+        	<f:ajax execute="@this" render="txtDescripcionCA txtAbreviaturaCA cbEstadoCA btNuevoCA btInsertarCA" listener="#{contratoB.nuevoCargo}" />        
+        </h:commandLink>
+        
+        <h:commandLink id="btInsertarCA" styleClass="boton-normal" disabled="#{not contratoB.banderaCargo}" >
+        	Guardar
+	        <f:ajax execute="@this txtDescripcionCA txtAbreviaturaCA cbEstadoCA " render="txtDescripcionCA txtAbreviaturaCA cbEstadoCA btNuevoCA btInsertarCA tbCargo :frmContrato:tabPrincipal:cboCargo" listener="#{contratoB.insertarCargo}" />
+	        
+        </h:commandLink>
+        </f:facet>
+        </p:dialog>
+        
+      
+        
+        <p:dialog  widgetVar="dlOficina" header="..: Oficina :.." resizable="false" modal="true" closeOnEscape="true" width="600" >
+        <div class="paneles" >
+        <h:outputLabel for="txtDescripcionOF" value="Descripcion" />
+        <h:inputText id="txtDescripcionOF" value="#{contratoB.oficina.descripcion}" disabled="#{not contratoB.banderaOficina}" required="true" />
+        <br />
+        <h:outputLabel for="txtAbreviaturaOF" value="Abreviatura" />
+        <h:inputText id="txtAbreviaturaOF" value="#{contratoB.oficina.abreviatura}" disabled="#{not contratoB.banderaOficina}" />
+        <br />
+        <h:outputLabel for="txtAnexoOF" value="Anexo" />
+        <h:inputText id="txtAnexoOF" value="#{contratoB.oficina.anexo}" disabled="#{not contratoB.banderaOficina}" />
+        <br />
+        
+          <h:outputLabel for="cbEstadoOF" value="Estado" />
+        <h:selectOneMenu id="cbEstadoOF" value="#{contratoB.oficina.estado_registro}"  disabled="#{not contratoB.banderaOficina}"  >
+        <f:selectItem itemLabel="Habilitado" itemValue="1" />
+        <f:selectItem itemLabel="DesHabilitado" itemValue="0" />
+        </h:selectOneMenu>
+        </div>
+        
+        <p:dataTable id="tbOficina" value="#{contratoB.oficinaL}" var="itemOficina" rowIndexVar="status" scrollable="true" scrollHeight="300" selectionMode="single" selection="#{contratoB.oficina}" rowKey="#{itemOficina}" >
+        <p:ajax event="rowSelect"  update="txtDescripcionOF txtAbreviaturaOF txtAnexoOF cbEstadoOF"  />
+        <p:column headerText="Nr." width="5" >
+        #{status+1}
+        </p:column>
+        <p:column headerText="oficina"  >
+        #{itemOficina.descripcion}
+        </p:column> 
+        <p:column headerText="anexo" width="80"  >
+        #{itemOficina.anexo}
+        </p:column>
+        <p:column  width="5" >
+        <h:commandLink>
+        <i class="fa fa-pencil" style="color:green" />
+        <f:ajax execute="@this" render=":frmContrato:txtDescripcionOF :frmContrato:txtAbreviaturaOF :frmContrato:txtAnexoOF :frmContrato:cbEstadoOF :frmContrato:btInsertarOF :frmContrato:btNuevoOF" listener="#{contratoB.editarOficina(itemOficina)}" />
+        </h:commandLink>
+        </p:column>        
+        </p:dataTable>        
+        <f:facet name="footer">
+        <h:commandLink id="btNuevoOF" styleClass="boton-normal" disabled="#{contratoB.banderaOficina}" >
+        	Nuevo
+        	<f:ajax execute="@this" render="txtDescripcionOF txtAbreviaturaOF txtAnexoOF cbEstadoOF btInsertarOF btNuevoOF"  listener="#{contratoB.nuevoOficina}" />        
+        </h:commandLink>
+        
+        <h:commandLink id="btInsertarOF" styleClass="boton-normal" disabled="#{not contratoB.banderaOficina}" >
+        	Guardar
+	        <f:ajax execute="@this txtDescripcionOF txtAbreviaturaOF txtAnexoOF cbEstadoOF " render="txtDescripcionOF txtAbreviaturaOF txtAnexoOF cbEstadoOF btNuevoOF btInsertarOF tbOficina :frmContrato:tabPrincipal:cbOficina" listener="#{contratoB.insertarOficina}"  />
+	        
+        </h:commandLink>
+        
+        
+        
+        </f:facet>
+        
+        </p:dialog >
+        
+            
+            <p:dialog header="Ocupacion" widgetVar="dlOcupacion" modal="true" resizable="false" closeOnEscape="true" width="600" >
+            <div class="paneles" >
+            <h:outputLabel for="txtDescripcionOC" value="Ocupacion" />
+            <h:inputText  id="txtDescripcionOC" value="#{contratoB.ocupacion.descripcion}" required="true" disabled="#{not contratoB.banderaOcupacion}"  />
+            <br />
+            <h:outputLabel for="txtAbreviaturaOC" value="Abreviatura" />
+            <h:inputText  id="txtAbreviaturaOC" value="#{contratoB.ocupacion.abreviatura}" disabled="#{not contratoB.banderaOcupacion}"  />
+            <br />
+            <h:outputLabel value="Estado" />
+            <h:selectOneMenu id="cbEstadoOC" value="#{contratoB.ocupacion.estadoRegistro}"  disabled="#{not contratoB.banderaOcupacion}"  >
+		        <f:selectItem itemLabel="Habilitado" itemValue="1" />
+		        <f:selectItem itemLabel="DesHabilitado" itemValue="0" />
+        	</h:selectOneMenu>
+            </div>
+            
+            <p:dataTable id="tbOcupacion" value="#{contratoB.ocupacionL}" var="itemOcupacion" rowIndexVar="status" scrollable="true" scrollHeight="300" selectionMode="single" selection="#{contratoB.ocupacion}" rowKey="#{itemOcupacion.ocupacion}" >
+            <p:ajax event="rowSelect"  update="txtDescripcionOC txtAbreviaturaOC cbEstadoOC"  />
+            <p:column headerText="Nr." width="5" >
+            #{status+1}
+            </p:column>
+            
+            <p:column headerText="Ocuapcion"  >
+            #{itemOcupacion.descripcion}
+            </p:column>
+            
+            </p:dataTable>
+            
+            <f:facet name="footer">
+              <h:commandLink id="btNuevoOC" styleClass="boton-normal" disabled="#{contratoB.banderaOcupacion}" >
+        	Nuevo
+        	<f:ajax execute="@this" render="txtDescripcionOC txtAbreviaturaOC cbEstadoOC  btNuevoOC btInsertarOC"  listener="#{contratoB.nuevoOcupacion}"  />        
+        </h:commandLink>
+        
+        <h:commandLink id="btInsertarOC" styleClass="boton-normal" disabled="#{not contratoB.banderaOcupacion}" >
+        	Guardar
+	        <f:ajax execute="@this txtDescripcionOC txtAbreviaturaOC cbEstadoOC" render="txtDescripcionOC txtAbreviaturaOC cbEstadoOC btNuevoOC btInsertarOC tbOcupacion :frmContrato:tabPrincipal:cboOcupacion"  listener="#{contratoB.insertarOcupacion}" />
+	        
+        </h:commandLink>
+        </f:facet>
+       </p:dialog>
+            
+       <p:dialog  header="Regimen Pensionario" widgetVar="dlRegimen" modal="true" resizable="false" closeOnEscape="true" width="600" >
+            <div class="paneles" >
+            <h:outputLabel for="txtDescripcionRP" value="Ocupacion" />
+            <h:inputText  id="txtDescripcionRP" value="#{contratoB.regimenPension.descripcion}" required="true" disabled="#{not contratoB.banderaRegimen}"  />
+            <br />
+            <h:outputLabel for="txtAbreviaturaRP" value="Abreviatura" />
+            <h:inputText  id="txtAbreviaturaRP" value="#{contratoB.regimenPension.abreviatura}" disabled="#{not contratoB.banderaRegimen}"  />
+            <br />
+            <h:outputLabel value="Estado" />
+            <h:selectOneMenu id="cbEstadoRP" value="#{contratoB.regimenPension.estadoRegistro}"  disabled="#{not contratoB.banderaRegimen}"  >
+		        <f:selectItem itemLabel="Habilitado" itemValue="1" />
+		        <f:selectItem itemLabel="DesHabilitado" itemValue="0" />
+        	</h:selectOneMenu>
+            </div>
+            
+            <p:dataTable id="tbRegimenPension" value="#{contratoB.regimenPensionL}" var="itemRegimenPension" rowIndexVar="status" scrollable="true" scrollHeight="300" selectionMode="single" selection="#{contratoB.regimenPension}" rowKey="#{itemRegimenPension.regimenPension}" >
+            <p:ajax event="rowSelect"  update="txtDescripcionRP txtAbreviaturaRP cbEstadoRP"  />
+            <p:column headerText="Nr." width="5" >
+            #{status+1}
+            </p:column>
+            
+            <p:column headerText="Regimen Pension"  >
+            #{itemRegimenPension.descripcion}
+            </p:column>
+            
+            </p:dataTable>
+            <f:facet name="footer">
+              <h:commandLink id="btNuevoRP" styleClass="boton-normal" disabled="#{contratoB.banderaRegimen}" >
+        	Nuevo
+        	<f:ajax execute="@this" render="txtDescripcionRP txtAbreviaturaRP cbEstadoRP btNuevoRP btInsertarRP" listener="#{contratoB.nuevoRegimen}"   />        
+        </h:commandLink>
+        
+        <h:commandLink id="btInsertarRP" styleClass="boton-normal" disabled="#{not contratoB.banderaRegimen}" >
+        	Guardar
+	        <f:ajax execute="@this txtDescripcionRP txtAbreviaturaRP cbEstadoRP " render="txtDescripcionRP txtAbreviaturaRP cbEstadoRP btNuevoRP btInsertarRP tbRegimenPension :frmContrato:tabPrincipal:cbRegimenPension" listener="#{contratoB.insertarRegimen}"  />
+	        
+        </h:commandLink>
+            
+            </f:facet>
+            </p:dialog>
+            
+            
+            
+            <p:dialog  header="Entidad Prestadora de Salud" widgetVar="dlEntidadPrestadoraSalud" modal="true" resizable="false" closeOnEscape="true" width="600" >
+            <div class="paneles" >
+            <h:outputLabel for="txtDescripcionEPS" value="Ocupacion" />
+            <h:inputText  id="txtDescripcionEPS" value="#{contratoB.entidadPrestadoraSalud.descripcion}" required="true" disabled="#{not contratoB.banderaEntidadPrestadoraSalud}"  />
+            <br />
+            <h:outputLabel for="txtAbreviaturaEPS" value="Abreviatura" />
+            <h:inputText  id="txtAbreviaturaEPS" value="#{contratoB.entidadPrestadoraSalud.abreviatura}" disabled="#{not contratoB.banderaEntidadPrestadoraSalud}"  />
+            <br />
+            <h:outputLabel value="Estado" />
+            <h:selectOneMenu id="cbEstadoEPS" value="#{contratoB.entidadPrestadoraSalud.estadoRegistro}"  disabled="#{not contratoB.banderaEntidadPrestadoraSalud}"  >
+		        <f:selectItem itemLabel="Habilitado" itemValue="1" />
+		        <f:selectItem itemLabel="DesHabilitado" itemValue="0" />
+        	</h:selectOneMenu>
+            </div>
+            
+            <p:dataTable id="tbEntidadPrestadoraSalud" value="#{contratoB.entidadPrestadoraSaludL}" var="itemEntidadPrestadoraSalud" rowIndexVar="status" scrollable="true" scrollHeight="300" selectionMode="single" selection="#{contratoB.entidadPrestadoraSalud}" rowKey="#{itemEntidadPrestadoraSalud.eps}" >
+            <p:ajax event="rowSelect"  update="txtDescripcionEPS txtAbreviaturaEPS cbEstadoEPS"  />
+            <p:column headerText="Nr." width="5" >
+            #{status+1}
+            </p:column>
+            
+            <p:column headerText="Regimen Pension"  >
+            #{itemEntidadPrestadoraSalud.descripcion}
+            </p:column>
+            
+            </p:dataTable>
+            <f:facet name="footer">
+              <h:commandLink id="btNuevoEPS" styleClass="boton-normal" disabled="#{contratoB.banderaEntidadPrestadoraSalud}" >
+        	Nuevo
+        	<f:ajax execute="@this" render="txtDescripcionEPS txtAbreviaturaEPS cbEstadoEPS btNuevoEPS btInsertarEPS" listener="#{contratoB.nuevoEntidadPrestadoraSalud}"   />        
+        </h:commandLink>
+        
+        <h:commandLink id="btInsertarEPS" styleClass="boton-normal" disabled="#{not contratoB.banderaEntidadPrestadoraSalud}" >
+        	Guardar
+	        <f:ajax execute="@this txtDescripcionEPS txtAbreviaturaEPS cbEstadoEPS " render="txtDescripcionEPS txtAbreviaturaEPS cbEstadoEPS btNuevoEPS btInsertarEPS tbEntidadPrestadoraSalud :frmContrato:tabPrincipal:cbEntidadPrestadoraSalud" listener="#{contratoB.insertarEntidadPrestadoraSalud}"  />
+	        
+        </h:commandLink>
+            
+            </f:facet>
+            </p:dialog>
+            
+            
+            
+            
+            
+            
+            
+             <p:dialog  header="Local" widgetVar="dlLocal" modal="true" resizable="false" closeOnEscape="true" width="600" >
+            <div class="paneles" >
+            <h:outputLabel for="txtDescripcionL" value="Local" />
+            <h:inputText  id="txtDescripcionL" value="#{contratoB.local.descripcion}" required="true" disabled="#{not contratoB.banderaLocal}"  />
+            <br />
+            <h:outputLabel for="txtAbreviaturaL" value="Abreviatura" />
+            <h:inputText  id="txtAbreviaturaL" value="#{contratoB.local.abreviatura}" disabled="#{not contratoB.banderaLocal}"  />
+            <br />
+            <h:outputLabel for="txtTelefonoL" value="Telefono" />
+            <h:inputText  id="txtTelefonoL" value="#{contratoB.local.telefono}" maxlength="10" disabled="#{not contratoB.banderaLocal}"  />
+            <br />
+            
+            
+            <h:outputLabel value="Estado" />
+            <h:selectOneMenu id="cbEstadoL" value="#{contratoB.local.estadoRegistro}"  disabled="#{not contratoB.banderaLocal}"  >
+		        <f:selectItem itemLabel="Habilitado" itemValue="1" />
+		        <f:selectItem itemLabel="DesHabilitado" itemValue="0" />
+        	</h:selectOneMenu>
+            </div>
+            
+            <p:dataTable id="tbLocal" value="#{contratoB.localL}" var="itemLocal" rowIndexVar="status" scrollable="true" scrollHeight="300" selectionMode="single" selection="#{contratoB.local}" rowKey="#{itemLocal.local}" >
+            <p:ajax event="rowSelect"  update="txtDescripcionL txtAbreviaturaL cbEstadoL"  />
+            <p:column headerText="Nr." width="5" >
+            #{status+1}
+            </p:column>
+            
+            <p:column headerText="Regimen Pension"  >
+            #{itemLocal.descripcion}
+            </p:column>
+            <p:column headerText="Telefono"  width="50" >
+            #{itemLocal.telefono}
+            </p:column>
+            
+            </p:dataTable>
+            <f:facet name="footer">
+              <h:commandLink id="btNuevoL" styleClass="boton-normal" disabled="#{contratoB.banderaLocal}" >
+        	Nuevo
+        	<f:ajax execute="@this" render="txtDescripcionL txtAbreviaturaL txtTelefonoL  cbEstadoL btNuevoL btInsertarL" listener="#{contratoB.nuevoLocal}"   />        
+        </h:commandLink>
+        
+        <h:commandLink id="btInsertarL" styleClass="boton-normal" disabled="#{not contratoB.banderaLocal}" >
+        	Guardar
+	        <f:ajax execute="@this txtDescripcionL txtAbreviaturaL txtTelefonoL  cbEstadoL" render="txtDescripcionL txtAbreviaturaL txtTelefonoL  cbEstadoL btNuevoL btInsertarL tbLocal :frmContrato:tabPrincipal:cbSede" listener="#{contratoB.insertarLocal}"  />
+	        
+        </h:commandLink>
+            
+            </f:facet>
+            </p:dialog>
+            
+            
+            
+            
+        <p:dialog header="..: CENTRO EDUCATIVO :.." widgetVar="dlgCentroEducativo" modal="true" closeOnEscape="true" resizable="false" width="700" >
+        
+        <div class="paneles">
+         <h:outputLabel value="Regimen" />
+        <h:selectOneMenu id="cbRegimenCE" value="#{contratoB.centroEducativo.regimen}" disabled="#{not contratoB.banderaCentroEducativo}" >
+        <f:selectItem itemLabel="Privado" itemValue="1" />
+        <f:selectItem itemLabel="Publico" itemValue="2" />
+        </h:selectOneMenu><br />
+        
+        <h:outputLabel value="Tipo" />
+        <h:selectOneMenu id="cbTipoCE" value="#{contratoB.centroEducativo.tipo}" disabled="#{not contratoB.banderaCentroEducativo}">
+        <f:selectItems value="#{contratoB.tipoCentroEducativoL}" var="itemTipoCentroEducativo" itemLabel="#{itemTipoCentroEducativo.descripcion}" itemValue="#{itemTipoCentroEducativo.tipoCentroEducativo}"  />
+        
+        </h:selectOneMenu><br />
+        
+        <h:outputLabel value="Nombre" />
+        <h:inputText id="txtDescripcionCE" value="#{contratoB.centroEducativo.descripcion}" disabled="#{not contratoB.banderaCentroEducativo}" required="true" style=" width:80%;#{ component.valid ? '' : 'border-color:red;'}" /><br />
+        <h:outputLabel value="Abreviatura" />
+        <h:inputText id="txtAbreviaturaCE" value="#{contratoB.centroEducativo.abreviatura}" disabled="#{not contratoB.banderaCentroEducativo}" /><br />
+       
+        
+       
+        </div>
+        <div class="paneles  bloquear"  style="position: relative;">
+        
+        <p:dataTable id="tbCentroEducativo" value="#{contratoB.centroEducativoL}" var="itemCentroEducativo"  selectionMode="single" rowKey="#{itemCentroEducativo}" selection="#{contratoB.centroEducativo}" scrollable="true" scrollHeight="300"   rowIndexVar="status" >
+        <p:ajax event="rowSelect"  update="txtDescripcionCE txtAbreviaturaCE cbRegimenCE cbTipoCE  " />
+        <p:column headerText="Nro." width="15" >
+        #{status+1}
+        </p:column>
+        <p:column headerText="Centro Educativo" >
+        #{itemCentroEducativo.descripcion}
+        </p:column>
+        
+        </p:dataTable>
+        
+        </div>
+        
+           <f:facet name="footer">
+           <div style="display: block;text-align: right;">
+        <h:commandLink id="btNuevoCE" styleClass="boton-normal" disabled="#{contratoB.banderaCentroEducativo}" >
+        	Nuevo
+        	<f:ajax  execute="@this" render="txtDescripcionCE txtAbreviaturaCE cbRegimenCE cbTipoCE btNuevoCE btGuardarCE btCancelarCE"  listener="#{contratoB.nuevoCentroEducativo}" />
+        </h:commandLink>
+        
+        <h:commandLink id="btGuardarCE" styleClass="boton-normal" disabled="#{not contratoB.banderaCentroEducativo}">
+        	Guardar
+        	<f:ajax  execute="@this txtDescripcionCE txtAbreviaturaCE cbRegimenCE cbTipoCE " render="txtDescripcionCE txtAbreviaturaCE cbRegimenCE cbTipoCE tbCentroEducativo btNuevoCE btGuardarCE btCancelarCE :frmContrato:cboGradoInstitucion" listener="#{contratoB.insertarCentroEducativo}" />
+        </h:commandLink>
+        
+        <h:commandLink id="btCancelarCE" styleClass="boton-normal" disabled="#{not contratoB.banderaCentroEducativo}">
+        	Cancelar
+        	<f:ajax  execute="@this" render="txtDescripcionCE txtAbreviaturaCE cbRegimenCE cbTipoCE btNuevoCE btGuardarCE btCancelarCE" resetValues="true" listener="#{contratoB.cancelarCentroEducativo}" />
+        </h:commandLink>
+       
+           </div>   
+           </f:facet>
+        </p:dialog>
+            
+            
+            
+            
+            
+            
+        </h:form>
+        
+        
+        
+        <h:form id="frmCertificadoTrabajo" prependId="false">
+        
+          <p:dialog header="Certificado Trabajo" widgetVar="dlgCertificadoTrabajo" modal="true" resizable="false" closeOnEscape="true" >
+           <h:outputLabel  value="Tipo" />
+           <h:selectOneMenu id="cbTipoPCT" value="#{contratoB.personalCertificadoTrabajo.tipo}" >
+           <f:selectItem itemLabel="Certificado" itemValue="1" />
+           <f:selectItem itemLabel="Constancia" itemValue="2" />
+           </h:selectOneMenu>
+           <br />
+             <h:outputLabel value="Tipo Personal" />
+             <h:selectOneMenu id="cbTipoPersonalPCT"  value="#{contratoB.personalCertificadoTrabajo.tipoPersonal}" >
+            <f:selectItem  itemLabel="--Seleccion--" />
+            <f:selectItem  itemLabel="Docente" itemValue="4" />
+            <f:selectItem  itemLabel="Administrativo" itemValue="3" />
+           
+            </h:selectOneMenu>    
+           
+           
+           
+           <br />
+            <h:outputLabel  value="Fecha Inicio" />
+            <p:calendar id="txtFechaInicioPCT" value="#{contratoB.personalCertificadoTrabajo.fechaInicio}" pattern="dd-MM-yyyy" >
+            <p:ajax event="dateSelect" process="@this"  update="txtFechaFinalPCT" />
+            </p:calendar>
+            <h:outputLabel  value="Fecha Final" />
+            <p:calendar id="txtFechaFinalPCT" value="#{contratoB.personalCertificadoTrabajo.fechaFinal}" pattern="dd-MM-yyyy" mindate="#{contratoB.personalCertificadoTrabajo.fechaInicio}" />
+              <f:facet name="footer">
+                <h:commandLink styleClass="boton-verde" >
+                    GUARDAR
+                    <f:ajax execute="@this cbTipoPCT cbTipoPersonalPCT txtFechaInicioPCT txtFechaFinalPCT" render=":frmContrato:tabPrincipal:pnTabCertificado"  listener="#{contratoB.insertarPersonalCertificadoTrabajo}"  />
+                </h:commandLink>
+                
+                <h:commandLink styleClass="boton-rojo" onclick="dlgCertificadoTrabajo.hide()">
+                    SALIR
+                    <f:ajax execute="@this" />
+                </h:commandLink>
+            </f:facet>
+            </p:dialog>
+        
+        
+        </h:form>
+            
+       
+       
+        <h:form id="frmCurriculum" enctype="multipart/form-data" prependId="false" >
+        <p:dialog widgetVar="dlgCurriculum" header="Insertar Curriculum" modal="true" closeOnEscape="true" resizable="false" >
+        
+            <div class="paneles">
+            
+            <div class=" column">
+          		<a  onclick="btCurrriculum.click()" >
+          			<i class="fa fa-file-pdf-o" style="font-size: 5.0em;color: silver;" />          		
+          		</a>
+          		<p:fileUpload id="btCurrriculum" value="#{contratoB.file}" update="btInsertarCV"     allowTypes="/(\.|\/)(doc|docx|xls|xlsx|pdf)$/"    mode="simple"  widgetVar="" style="display:none;position: absolute;" />
+          		
+           </div>
+            
+            
+			            <div class="column">
+			            
+			                    <h:outputLabel for="txtFolioCV" value="Nº Folio" />
+				                <h:inputText id="txtFolioCV" value="#{contratoB.curriculumVitae.folio}" style="width:60px"   hp:type="number"  onkeypress="return soloNumeros(event)"  /><br />				                
+				                <h:outputLabel for="txtUbicacionCV" value="Ubicacion" />
+				                <h:inputText id="txtUbicacionCV" value="#{contratoB.curriculumVitae.ubicacion}"  /><br />				                
+				                <h:outputLabel value="Folios de Grado" /><br />
+				                <h:outputLabel for="txtFolioDesde" value="Desde" />
+				                <h:inputText id="txtFolioDesde" value="#{contratoB.curriculumVitae.folioDesde}" style="width:60px"   hp:type="number"  onkeypress="return soloNumeros(event)" />
+				                <h:outputLabel for="txtFolioHasta" value="Hasta" />
+				                <h:inputText id="txtFolioHasta" value="#{contratoB.curriculumVitae.folioHasta}"  style="width:60px" hp:type="number"   onkeypress="return soloNumeros(event)" />
+				        
+			            </div>
+             </div>
+          		
+          		
+          	
+                
+                
+           <f:facet name="footer">
+                 <div style="display: block;text-align: right;">
+                 <h:commandButton   id="btInsertarCV"  value="GUARDAR"   actionListener="#{contratoB.insertarCurriculumVitae}" />
+                <h:commandLink styleClass="boton-rojo" onclick="dlgCurriculum.hide()" >
+                    CANCELAR
+                    <f:ajax execute="@this"  listener="#{contratoB.cancelarCurriculum}" />
+                </h:commandLink>
+                 </div>   
+                
+            </f:facet>
+        </p:dialog>
+        </h:form>
+        
+        
+        
+       
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        <h:form id="frmParentesco" prependId="false" hp:autocomplete="off">
+            
+       
+            <p:dialog header="PARENTESCO FAMILIAR"  modal="true"  width="400" closeOnEscape="true" resizable="false" widgetVar="dlgParentesco" >
+             <h:outputLabel for="cbParentesco" value="PARENTESCO" />
+            <h:selectOneMenu id="cbParentesco" value="#{contratoB.personaParentesco.parentesco}" >
+                <f:selectItems value="#{contratoB.parentescoL}" var="itemParentesco" itemLabel="&lt;b style='color:Red'> #{itemParentesco.descripcion} &lt;/b>" itemValue="#{itemParentesco.parentesco}" itemLabelEscaped="false" />
+                               
+            </h:selectOneMenu>
+            <br/>
+            
+            
+            <h:outputLabel for="txtPersona" value="PERSONA" />
+            <h:inputText id="txtPersona" value="#{contratoB.personaParentesco.personaParentesco}" />
+            
+            <h:commandLink title="Nuevo persona" >                 
+                 <i class="fa fa-plus" style="color: #008000"  />
+                 <f:ajax execute="@this cbParentesco" render="txtPaternoF txtMaternoF " listener="#{contratoB.nuevoPersonaParentesco}" />                 
+             </h:commandLink>
+            
+            <h:inputText id="txtFiltroPersona"  value="#{contratoB.personaParantescoF}" style="display: block;width: 100%">
+                <f:ajax event="keyup" execute="@this" render="pnFiltroPersona"  listener="#{contratoB.filtroPersonaParentesco}"  />
+            </h:inputText>
+            <div class="paneles" style="display: block;width:91%;max-height: 150px;overflow: auto;position: absolute;">                
+                    <h:panelGroup layout="block" id="pnFiltroPersona" >
+
+                        <ui:repeat value="#{contratoB.personaFiltroL}" var="itemPersona">                    
+                            <h:commandLink styleClass="fila-filtro" >
+                                    #{itemPersona.paterno} #{itemPersona.materno} #{itemPersona.nombres}<br/>
+                                    <f:ajax execute="@this"  render=":frmParentesco:txtPersona :frmParentesco:txtFiltroPersona"  listener="#{contratoB.seleccionarFiltroPersona(itemPersona)}" />
+                                </h:commandLink>
+                        </ui:repeat>
+                    </h:panelGroup>
+             </div>
+       
+            <h:outputLabel for="ckViveUsted" value="Vive con Usted" >
+                <h:selectBooleanCheckbox id="ckViveUsted" value="#{contratoB.personaParentesco.viveconud}" />
+            </h:outputLabel>
+            <br/>
+            <h:outputLabel for="ckDependeUsted" value="Depende de con Usted">
+               <h:selectBooleanCheckbox id="ckDependeUsted" value="#{contratoB.personaParentesco.dependedeud}" />
+            </h:outputLabel>
+            <br/>
+             <h:outputLabel for="txtObservacion" value="Observacion" />
+             <br/>
+             <h:inputTextarea id="txtObservacion" style="resize: none;width: 97%;height: 80px" value="#{contratoB.personaParentesco.observacion}" />
+           
+            <f:facet name="footer">
+                <h:commandLink styleClass="boton-verde" >
+                    GUARDAR
+                    <f:ajax execute="@this txtPersona cbParentesco ckViveUsted ckDependeUsted txtObservacion" render=":frmContrato:tabPrincipal:tbPersonaPerentesco" listener="#{contratoB.insertarPersonaParentesco()}" />
+                </h:commandLink>
+                
+                <h:commandLink styleClass="boton-rojo" onclick="dlgParentesco.hide()">
+                    SALIR
+                    <f:ajax execute="@this" />
+                </h:commandLink>
+            </f:facet>
+        </p:dialog>
+        
+        
+          <p:dialog header="NUEVA PERSONA" widgetVar="dlgPersona" modal="true" resizable="false" closeOnEscape="true">
+             <br/>
+            <h:outputLabel for="txtPaternoF" value="PATERNO" />
+            <h:inputText id="txtPaternoF" value="#{contratoB.personaFamiliar.paterno}"  />
+            <br />
+            <h:outputLabel for="txtMaternoF" value="MATERNO"   />
+            <h:inputText id="txtMaternoF" value="#{contratoB.personaFamiliar.materno}"  />
+            <br />
+            <h:outputLabel for="txtNombresF" value="NOMBRES"   />
+            <h:inputText id="txtNombresF" value="#{contratoB.personaFamiliar.nombres}" />
+            <br />
+            <h:outputLabel for="txtFechaNacimientoF" value="FECHA NACI."   />
+            <p:calendar id="txtFechaNacimientoF" value="#{contratoB.personaFamiliar.fecha_nacimiento}" pattern="dd-MM-yyyy" mask="true"  />
+            
+               <f:facet name="footer">
+                <h:commandLink styleClass="boton-verde" >
+                    GUARDAR
+                    <f:ajax execute="@this txtPaternoF txtMaternoF txtNombresF txtFechaNacimientoF "   />
+                </h:commandLink>
+                
+                <h:commandLink styleClass="boton-rojo" onclick="dlgPersona.hide()">
+                    SALIR
+                    <f:ajax execute="@this" />
+                </h:commandLink>
+            </f:facet>
+            </p:dialog>
+            
+            
+          
+            
+            
+        </h:form>
+        
+   </ui:define>
+ </ui:composition>

@@ -1,0 +1,45 @@
+<ui:composition 
+		        xmlns="http://www.w3.org/1999/xhtml"
+		        xmlns:f="http://xmlns.jcp.org/jsf/core"
+      			xmlns:h="http://xmlns.jcp.org/jsf/html"
+         		xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="plantilla.xhtml">
+        
+              <ui:define name="titulo">
+                
+                CAMBIAR CLAVE
+                
+            </ui:define>
+             
+                         
+        <ui:define name="contenido">
+               <h:form id="form-cambiarclave" prependId="false" >
+               
+               <div class="paneles" >
+                 	<h:outputLabel for="txtClaveA" value="Contraseña actual" />
+                 	<h:inputText id="txtClaveA" value="#{usuarioB.clave}"  required="true"/>
+                 	<br />    
+       			    <h:outputLabel for="txtClaveN" value="Nueva contraseña" />                
+                    <h:inputSecret id="txtClaveN" value="#{usuarioB.claveN}"  required="true" />
+                    <br />
+           			<h:outputLabel for="txtClaveR" value="Repeta contraseña" />                   
+                    <h:inputSecret id="txtClaveR" value="#{usuarioB.claveR}"  required="true"/>
+            
+               </div>
+               <div class="paneles" >
+               
+               <h:commandLink styleClass="boton-normal" action="#{usuarioB.cambiarClaveAdmin}" >
+               
+               Aceptar
+               <f:ajax  execute="@this txtClaveA txtClaveN txtClaveR"  render="txtClaveA txtClaveN txtClaveR"  />
+               </h:commandLink>
+               </div>
+               
+                   
+             </h:form>
+          
+ </ui:define>
+      
+     </ui:composition>
+
+

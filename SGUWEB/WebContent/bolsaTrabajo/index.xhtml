@@ -1,0 +1,218 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:hp="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<h:head>
+<title>Oportunidades Laborales Segio Bernales</title>
+ <link   type="text/css" rel="stylesheet" href="/SGUWEB/resources/css/bolsaTrabajo/style.css" />
+ <link   type="text/css" rel="stylesheet" href="/SGUWEB/resources/css/font-awesome.css" /> 
+ <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.2.6/jquery.js" />
+
+<script>
+
+$(document).ready(function(){
+	$("#txtUsuario").focus();
+	
+	$("#btSiguiente").click(function(e){
+		e.preventDefault();
+		$("#slider div:first-child").addClass("primero");
+		
+	});
+	
+});
+
+
+function notificacion(msg,speed,fadeSpeed,type){
+    $('.notify').remove();
+	if (typeof fade != "undefined"){
+	clearTimeout(fade);
+	}
+	$('body').append('<div class="notify '+type+'" style="display:none;position:fixed;right:10px"><p>'+msg+'</p></div>');	
+	notifyHeight = $('.notify').outerHeight();
+	$('.notify').css('top',-notifyHeight).animate({top:10,opacity:'toggle'},speed);	
+	fade = setTimeout(function(){
+	
+		$('.notify').animate({top:notifyHeight+10,opacity:'toggle'}, speed);
+	
+	}, fadeSpeed);
+}
+
+</script> 
+
+<style>
+
+table tbody tr td{border: none!important}
+.panel-cuerpo{display: block;width:100%;height:315px;background-color: white;position: relative;background: url(/imagen/java/banner_bolsa.png)}
+.panel-acceso{display:block;width: 260px;padding: 5px;position: absolute;right: 20px;top: 20px}
+.panel-acceso-cabecera{}
+.panel-acceso-cabecera input{opacity: 0 }
+.panel-acceso-cabecera input:checked + label{background-color: white;color: black;}
+.panel-acceso-cabecera label{cursor: pointer;display: block;margin: -12px -3px 0px 0px;padding: 8px 5px;background-color: #1469aa;color: white;text-align: center;}
+.panel-acceso-cabecera table tbody tr:HOVER {background-color: transparent!important;}       
+.panel-acceso-cabecera table{    margin: 0px 0px -2px -2px;}
+
+.panel-acceso-cuerpo{background-color:white;padding: 5px 15px;border-bottom: 4px solid rgb(236, 196, 46);}
+.panel-acceso-datos{padding: 10px 0px}
+.panel-acceso-datos div{margin: 3px  0px;border-radius:2px}
+.panel-acceso-datos div label{border-right: 1px solid silver;padding :5px  ;display: inline-block;color: silver;min-width: 16px;!important}
+.panel-acceso-datos div input{width: 82%;border: none;padding: 6px 4px!important;}
+.panel-acceso-botonera{text-align: right;border-top: 1px solid silver;padding: 5px 0px}
+.panel-acceso-pie{text-align: right;}
+.panel-aviso{display: block;width: 80%; border: 1px solid silver;margin: 5px auto;background-color: white;padding: 5px  10px}
+.panel-aviso h2{border-bottom: 1px solid silver;padding: 5px}
+.panel-area-item{padding: 5px 10px;}
+.panel-convenio-item{padding: 5px 10px;}
+.panel-convenio-item > div{position: relative;overflow: hidden;}
+.panel-convenio-item > div,.panel-area-item > div{border: 1px solid silver;width: 150px;height: 150px;text-align: center;}
+.panel-area-item > div{padding: 5px}
+.panel-area-item > div span{font-size: 2.0em}
+.panel-area-item > div p{}
+.panel-area-item > div b{font-size: 3.2em;display: block;color: #1469aa}
+.panel-convenio-item div img{width: 100%;height: 100%;}
+.panel-convenio-item > div > div{position: absolute;top: 200px;left: 0;display: block;width: 100%;height: 100%;background-color: rgba(0,0,0,0.8);color: white;transition:all 0.5s}
+.panel-convenio-item > div:HOVER div{top: 0}
+.panel-convenio-item > div:HOVER b{left: 0}
+.panel-convenio-item  div b{color:rgb(236, 196, 46);display:block;width:100%;text-align:center  ;font-size: 2.0em;position: absolute;top: 0px;left: 200px;padding:50px 0px;transition:all 0.5s}
+
+.valida-caja::-webkit-input-placeholder{color: red}
+.valida-caja::-moz-placeholder{color: red}
+</style>
+</h:head>
+<h:body>
+	
+<div id="header">
+	<a href="index.xhtml">
+	<img src="/imagen/java/logoupsb.png" alt="" style="width: 60px; height: 60px"  />
+	
+	</a>
+	<div class="column" >
+	<h1 >OPORTUNIDADES LABORALES </h1>
+	</div>
+	
+	<div class="column">
+	<ul>
+	<li>Registrarte</li>
+	<li>Iniciar Sesion</li>
+	</ul>
+	</div>
+</div>
+	
+	
+	
+	<div class="panel-cuerpo"  >
+	
+	<h:form id="frmAcceso" prependId="false" hp:autocomplete="off"  >
+		<div class="panel-acceso" >
+			<div  class="panel-acceso-cabecera" >			
+				<h:selectOneRadio id="rbPerfil" value="#{usuarioTrabajoB.perfil}"  >
+					<f:selectItem itemLabel="Persona" itemValue="1" />
+					<f:selectItem itemLabel="Empresa" itemValue="2" />
+					 
+				</h:selectOneRadio>			
+			</div>
+		<div class="panel-acceso-cuerpo" >
+		<div class="panel-acceso-datos" >
+			<div style="border: 1px solid silver">
+			<label for="txtUsuario">
+			<i class="fa fa-envelope-o" />
+			</label>
+					
+					<h:inputText  id="txtUsuario" value="#{usuarioTrabajoB.usuario}" hp:placeholder="correo@dominio.com"  required="true" styleClass="#{not component.valid ?'valida-caja':''}"  />		
+			</div>
+			<div style="border: 1px solid silver">
+					<label for="txtClave" >
+					<i class="fa fa-lock" />
+					</label>
+					
+					<h:inputSecret id="txtClave" value="#{usuarioTrabajoB.clave}"  hp:placeholder="Contraseña" required="true" styleClass="#{not component.valid ?'valida-caja':''}"  />			
+			</div>
+			
+				<a href="/SGAWEB/faces/bolsaTrabajo/persona/registro.xhtml" target="_blank">
+					<i class="fa fa-user-plus" />
+					Crear cuenta
+				</a>
+		</div>
+		
+		<div class="panel-acceso-botonera" >
+			<h:commandButton style="display:none">
+				<f:ajax execute="@this txtUsuario txtClave rbPerfil" render=" txtUsuario txtClave" listener="#{usuarioTrabajoB.ingresar}"  />
+				</h:commandButton>
+		
+			<h:commandLink styleClass="boton-normal" >
+			<i class="fa fa-paper-plane-o" />
+				Ingresar
+				<f:ajax execute="@this txtUsuario txtClave rbPerfil" render=" txtUsuario txtClave" listener="#{usuarioTrabajoB.ingresar}"  />
+			</h:commandLink>
+			</div>
+		</div>
+				
+			
+			</div>
+			</h:form>
+		
+		
+		
+	</div>
+	<h:form>
+	<div  id="pn-interez" style="border: 1px solid silver;height: 100px;text-align: center" >
+	<a  id="btSiguiente" href="#" >Siguiente</a>
+		<ui:repeat var="itemInteres" value="#{inicioTrabajoB.interesL}">
+			
+			<div class="column" style="height: 100%;"  >
+					<a href="#{itemInteres.web}" target="_blank"  >
+					<h:graphicImage   value="../../faces/bolsaTrabajo/SimagenBD?opcion=8&amp;codigo=#{itemInteres.interes}"  style="height: 100%" />
+					</a>		
+			</div>
+			
+		</ui:repeat>
+		<a href="#">Anterior</a>
+	</div>
+	<div class="panel-aviso" >
+	<h2>Bolsa de Trabajo</h2>
+	<div class="panel-area-item" >
+	<ui:repeat var="itemAviso" value="#{inicioTrabajoB.areaAvisoL}">
+	<div class="column" >
+		<span><i class="#{itemAviso.icono}" /></span>
+		<div>
+		<b>#{itemAviso.cantidad}</b>
+		
+		<p>#{itemAviso.descripcion}</p>
+	
+		</div>
+	</div>
+	
+	</ui:repeat>
+	
+		
+	</div>
+	</div>
+	
+	<div class="panel-aviso" >
+	<h2>Nuestros Convenios</h2>
+	<div class="panel-convenio-item" >
+	<ui:repeat var="itemEmpresa" value="#{inicioTrabajoB.empresaTrabL}">
+		<div class="column" >
+			<h:graphicImage   value="SimagenBD?opcion=7&amp;codigo=#{itemEmpresa.empresa}"  />
+			<div />	
+			
+			<b>
+				#{itemEmpresa.descripcion}
+			</b>
+			
+		</div>
+	
+	</ui:repeat>
+		
+	
+	</div>
+	
+	
+	</div>
+	</h:form>
+</h:body>
+</html>

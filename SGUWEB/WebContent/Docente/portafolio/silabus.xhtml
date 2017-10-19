@@ -1,0 +1,93 @@
+
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                        xmlns="http://www.w3.org/1999/xhtml"
+                        xmlns:h="http://xmlns.jcp.org/jsf/html"
+                        xmlns:f="http://xmlns.jcp.org/jsf/core"                       
+                        xmlns:p="http://primefaces.org/ui"
+                        template="/Docente/plantilla.xhtml">
+
+                <ui:define name="titulo">
+                   ADMINISTRAR SILABO
+                </ui:define>
+                
+    <ui:define name="contenido">
+        
+        <script>
+            function subirArchivo(){
+               
+                $("#btExaminar").click();
+             
+            }
+            $("body").on("change","#btExaminar",function (){    
+                   
+                   $("#btSubir").click();
+             }); 
+        </script>
+     
+            
+          <span class="tituto-docente">ADMINISTRAR SILABO  </span>    
+          #{administrarSilabusB.load(usuarioB.institucionS,usuarioB.periodoS,usuarioB.personal.personal)}     
+        <h:form id="frmSubir" enctype="multipart/form-data" prependId="false" style="display: none" >           
+                     
+                
+                <p:fileUpload id="btExaminar" styleClass="subirArchivo" mode="simple" value="#{administrarSilabusB.uploadedFile}"  />   
+                <h:commandButton id="btSubir" value="Subir" actionListener="#{administrarSilabusB.save}">
+                    <f:ajax execute="btExaminar" render="@form :frmSilabu"/>
+                </h:commandButton>
+         
+                     
+         </h:form>
+         
+         
+        <h:form id="frmSilabu"  prependId="false" >       
+                 
+           
+           
+           <h:panelGroup  id="pnSilabu" layout="block" >
+           <ui:repeat var="itemSilabu" value="#{administrarSilabusB.cursoSeccionSilabuL}">
+           <div class="column paneles" style="background-color: white;max-width: 220px" >
+           <div>
+           #{itemSilabu.itemCarrera.descripcion}
+           <br />
+           #{itemSilabu.itemSeccion.descripcion}
+            
+            <br/>
+            #{itemSilabu.itemCurso.descripcion}
+           </div>
+           <div class="paneles">
+           
+                            <h:commandLink type="button" onclick="subirArchivo()" disabled="#{itemSilabu.silabu ne null}"  >
+                               <i class="fa fa-cloud-upload"/>
+                               SUBIR
+                               <f:ajax execute="@this" render="@this" listener="#{administrarSilabusB.seleccionar(itemSilabu)}" />
+                           </h:commandLink>
+                            <h:commandLink disabled="#{itemSilabu.silabu eq null}" onclick="return confirmacion(this,'¿ Esta Seguro ?');" >
+                               <i class="fa fa-eraser"/>
+                               BORRAR
+                               <f:ajax execute="@this" render=":frmSilabu:pnSilabu"  listener="#{administrarSilabusB.eliminar(itemSilabu,usuarioB.personal.personal)}" />
+                           </h:commandLink>
+                  
+                            <h:commandLink actionListener="#{administrarSilabusB.prepDownload(itemSilabu.ruta.concat('\\').concat(itemSilabu.silabu))}" disabled="#{itemSilabu.silabu eq null}" >
+                               <i class="fa fa-cloud-download"/>
+                               DESCARGAR
+                               <p:fileDownload value="#{administrarSilabusB.download}" />
+                           </h:commandLink>
+                            
+                          
+           </div>
+           
+         
+           
+           </div>
+           
+           </ui:repeat>
+           </h:panelGroup>
+            
+            
+            
+        </h:form>
+    </ui:define>
+</ui:composition>
+        
+            
+

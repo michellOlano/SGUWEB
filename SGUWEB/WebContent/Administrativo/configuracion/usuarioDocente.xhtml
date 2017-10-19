@@ -1,0 +1,122 @@
+ <ui:composition   xmlns:ui="http://java.sun.com/jsf/facelets"
+        				  xmlns="http://www.w3.org/1999/xhtml"
+					      xmlns:h="http://xmlns.jcp.org/jsf/html"
+					      xmlns:hp="http://xmlns.jcp.org/jsf/passthrough"				      					          
+					      xmlns:p="http://primefaces.org/ui"
+					      xmlns:f="http://xmlns.jcp.org/jsf/core"
+                		  template="/Administrativo/plantilla.xhtml">
+                		  
+                		  
+        <ui:define name="titulo">
+                
+                USUARIO DOCENTE
+                
+            </ui:define>  
+             <ui:define name="contenido">  
+             
+             <style>
+             #pnUsuario >div{opacity:1;transition:all 1.5s}
+             #pnUsuario >div.deshabilitado{opacity:0.4}
+             
+             </style>
+             
+             
+<h:form id="frmUsuarioDocente" prependId="false"  >
+<div class="paneles" >
+<i class="fa fa-search" />
+<h:inputText id="txtPaterno" value="#{usuarioDocenteB.paterno}" hp:placeholder="Paterno" >
+
+<f:ajax execute="@this" render="pnUsuario" listener="#{usuarioDocenteB.filtraUsuarioDocente}" />
+</h:inputText>
+
+<h:inputText id="txtMaterno" value="#{usuarioDocenteB.materno}" hp:placeholder="Materno" >
+
+<f:ajax execute="@this" render="pnUsuario" listener="#{usuarioDocenteB.filtraUsuarioDocente}" />
+</h:inputText>
+
+<h:inputText id="txtNombres" value="#{usuarioDocenteB.nombres}" hp:placeholder="Nombres" >
+
+<f:ajax execute="@this" render="pnUsuario" listener="#{usuarioDocenteB.filtraUsuarioDocente}" />
+</h:inputText>
+</div>
+
+<h:panelGroup layout="block" id="pnUsuario" >
+<ui:repeat var="itemUsuario" value="#{usuarioDocenteB.usuarioL}">
+
+
+<h:panelGroup id="pnFicha"  layout="block" styleClass="paneles column #{itemUsuario.estadoRegistro eq 0?'deshabilitado':''}" style=";min-width: 100px;padding: 5px;font-size: 12px;" >
+<div class="column" >
+	<h:graphicImage  value="SVerImagenAlumno?alumno=#{itemUsuario.persona}" style="width:50px;height: 70px" />
+	</div>
+	
+	<div class="column" style="max-width:220px;" >
+		
+		#{itemUsuario.itemPersona.paterno} #{itemUsuario.itemPersona.materno} #{itemUsuario.itemPersona.nombres}
+		<br />
+		#{itemUsuario.usuario}
+		<br />
+		
+		#{utilB.convertDateString(itemUsuario.fechaDesde,'dd-MM-yyyy')} 		#{utilB.convertDateString(itemUsuario.fechaHasta,'dd-MM-yyyy')}
+		
+		
+		
+	</div>
+<div class="paneles">
+		<h:commandLink title="Acceso" >
+			<i class="fa fa-sign-in" />
+			<f:ajax execute="@this" listener="#{usuarioB.selectUsuarioDocente(itemUsuario)}" />
+		</h:commandLink>
+		<h:commandLink title="Editar"  onclick="$(this).parent().parent().addClass('select-usuario')"   >
+		<i class="fa fa-pencil" />
+		<f:ajax  execute="@this"     render=":frmUsuarioDocente:imgFoto :frmUsuarioDocente:txtUsuario :frmUsuarioDocente:txtClave :frmUsuarioDocente:txtFechaInicio :frmUsuarioDocente:txtFechaFinal :frmUsuarioDocente:cbEstado" listener="#{usuarioDocenteB.editarUsuario(itemUsuario)}"  />
+		</h:commandLink>
+</div>
+</h:panelGroup>
+
+</ui:repeat>
+
+</h:panelGroup>
+
+<p:dialog header="Mantenimiento Usuarios" widgetVar="dlUsuario" modal="true" resizable="false" closeOnEscape="true" >
+<div class="column" >
+<h:graphicImage id="imgFoto"  value="SVerImagenAlumno?alumno=#{usuarioDocenteB.usuario.persona}" style="width:50px;height: 70px" />
+</div>
+<div class="column" >
+<h:outputLabel value="Usuario" />
+<h:inputText  id="txtUsuario" value="#{usuarioDocenteB.usuario.usuario}" disabled="true" />
+<br />
+<h:outputLabel value="Clave" />
+<h:inputText  id="txtClave" value="#{usuarioDocenteB.usuario.clave}" />
+<br />
+<h:outputLabel value="Fecha Inicio" />
+<p:calendar id="txtFechaInicio" value="#{usuarioDocenteB.usuario.fechaDesde}" pattern="dd-MM-yyyy" mask="true" navigator="true" size="10" required="true" />
+<br />
+<h:outputLabel value="Fecha Final" />
+<p:calendar id="txtFechaFinal" value="#{usuarioDocenteB.usuario.fechaHasta}" pattern="dd-MM-yyyy" mask="true" navigator="true" size="10" required="true" />
+<br />
+<h:outputLabel value="Estado" />
+<h:selectOneMenu id="cbEstado" value="#{usuarioDocenteB.usuario.estadoRegistro}" >
+<f:selectItem itemValue="1" itemLabel="Habilitado" /> 
+<f:selectItem itemValue="0" itemLabel="Deshabilitado" />
+</h:selectOneMenu>
+</div>
+
+
+
+<f:facet name="footer">
+
+
+<p:commandLink styleClass="boton-normal" >
+Aceptar
+
+<p:ajax process="@this txtFechaInicio txtFechaFinal cbEstado" update="@(.select-usuario)" listener="#{usuarioDocenteB.insertarUsuario}" />
+</p:commandLink>
+
+
+</f:facet>
+</p:dialog>
+
+
+</h:form>
+</ui:define>
+</ui:composition>
